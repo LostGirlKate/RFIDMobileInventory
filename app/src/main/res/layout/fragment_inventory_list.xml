@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.list.InventoryListFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Spinner
+            android:id="@+id/location_spinner"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/spinner_background"
+            android:dropDownWidth="match_parent"
+            android:padding="10dp"
+            android:popupBackground="@color/colorPrimaryDark"
+            android:scrollbarSize="40dp"
+            android:spinnerMode="dropdown"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+        <SearchView
+            android:id="@+id/searchView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+
+            android:iconifiedByDefault="false"
+            android:isScrollContainer="true"
+            android:queryHint="@string/search"
+            app:layout_constraintEnd_toStartOf="@+id/open_rfid_scanner_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/location_spinner" />
+
+
+        <TextView
+            android:id="@+id/tv_empty_list"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:elevation="16dp"
+            android:gravity="center"
+            android:text="@string/no_data_found"
+            android:textAllCaps="true"
+            android:textSize="18sp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/rc_inventory_list"
+            app:layout_constraintEnd_toEndOf="@+id/rc_inventory_list"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/rc_inventory_list" />
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rc_inventory_list"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/filter_state_block" />
+
+        <LinearLayout
+            android:id="@+id/filter_state_block"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/searchView">
+
+            <ToggleButton
+                android:id="@+id/filter_button_not_found"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/button_height"
+                android:layout_marginEnd="12dp"
+                android:layout_weight="1"
+                android:background="@drawable/filter_red_button_background"
+                android:button="@drawable/filter_red_button_background"
+                android:checked="true"
+                android:freezesText="false"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+
+            <ToggleButton
+                android:id="@+id/filter_button_found"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/button_height"
+                android:layout_marginEnd="12dp"
+                android:layout_weight="1"
+                android:background="@drawable/filter_green_button_background"
+                android:checked="true"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+
+            <ToggleButton
+                android:id="@+id/filter_button_found_in_wrong_place"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/button_height"
+                android:layout_weight="1"
+                android:background="@drawable/filter_orange_button_background"
+                android:checked="true"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/open_rfid_scanner_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/orange_background"
+            android:backgroundTint="@color/colorPrimary"
+            android:padding="10dp"
+            android:src="@drawable/ico_radar"
+            app:layout_constraintBottom_toBottomOf="@+id/searchView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/searchView" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</FrameLayout>

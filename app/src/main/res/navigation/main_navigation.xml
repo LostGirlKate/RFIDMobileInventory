@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_navigation"
+    app:startDestination="@id/inventoryMainFragment">
+
+    <fragment
+        android:id="@+id/inventoryMainFragment"
+        android:name="lost.girl.rfidmobileinventory.ui.main.InventoryMainFragment"
+        android:label="@string/app_name"
+        tools:layout="@layout/fragment_inventory_main" >
+        <action
+            android:id="@+id/action_inventoryMainFragment_to_inventoryListFragment"
+            app:destination="@id/inventoryListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/inventoryListFragment"
+        android:name="lost.girl.rfidmobileinventory.ui.list.InventoryListFragment"
+        android:label="@string/show_tmc"
+        tools:layout="@layout/fragment_inventory_list" >
+        <action
+            android:id="@+id/action_inventoryListFragment_to_inventoryItemDetailFragment"
+            app:destination="@id/inventoryItemDetailFragment" />
+        <action
+            android:id="@+id/action_inventoryListFragment_to_rfidScannerFragment"
+            app:destination="@id/rfidScannerFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/inventoryItemDetailFragment"
+        android:label="{title}"
+        android:name="lost.girl.rfidmobileinventory.ui.detail.InventoryItemDetailFragment"
+        tools:layout="@layout/fragment_inventory_item_detail">
+        <argument
+            android:name="item_id"
+            android:defaultValue="-1"
+            app:argType="integer" />
+        <argument
+            android:name="title"
+            app:argType="string" />
+        <argument
+            android:name="state"
+            app:argType="lost.girl.rfidmobileinventory.domain.models.InventoryItemState"
+            android:defaultValue="STATE_FOUND" />
+    </fragment>
+    <fragment
+        android:id="@+id/rfidScannerFragment"
+        android:name="lost.girl.rfidmobileinventory.ui.rfidscan.RfidScannerFragment"
+        android:label="{title}"
+        tools:layout="@layout/fragment_rfid_scanner" >
+        <argument
+            android:name="title"
+            app:argType="string" />
+        <argument
+            android:name="location_id"
+            app:argType="integer"
+            android:defaultValue="-1" />
+    </fragment>
+</navigation>
