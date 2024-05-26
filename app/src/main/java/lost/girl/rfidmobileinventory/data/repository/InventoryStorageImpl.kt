@@ -9,8 +9,8 @@ import lost.girl.rfidmobileinventory.data.storage.roomdb.ClearDataBase
 import lost.girl.rfidmobileinventory.domain.models.InventoryInfoModel
 import lost.girl.rfidmobileinventory.domain.models.InventoryItemForExportModel
 import lost.girl.rfidmobileinventory.domain.models.InventoryItemFullModel
-import lost.girl.rfidmobileinventory.domain.models.InventoryItemFullModelForDetail
-import lost.girl.rfidmobileinventory.domain.models.InventoryItemModelForList
+import lost.girl.rfidmobileinventory.domain.models.InventoryItemForDetailFullModel
+import lost.girl.rfidmobileinventory.domain.models.InventoryItemForListModel
 import lost.girl.rfidmobileinventory.domain.models.InventoryItemState
 import lost.girl.rfidmobileinventory.domain.models.InventoryLocationFullModel
 import lost.girl.rfidmobileinventory.domain.models.InventoryState
@@ -37,7 +37,7 @@ class InventoryStorageImpl(
         return inventoryStorage.getAllLocationList().map { mapToInventoryLocationFullModel(it) }
     }
 
-    override fun getAllInventoryItemList(): List<InventoryItemModelForList> {
+    override fun getAllInventoryItemList(): List<InventoryItemForListModel> {
         TODO("Not yet implemented")
     }
 
@@ -53,7 +53,7 @@ class InventoryStorageImpl(
         return inventoryStorage.insertManyInventoryItem(items.map { mapToInventoryItem(it) })
     }
 
-    override fun getInventoryItemByLocationID(locationID: Int): List<InventoryItemModelForList> {
+    override fun getInventoryItemByLocationID(locationID: Int): List<InventoryItemForListModel> {
         return inventoryStorage.getInventoryItemByLocationID(locationID)
             .map { mapToInventoryItemModelForList(it) }
     }
@@ -77,7 +77,7 @@ class InventoryStorageImpl(
         return true
     }
 
-    override fun getInventoryItemDetail(id: Int): InventoryItemFullModelForDetail {
+    override fun getInventoryItemDetail(id: Int): InventoryItemForDetailFullModel {
         return mapToInventoryItemFullModelForDetail(inventoryStorage.getInventoryItemDetail(id))
     }
 
@@ -132,13 +132,13 @@ class InventoryStorageImpl(
         )
     }
 
-    private fun mapToInventoryItemFullModelForDetail(item: InventoryItem): InventoryItemFullModelForDetail {
+    private fun mapToInventoryItemFullModelForDetail(item: InventoryItem): InventoryItemForDetailFullModel {
         val state = when (item.actualLocationID) {
             null -> "Не найдено"
             item.locationID -> "Найдено"
             else -> "Найдено не на своем месте"
         }
-        return InventoryItemFullModelForDetail(
+        return InventoryItemForDetailFullModel(
             id = item.id,
             inventoryNum = item.inventoryNum,
             managerName = item.managerName,
@@ -153,13 +153,13 @@ class InventoryStorageImpl(
         )
     }
 
-    private fun mapToInventoryItemModelForList(item: InventoryItem): InventoryItemModelForList {
+    private fun mapToInventoryItemModelForList(item: InventoryItem): InventoryItemForListModel {
         val state = when (item.actualLocationID) {
             null -> InventoryItemState.STATE_NOT_FOUND
             item.locationID -> InventoryItemState.STATE_FOUND
             else -> InventoryItemState.STATE_FOUND_IN_WRONG_PLACE
         }
-        return InventoryItemModelForList(
+        return InventoryItemForListModel(
             id = item.id,
             model = item.model,
             state = state,

@@ -1,6 +1,6 @@
 package lost.girl.rfidmobileinventory.domain.models
 
-data class InventoryItemDetailItem(
+data class InventoryItemDetailModel(
     val paraName: String,
     val value: String,
     val isStatus: Boolean = false,

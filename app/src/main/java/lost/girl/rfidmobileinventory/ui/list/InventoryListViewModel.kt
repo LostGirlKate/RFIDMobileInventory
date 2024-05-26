@@ -1,20 +1,14 @@
 package lost.girl.rfidmobileinventory.ui.list
 
 import android.app.Application
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import lost.girl.rfidmobileinventory.domain.models.InventoryInfoModel
-import lost.girl.rfidmobileinventory.domain.models.InventoryItemModelForList
-import lost.girl.rfidmobileinventory.domain.models.InventoryLocationFullModel
 import lost.girl.rfidmobileinventory.domain.usescase.GetAllLocationsUseCase
 import lost.girl.rfidmobileinventory.domain.usescase.GetInventoryInfoUseCase
 import lost.girl.rfidmobileinventory.domain.usescase.GetInventoryItemByLocationIDUseCase
 import lost.girl.rfidmobileinventory.mvi.MviViewModel
-import lost.girl.rfidmobileinventory.ui.main.InventoryMainViewState
 
 class InventoryListViewModel(
     application: Application,

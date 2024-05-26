@@ -10,15 +10,15 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import lost.girl.rfidmobileinventory.R
 import lost.girl.rfidmobileinventory.databinding.InventoryDetailItemBinding
-import lost.girl.rfidmobileinventory.domain.models.InventoryItemDetailItem
+import lost.girl.rfidmobileinventory.domain.models.InventoryItemDetailModel
 
 class InventoryItemDetailAdapter :
-    ListAdapter<InventoryItemDetailItem, InventoryItemDetailAdapter.ItemHolder>(ItemComparator()) {
+    ListAdapter<InventoryItemDetailModel, InventoryItemDetailAdapter.ItemHolder>(ItemComparator()) {
 
     class ItemHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val binding = InventoryDetailItemBinding.bind(view)
 
-        fun setData(detail: InventoryItemDetailItem) = with(binding) {
+        fun setData(detail: InventoryItemDetailModel) = with(binding) {
             paramName.text = detail.paraName
             paramValue.text = detail.value
             statusBox.visibility = if (detail.isStatus) View.VISIBLE else View.GONE
@@ -46,18 +46,18 @@ class InventoryItemDetailAdapter :
     }
 }
 
-class ItemComparator : DiffUtil.ItemCallback<InventoryItemDetailItem>() {
+class ItemComparator : DiffUtil.ItemCallback<InventoryItemDetailModel>() {
     override fun areItemsTheSame(
-        oldItem: InventoryItemDetailItem,
-        newItem: InventoryItemDetailItem
+        oldItem: InventoryItemDetailModel,
+        newItem: InventoryItemDetailModel
     ): Boolean {
         return oldItem.paraName == newItem.paraName
     }
 
     @SuppressLint("DiffUtilEquals")
     override fun areContentsTheSame(
-        oldItem: InventoryItemDetailItem,
-        newItem: InventoryItemDetailItem
+        oldItem: InventoryItemDetailModel,
+        newItem: InventoryItemDetailModel
     ): Boolean {
         return oldItem == newItem
     }

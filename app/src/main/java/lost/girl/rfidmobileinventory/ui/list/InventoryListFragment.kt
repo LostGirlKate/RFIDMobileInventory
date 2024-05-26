@@ -14,7 +14,7 @@ import lost.girl.rfidmobileinventory.R
 import lost.girl.rfidmobileinventory.activities.MainApp
 import lost.girl.rfidmobileinventory.data.repository.InventoryStorageImpl
 import lost.girl.rfidmobileinventory.databinding.FragmentInventoryListBinding
-import lost.girl.rfidmobileinventory.domain.models.InventoryItemModelForList
+import lost.girl.rfidmobileinventory.domain.models.InventoryItemForListModel
 import lost.girl.rfidmobileinventory.domain.usescase.GetAllLocationsUseCase
 import lost.girl.rfidmobileinventory.domain.usescase.GetInventoryInfoUseCase
 import lost.girl.rfidmobileinventory.domain.usescase.GetInventoryItemByLocationIDUseCase
@@ -100,8 +100,8 @@ class InventoryListFragment :
     private fun initRcView() = with(binding) {
         rcInventoryList.layoutManager = LinearLayoutManager(activity)
         adapter = InventoryItemsFilterableAdapter(
-            object : OnItemClickListener<InventoryItemModelForList> {
-                override fun onItemClick(item: InventoryItemModelForList) {
+            object : OnItemClickListener<InventoryItemForListModel> {
+                override fun onItemClick(item: InventoryItemForListModel) {
                     openItemDetail(item)
                 }
             }
@@ -109,7 +109,7 @@ class InventoryListFragment :
         rcInventoryList.adapter = adapter
     }
 
-    private fun openItemDetail(item: InventoryItemModelForList) {
+    private fun openItemDetail(item: InventoryItemForListModel) {
         val action =
             InventoryListFragmentDirections.actionInventoryListFragmentToInventoryItemDetailFragment(
                 item.model,

@@ -1,6 +1,6 @@
 package lost.girl.rfidmobileinventory.domain.models
 
-data class InventoryItemFullModelForDetail(
+data class InventoryItemForDetailFullModel(
     val id: Int?,
     val inventoryNum: String,
     var managerName: String,

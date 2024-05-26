@@ -1,6 +1,5 @@
 package lost.girl.rfidmobileinventory.ui.rfidscan
 
-import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,7 +15,7 @@ import lost.girl.rfidmobileinventory.R
 import lost.girl.rfidmobileinventory.activities.MainApp
 import lost.girl.rfidmobileinventory.data.repository.InventoryStorageImpl
 import lost.girl.rfidmobileinventory.databinding.FragmentRfidScannerBinding
-import lost.girl.rfidmobileinventory.domain.models.InventoryItemModelForList
+import lost.girl.rfidmobileinventory.domain.models.InventoryItemForListModel
 import lost.girl.rfidmobileinventory.domain.usescase.GetAllInventoryItemListForRfidScanningUseCase
 import lost.girl.rfidmobileinventory.domain.usescase.GetInventoryInfoUseCase
 import lost.girl.rfidmobileinventory.domain.usescase.GetInventoryItemByLocationIDUseCase
@@ -173,8 +172,8 @@ class RfidScannerFragment :
     private fun initRcView() = with(binding) {
         rcItems.layoutManager = LinearLayoutManager(activity)
         adapter = InventoryItemsFilterableAdapter(
-            object : OnItemClickListener<InventoryItemModelForList> {
-                override fun onItemClick(item: InventoryItemModelForList) {
+            object : OnItemClickListener<InventoryItemForListModel> {
+                override fun onItemClick(item: InventoryItemForListModel) {
                     // openItemDetail(item)
                 }
             }
