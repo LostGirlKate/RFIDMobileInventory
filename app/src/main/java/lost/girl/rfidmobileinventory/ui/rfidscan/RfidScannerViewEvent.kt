@@ -6,5 +6,4 @@ sealed class RfidScannerViewEvent {
 
     data class SetScannerPowerValue(val powerValue: Int) : RfidScannerViewEvent()
     data class SetScanningState(val state: Boolean) : RfidScannerViewEvent()
-    object ClearEffect : RfidScannerViewEvent()
 }

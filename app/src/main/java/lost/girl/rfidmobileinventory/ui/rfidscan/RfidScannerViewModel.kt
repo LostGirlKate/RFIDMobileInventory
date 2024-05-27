@@ -48,7 +48,6 @@ class RfidScannerViewModel(
 
             is RfidScannerViewEvent.SetScannerPowerValue -> setScannerPowerValue(viewEvent.powerValue)
             is RfidScannerViewEvent.SetScanningState -> setScanningState(viewEvent.state)
-            RfidScannerViewEvent.ClearEffect -> viewEffect = RfidScannerViewEffect.EmptyEffect
         }
 
     }
@@ -72,7 +71,7 @@ class RfidScannerViewModel(
         readerJob = viewModelScope.launch(Dispatchers.IO) {
             while (viewState.isScanningStart) {
                 val rfidTag = reader.readTagFromBuffer()
-                checkItemNewLocationAndUpdate(rfidTag, viewState.currentLocation)
+                checkItemNewLocationAndUpdate(rfidTag)
             }
         }
 
@@ -118,7 +117,7 @@ class RfidScannerViewModel(
         )
     }
 
-    private suspend fun checkItemNewLocationAndUpdate(rfidCardNum: String, locationId: Int) {
+    private suspend fun checkItemNewLocationAndUpdate(rfidCardNum: String) {
         val allItem = viewState.inventoryItemsFullRFIDList
         if (!allItem.none { it.second == rfidCardNum }) {
             val itemId = allItem.first { it.second == rfidCardNum }.first

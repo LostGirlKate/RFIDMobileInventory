@@ -93,11 +93,6 @@ class RfidScannerFragment :
     override fun renderViewEffect(viewEffect: RfidScannerViewEffect) {
         when (viewEffect) {
             is RfidScannerViewEffect.InventoryReady -> inventoryReady(viewEffect.message)
-            RfidScannerViewEffect.EmptyEffect -> {}
-        }
-
-        if (viewEffect !is RfidScannerViewEffect.EmptyEffect) {
-            viewModel.process(RfidScannerViewEvent.ClearEffect)
         }
     }
 

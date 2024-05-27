@@ -123,10 +123,6 @@ class InventoryMainFragment :
             }
 
             InventoryMainViewEffect.OpenFileManager -> openFileManager()
-            InventoryMainViewEffect.EmptyEffect -> {}
-        }
-        if (viewEffect !is InventoryMainViewEffect.EmptyEffect){
-            viewModel.process(InventoryMainViewEvent.ClearEffect)
         }
 
     }

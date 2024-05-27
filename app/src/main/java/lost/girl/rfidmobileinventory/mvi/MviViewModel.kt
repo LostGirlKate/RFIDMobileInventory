@@ -5,6 +5,8 @@ import androidx.annotation.CallSuper
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 
 open class MviViewModel<STATE, EFFECT, EVENT>(application: Application) :
     AndroidViewModel(application), ViewModelContract<EVENT> {
@@ -21,8 +23,9 @@ open class MviViewModel<STATE, EFFECT, EVENT>(application: Application) :
             _viewStates.postValue(value)
         }
 
-    private val _viewEffects: MutableLiveData<EFFECT> = MutableLiveData()
-    internal fun viewEffects(): LiveData<EFFECT> = _viewEffects
+
+    private val _viewEffects: MutableSharedFlow<EFFECT> = MutableSharedFlow(1)
+    internal fun viewEffects(): SharedFlow<EFFECT> = _viewEffects
 
     private var _viewEffect: EFFECT? = null
     protected var viewEffect: EFFECT
@@ -30,7 +33,7 @@ open class MviViewModel<STATE, EFFECT, EVENT>(application: Application) :
             ?: throw UninitializedPropertyAccessException("You must initialize viewEffect")
         set(value) {
             _viewEffect = value
-            _viewEffects.postValue(value)
+            _viewEffects.tryEmit(value)
         }
 
     @CallSuper

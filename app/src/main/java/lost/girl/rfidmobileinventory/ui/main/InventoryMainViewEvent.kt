@@ -14,7 +14,6 @@ sealed class InventoryMainViewEvent {
 
     object OpenFileManager : InventoryMainViewEvent()
     object RefreshData : InventoryMainViewEvent()
-    object ClearEffect : InventoryMainViewEvent()
 
     data class ShowProcessDialog(val message: Int, val processEvent: InventoryMainViewEvent) :
         InventoryMainViewEvent()

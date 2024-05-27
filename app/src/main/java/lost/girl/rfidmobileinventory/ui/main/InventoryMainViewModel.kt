@@ -67,7 +67,6 @@ class InventoryMainViewModel(
             )
 
             InventoryMainViewEvent.RefreshData -> refreshInventoryState()
-            InventoryMainViewEvent.ClearEffect -> viewEffect = InventoryMainViewEffect.EmptyEffect
         }
 
     }
