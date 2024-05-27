@@ -12,7 +12,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import lost.girl.rfidmobileinventory.R
 import lost.girl.rfidmobileinventory.activities.MainApp
-import lost.girl.rfidmobileinventory.data.repository.InventoryStorageImpl
+import lost.girl.rfidmobileinventory.data.repository.InventoryRepositoryImpl
 import lost.girl.rfidmobileinventory.databinding.FragmentInventoryListBinding
 import lost.girl.rfidmobileinventory.domain.models.InventoryItemForListModel
 import lost.girl.rfidmobileinventory.domain.usescase.GetAllLocationsUseCase
@@ -31,7 +31,7 @@ class InventoryListFragment :
     private lateinit var adapter: InventoryItemsFilterableAdapter
 
     private val storage by lazy {
-        InventoryStorageImpl(
+        InventoryRepositoryImpl(
             (context?.applicationContext as MainApp).database.getDao()
         )
     }

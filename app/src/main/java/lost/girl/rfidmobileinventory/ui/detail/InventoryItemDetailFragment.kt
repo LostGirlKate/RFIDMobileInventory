@@ -8,7 +8,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import lost.girl.rfidmobileinventory.activities.MainApp
-import lost.girl.rfidmobileinventory.data.repository.InventoryStorageImpl
+import lost.girl.rfidmobileinventory.data.repository.InventoryRepositoryImpl
 import lost.girl.rfidmobileinventory.databinding.FragmentInventoryItemDetailBinding
 import lost.girl.rfidmobileinventory.domain.usescase.GetInventoryItemDetailUseCase
 import lost.girl.rfidmobileinventory.mvi.MviFragment
@@ -19,7 +19,7 @@ class InventoryItemDetailFragment :
     private lateinit var binding: FragmentInventoryItemDetailBinding
     private lateinit var adapter: InventoryItemDetailAdapter
     private val storage by lazy {
-        InventoryStorageImpl(
+        InventoryRepositoryImpl(
             (context?.applicationContext as MainApp).database.getDao()
         )
     }

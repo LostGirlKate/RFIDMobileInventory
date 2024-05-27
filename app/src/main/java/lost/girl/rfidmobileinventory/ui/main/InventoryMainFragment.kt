@@ -15,7 +15,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import lost.girl.rfidmobileinventory.R
 import lost.girl.rfidmobileinventory.activities.MainApp
-import lost.girl.rfidmobileinventory.data.repository.InventoryStorageImpl
+import lost.girl.rfidmobileinventory.data.repository.InventoryRepositoryImpl
 import lost.girl.rfidmobileinventory.databinding.FragmentInventoryMainBinding
 import lost.girl.rfidmobileinventory.domain.usescase.ClearDataBaseUseCase
 import lost.girl.rfidmobileinventory.domain.usescase.ExportDataToExcelFileUseCase
@@ -24,7 +24,6 @@ import lost.girl.rfidmobileinventory.domain.usescase.GetDataFromExcelUseCase
 import lost.girl.rfidmobileinventory.domain.usescase.GetInventoryInfoUseCase
 import lost.girl.rfidmobileinventory.domain.usescase.LoadDataToDataBaseUseCase
 import lost.girl.rfidmobileinventory.mvi.MviFragment
-import lost.girl.rfidmobileinventory.ui.list.InventoryListViewEvent
 import lost.girl.rfidmobileinventory.utils.ExcelUtil
 import lost.girl.rfidmobileinventory.utils.UIHelper.Companion.alertDialog
 import lost.girl.rfidmobileinventory.utils.UIHelper.Companion.alertProcessDialog
@@ -35,7 +34,7 @@ class InventoryMainFragment :
 
     private lateinit var binding: FragmentInventoryMainBinding
     private val storage by lazy {
-        InventoryStorageImpl(
+        InventoryRepositoryImpl(
             (context?.applicationContext as MainApp).database.getDao()
         )
     }

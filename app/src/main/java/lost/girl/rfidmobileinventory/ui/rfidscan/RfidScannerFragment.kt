@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.slider.Slider
 import lost.girl.rfidmobileinventory.R
 import lost.girl.rfidmobileinventory.activities.MainApp
-import lost.girl.rfidmobileinventory.data.repository.InventoryStorageImpl
+import lost.girl.rfidmobileinventory.data.repository.InventoryRepositoryImpl
 import lost.girl.rfidmobileinventory.databinding.FragmentRfidScannerBinding
 import lost.girl.rfidmobileinventory.domain.models.InventoryItemForListModel
 import lost.girl.rfidmobileinventory.domain.usescase.GetAllInventoryItemListForRfidScanningUseCase
@@ -39,7 +39,7 @@ class RfidScannerFragment :
 
 
     private val storage by lazy {
-        InventoryStorageImpl(
+        InventoryRepositoryImpl(
             (context?.applicationContext as MainApp).database.getDao()
         )
     }
