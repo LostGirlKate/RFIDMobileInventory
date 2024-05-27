@@ -11,44 +11,23 @@ import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import lost.girl.rfidmobileinventory.R
-import lost.girl.rfidmobileinventory.activities.MainApp
-import lost.girl.rfidmobileinventory.data.repository.InventoryRepositoryImpl
 import lost.girl.rfidmobileinventory.databinding.FragmentInventoryMainBinding
-import lost.girl.rfidmobileinventory.domain.usescase.ClearDataBaseUseCase
-import lost.girl.rfidmobileinventory.domain.usescase.ExportDataToExcelFileUseCase
-import lost.girl.rfidmobileinventory.domain.usescase.GetDataForExcelUseCase
-import lost.girl.rfidmobileinventory.domain.usescase.GetDataFromExcelUseCase
-import lost.girl.rfidmobileinventory.domain.usescase.GetInventoryInfoUseCase
-import lost.girl.rfidmobileinventory.domain.usescase.LoadDataToDataBaseUseCase
 import lost.girl.rfidmobileinventory.mvi.MviFragment
 import lost.girl.rfidmobileinventory.utils.ExcelUtil
 import lost.girl.rfidmobileinventory.utils.UIHelper.Companion.alertDialog
 import lost.girl.rfidmobileinventory.utils.UIHelper.Companion.alertProcessDialog
 import lost.girl.rfidmobileinventory.utils.UIHelper.Companion.showToastMessage
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class InventoryMainFragment :
     MviFragment<InventoryMainViewState, InventoryMainViewEffect, InventoryMainViewEvent, InventoryMainViewModel>() {
 
     private lateinit var binding: FragmentInventoryMainBinding
-    private val storage by lazy {
-        InventoryRepositoryImpl(
-            (context?.applicationContext as MainApp).database.getDao()
-        )
-    }
-    override val viewModel: InventoryMainViewModel by activityViewModels {
-        InventoryMainViewModel.InventoryMainViewModelFactory(
-            application = requireActivity().application,
-            GetInventoryInfoUseCase(storage),
-            LoadDataToDataBaseUseCase(storage),
-            GetDataForExcelUseCase(storage),
-            ClearDataBaseUseCase(storage, requireContext()),
-            GetDataFromExcelUseCase(),
-            ExportDataToExcelFileUseCase(requireContext())
-        )
-    }
+
+    override val viewModel by viewModel<InventoryMainViewModel>()
+
 
     private var activeProcessDialog: AlertDialog? = null
 

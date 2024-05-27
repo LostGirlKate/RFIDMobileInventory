@@ -3,8 +3,6 @@ package lost.girl.rfidmobileinventory.ui.rfidscan
 import android.app.Application
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -138,27 +136,5 @@ class RfidScannerViewModel(
     override fun onCreate(owner: LifecycleOwner) {
         super.onCreate(owner)
         initReader()
-    }
-
-    class RfidScannerViewModelFactory(
-        private val application: Application,
-        private val updateInventoryItemUseCase: UpdateInventoryItemUseCase,
-        private val getAllInventoryItemListForRfidScanningUseCase: GetAllInventoryItemListForRfidScanningUseCase,
-        private val getInventoryItemByLocationIDUseCase: GetInventoryItemByLocationIDUseCase,
-        private val getInventoryInfo: GetInventoryInfoUseCase
-    ) : ViewModelProvider.Factory {
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            if (modelClass.isAssignableFrom(RfidScannerViewModel::class.java)) {
-                @Suppress("UNCHECKED_CAST")
-                return RfidScannerViewModel(
-                    application,
-                    updateInventoryItemUseCase,
-                    getAllInventoryItemListForRfidScanningUseCase,
-                    getInventoryItemByLocationIDUseCase,
-                    getInventoryInfo
-                ) as T
-            }
-            throw java.lang.IllegalArgumentException("Unknown ViewModelClass")
-        }
     }
 }

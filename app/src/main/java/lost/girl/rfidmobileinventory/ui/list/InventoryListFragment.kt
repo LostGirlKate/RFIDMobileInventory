@@ -7,22 +7,17 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.SearchView
-import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import lost.girl.rfidmobileinventory.R
-import lost.girl.rfidmobileinventory.activities.MainApp
-import lost.girl.rfidmobileinventory.data.repository.InventoryRepositoryImpl
 import lost.girl.rfidmobileinventory.databinding.FragmentInventoryListBinding
 import lost.girl.rfidmobileinventory.domain.models.InventoryItemForListModel
-import lost.girl.rfidmobileinventory.domain.usescase.GetAllLocationsUseCase
-import lost.girl.rfidmobileinventory.domain.usescase.GetInventoryInfoUseCase
-import lost.girl.rfidmobileinventory.domain.usescase.GetInventoryItemByLocationIDUseCase
 import lost.girl.rfidmobileinventory.mvi.MviFragment
 import lost.girl.rfidmobileinventory.utils.OnItemClickListener
 import lost.girl.rfidmobileinventory.utils.UIHelper
 import lost.girl.rfidmobileinventory.utils.UIHelper.Companion.refreshToggleButton
 import lost.girl.rfidmobileinventory.utils.UIHelper.Companion.setOnCheckedChangeListenerToFilterButton
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class InventoryListFragment :
@@ -30,20 +25,8 @@ class InventoryListFragment :
     private lateinit var binding: FragmentInventoryListBinding
     private lateinit var adapter: InventoryItemsFilterableAdapter
 
-    private val storage by lazy {
-        InventoryRepositoryImpl(
-            (context?.applicationContext as MainApp).database.getDao()
-        )
-    }
 
-    override val viewModel: InventoryListViewModel by activityViewModels {
-        InventoryListViewModel.InventoryListViewModelFactory(
-            application = requireActivity().application,
-            GetAllLocationsUseCase(storage),
-            GetInventoryItemByLocationIDUseCase(storage),
-            GetInventoryInfoUseCase(storage)
-        )
-    }
+    override val viewModel by viewModel<InventoryListViewModel>()
 
     private val locationList = ArrayList<String>()
     private val locationListID = ArrayList<Int>()
@@ -93,7 +76,10 @@ class InventoryListFragment :
 
         refreshToggleButton(filterButtonNotFound, viewState.inventoryState.countNotFoundString)
         refreshToggleButton(filterButtonFound, viewState.inventoryState.countFoundString)
-        refreshToggleButton(filterButtonFoundInWrongPlace,viewState.inventoryState.countFoundInWrongPlaceString)
+        refreshToggleButton(
+            filterButtonFoundInWrongPlace,
+            viewState.inventoryState.countFoundInWrongPlaceString
+        )
     }
 
 

@@ -3,8 +3,6 @@ package lost.girl.rfidmobileinventory.ui.detail
 import android.app.Application
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import lost.girl.rfidmobileinventory.R
 import lost.girl.rfidmobileinventory.domain.models.InventoryItemState
 import lost.girl.rfidmobileinventory.domain.usescase.GetInventoryItemDetailUseCase
@@ -48,22 +46,6 @@ class InventoryItemDetailViewModel(
     override fun onDestroy(owner: LifecycleOwner) {
         super.onDestroy(owner)
         viewState = InventoryItemDetailState()
-    }
-
-    class InventoryItemDetailViewModelFactory(
-        private val application: Application,
-        private val getInventoryItemDetailUseCase: GetInventoryItemDetailUseCase
-    ) : ViewModelProvider.Factory {
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            if (modelClass.isAssignableFrom(InventoryItemDetailViewModel::class.java)) {
-                @Suppress("UNCHECKED_CAST")
-                return InventoryItemDetailViewModel(
-                    application,
-                    getInventoryItemDetailUseCase
-                ) as T
-            }
-            throw java.lang.IllegalArgumentException("Unknown ViewModelClass")
-        }
     }
 
 }

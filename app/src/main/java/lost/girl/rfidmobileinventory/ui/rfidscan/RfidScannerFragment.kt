@@ -6,26 +6,20 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.slider.Slider
 import lost.girl.rfidmobileinventory.R
-import lost.girl.rfidmobileinventory.activities.MainApp
-import lost.girl.rfidmobileinventory.data.repository.InventoryRepositoryImpl
 import lost.girl.rfidmobileinventory.databinding.FragmentRfidScannerBinding
 import lost.girl.rfidmobileinventory.domain.models.InventoryItemForListModel
-import lost.girl.rfidmobileinventory.domain.usescase.GetAllInventoryItemListForRfidScanningUseCase
-import lost.girl.rfidmobileinventory.domain.usescase.GetInventoryInfoUseCase
-import lost.girl.rfidmobileinventory.domain.usescase.GetInventoryItemByLocationIDUseCase
-import lost.girl.rfidmobileinventory.domain.usescase.UpdateInventoryItemUseCase
 import lost.girl.rfidmobileinventory.mvi.MviFragment
 import lost.girl.rfidmobileinventory.ui.list.InventoryItemsFilterableAdapter
 import lost.girl.rfidmobileinventory.utils.OnItemClickListener
 import lost.girl.rfidmobileinventory.utils.UIHelper
 import lost.girl.rfidmobileinventory.utils.UIHelper.Companion.refreshToggleButton
 import lost.girl.rfidmobileinventory.utils.UIHelper.Companion.setOnCheckedChangeListenerToFilterButton
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class RfidScannerFragment :
@@ -37,21 +31,7 @@ class RfidScannerFragment :
 
     private var activeReadyDialog: androidx.appcompat.app.AlertDialog? = null
 
-
-    private val storage by lazy {
-        InventoryRepositoryImpl(
-            (context?.applicationContext as MainApp).database.getDao()
-        )
-    }
-    override val viewModel: RfidScannerViewModel by activityViewModels {
-        RfidScannerViewModel.RfidScannerViewModelFactory(
-            application = requireActivity().application,
-            UpdateInventoryItemUseCase(storage),
-            GetAllInventoryItemListForRfidScanningUseCase(storage),
-            GetInventoryItemByLocationIDUseCase(storage),
-            GetInventoryInfoUseCase(storage)
-        )
-    }
+    override val viewModel by viewModel<RfidScannerViewModel>()
 
     private val args: RfidScannerFragmentArgs by navArgs()
 

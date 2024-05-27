@@ -5,7 +5,7 @@ import androidx.annotation.CallSuper
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import kotlinx.coroutines.flow.MutableSharedFlow
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.SharedFlow
 
 open class MviViewModel<STATE, EFFECT, EVENT>(application: Application) :
@@ -24,7 +24,7 @@ open class MviViewModel<STATE, EFFECT, EVENT>(application: Application) :
         }
 
 
-    private val _viewEffects: MutableSharedFlow<EFFECT> = MutableSharedFlow(1)
+    private val _viewEffects: ChannelSharedFlow<EFFECT> = ChannelSharedFlow(viewModelScope)
     internal fun viewEffects(): SharedFlow<EFFECT> = _viewEffects
 
     private var _viewEffect: EFFECT? = null

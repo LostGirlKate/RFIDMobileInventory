@@ -5,8 +5,6 @@ import android.app.Application
 import android.content.ContentResolver
 import android.net.Uri
 import android.util.Log
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -33,7 +31,6 @@ class InventoryMainViewModel(
     MviViewModel<InventoryMainViewState, InventoryMainViewEffect, InventoryMainViewEvent>(
         application
     ) {
-
 
     init {
         viewState = InventoryMainViewState(getInventoryInfo.execute())
@@ -157,31 +154,5 @@ class InventoryMainViewModel(
         val result = loadDataToDataBaseUseCase.execute(data)
         viewState = viewState.copy(inventoryState = getInventoryInfo.execute())
         return result
-    }
-
-    class InventoryMainViewModelFactory(
-        private val application: Application,
-        private val getInventoryInfo: GetInventoryInfoUseCase,
-        private val loadDataToDataBaseUseCase: LoadDataToDataBaseUseCase,
-        private val getDataForExcelUseCase: GetDataForExcelUseCase,
-        private val clearDataBaseUseCase: ClearDataBaseUseCase,
-        private val getDataFromExcelUseCase: GetDataFromExcelUseCase,
-        private val exportDataToExcelFileUseCase: ExportDataToExcelFileUseCase
-    ) : ViewModelProvider.Factory {
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            if (modelClass.isAssignableFrom(InventoryMainViewModel::class.java)) {
-                @Suppress("UNCHECKED_CAST")
-                return InventoryMainViewModel(
-                    application,
-                    getInventoryInfo,
-                    loadDataToDataBaseUseCase,
-                    getDataForExcelUseCase,
-                    clearDataBaseUseCase,
-                    getDataFromExcelUseCase,
-                    exportDataToExcelFileUseCase
-                ) as T
-            }
-            throw java.lang.IllegalArgumentException("Unknown ViewModelClass")
-        }
     }
 }

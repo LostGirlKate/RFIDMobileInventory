@@ -1,8 +1,6 @@
 package lost.girl.rfidmobileinventory.ui.list
 
 import android.app.Application
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import lost.girl.rfidmobileinventory.domain.usescase.GetAllLocationsUseCase
@@ -15,9 +13,11 @@ class InventoryListViewModel(
     getAllLocationsUseCase: GetAllLocationsUseCase,
     private val getInventoryItemByLocationIDUseCase: GetInventoryItemByLocationIDUseCase,
     private val getInventoryInfo: GetInventoryInfoUseCase
-): MviViewModel<InventoryListViewState, InventoryListViewEffect, InventoryListViewEvent>(application){
+) : MviViewModel<InventoryListViewState, InventoryListViewEffect, InventoryListViewEvent>(
+    application
+) {
 
-       init {
+    init {
         viewState = InventoryListViewState(
             locations = getAllLocationsUseCase.execute(),
             inventoryState = getInventoryInfo.execute(0)
@@ -43,24 +43,4 @@ class InventoryListViewModel(
         )
     }
 
-
-    class InventoryListViewModelFactory(
-        private val application: Application,
-        private val getAllLocationsUseCase: GetAllLocationsUseCase,
-        private val getInventoryItemByLocationIDUseCase: GetInventoryItemByLocationIDUseCase,
-        private val getInventoryInfo: GetInventoryInfoUseCase
-    ) : ViewModelProvider.Factory {
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            if (modelClass.isAssignableFrom(InventoryListViewModel::class.java)) {
-                @Suppress("UNCHECKED_CAST")
-                return InventoryListViewModel(
-                    application,
-                    getAllLocationsUseCase,
-                    getInventoryItemByLocationIDUseCase,
-                    getInventoryInfo
-                ) as T
-            }
-            throw java.lang.IllegalArgumentException("Unknown ViewModelClass")
-        }
-    }
 }

@@ -4,32 +4,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import lost.girl.rfidmobileinventory.activities.MainApp
-import lost.girl.rfidmobileinventory.data.repository.InventoryRepositoryImpl
 import lost.girl.rfidmobileinventory.databinding.FragmentInventoryItemDetailBinding
-import lost.girl.rfidmobileinventory.domain.usescase.GetInventoryItemDetailUseCase
 import lost.girl.rfidmobileinventory.mvi.MviFragment
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class InventoryItemDetailFragment :
     MviFragment<InventoryItemDetailState, InventoryItemDetailEffect, InventoryItemDetailEvent, InventoryItemDetailViewModel>() {
 
     private lateinit var binding: FragmentInventoryItemDetailBinding
     private lateinit var adapter: InventoryItemDetailAdapter
-    private val storage by lazy {
-        InventoryRepositoryImpl(
-            (context?.applicationContext as MainApp).database.getDao()
-        )
-    }
-    override val viewModel: InventoryItemDetailViewModel by activityViewModels {
-        InventoryItemDetailViewModel.InventoryItemDetailViewModelFactory(
-            application = requireActivity().application,
-            GetInventoryItemDetailUseCase(storage, requireContext())
-        )
-    }
 
+
+    override val viewModel by viewModel<InventoryItemDetailViewModel>()
     private val args: InventoryItemDetailFragmentArgs by navArgs()
 
     override fun onCreateView(
