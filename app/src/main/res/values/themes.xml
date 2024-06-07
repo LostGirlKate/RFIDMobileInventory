@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- Base application theme. -->
     <style name="Theme.RFIDMobileInventory" parent="Theme.MaterialComponents.DayNight">
         <item name="colorPrimary">@color/colorPrimaryDark</item>
@@ -22,6 +22,7 @@
         <item name="android:textColorTertiaryInverse">@color/textColor</item>
         <item name="android:textColor">@color/textColor</item>
         <item name="android:textAppearance">@color/textColor</item>
+        <item name="android:textSize">@dimen/text_medium_size</item>
         <item name="colorControlHighlight">@color/textColor</item>
 
         <item name="android:windowFullscreen">true</item>

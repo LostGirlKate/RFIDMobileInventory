@@ -132,15 +132,13 @@ class InventoryMainFragment :
         )
     }
 
-
     private fun showToast(message: Int, errorMessage: Int, isError: Boolean = false) {
         showToastMessage(
             requireContext(),
             if (isError) getString(errorMessage) else getString(message),
-            if (isError) R.color.light_red else R.color.light_green
+            if (isError) R.color.toast_red_text else R.color.toast_green_text
         )
     }
-
 
     private fun showProcessDialog(message: Int, processEvent: InventoryMainViewEvent) {
         val dialog = alertProcessDialog(

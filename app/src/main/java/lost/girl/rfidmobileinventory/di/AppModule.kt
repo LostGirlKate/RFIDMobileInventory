@@ -18,7 +18,8 @@ val appModule = module {
             getDataForExcelUseCase = get(),
             clearDataBaseUseCase = get(),
             getDataFromExcelUseCase = get(),
-            exportDataToExcelFileUseCase = get()
+            exportDataToExcelFileUseCase = get(),
+            isRFIDReaderInitializedUseCase = get()
         )
     }
 
@@ -35,9 +36,17 @@ val appModule = module {
         RfidScannerViewModel(
             application = androidApplication(),
             getInventoryItemByLocationIDUseCase = get(),
-            getInventoryInfo = get(),
+            getInventoryInfoUseCase = get(),
             updateInventoryItemUseCase = get(),
-            getAllInventoryItemListForRfidScanningUseCase = get()
+            getAllInventoryItemListForRfidScanningUseCase = get(),
+            startRFiDInventoryUseCase = get(),
+            stopRFiDInventoryUseCase = get(),
+            getRFIDReaderPowerUseCase = get(),
+            isRFIDReaderInitializedUseCase = get(),
+            openBarcodeReaderUseCase = get(),
+            closeBarcodeReaderUseCase = get(),
+            startBarcodeReaderUseCase = get(),
+            stopBarcodeReaderUseCase = get()
         )
     }
 

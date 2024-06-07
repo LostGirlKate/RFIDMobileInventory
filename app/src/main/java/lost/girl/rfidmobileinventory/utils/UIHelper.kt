@@ -93,7 +93,7 @@ class UIHelper {
             showBox: Boolean,
             textColor: Int,
             cancelable: Boolean = false
-        ) : androidx.appcompat.app.AlertDialog  {
+        ): androidx.appcompat.app.AlertDialog {
             val binding = CustomFilterDialogBinding.inflate(LayoutInflater.from(context))
             binding.messageText.text = message
             binding.messageText.setTextColor(context.getColor(textColor))

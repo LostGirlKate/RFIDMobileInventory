@@ -20,7 +20,6 @@ class MainApp : Application() {
             androidLogger(Level.ERROR)
             androidContext(this@MainApp)
             modules(listOf(appModule, domainModule, dataModule))
-
         }
     }
 }

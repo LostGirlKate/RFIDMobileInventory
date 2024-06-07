@@ -55,5 +55,10 @@
             android:name="location_id"
             app:argType="integer"
             android:defaultValue="-1" />
+        <argument
+            android:name="scanner_type"
+            app:argType="lost.girl.rfidmobileinventory.data.readers.ReaderType"
+            android:defaultValue="RFID" />
+
     </fragment>
 </navigation>

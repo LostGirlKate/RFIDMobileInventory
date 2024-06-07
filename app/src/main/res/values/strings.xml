@@ -57,4 +57,11 @@
     <string name="all_tag_found">Все метки в текущем местоположении найдены!</string>
 
 
+    <string name="init_rfid_message">Считыватель инициализирован</string>
+    <string name="init_error_rfid_message">Ошибка инициализации считывателя</string>
+    <string name="init_process_rfid_message">Инициализация считывателя</string>
+    <string name="rfid">RFID</string>
+    <string name="_2d_scanner">2D scanner</string>
+
+
 </resources>

@@ -6,6 +6,7 @@ import androidx.room.PrimaryKey
 import lost.girl.rfidmobileinventory.domain.models.InventoryItemForDetailFullModel
 import lost.girl.rfidmobileinventory.domain.models.InventoryItemForExportModel
 import lost.girl.rfidmobileinventory.domain.models.InventoryItemForListModel
+import lost.girl.rfidmobileinventory.domain.models.InventoryItemForScanningModel
 import lost.girl.rfidmobileinventory.domain.models.InventoryItemFullModel
 import lost.girl.rfidmobileinventory.domain.models.InventoryItemState
 
@@ -21,31 +22,31 @@ class InventoryItem(
     var managerName: String,
 
     @ColumnInfo(name = "location_id")
-    var locationID: Int?,
+    val locationID: Int?,
 
     @ColumnInfo(name = "location")
-    var location: String,
+    val location: String,
 
     @ColumnInfo(name = "type")
-    var type: String,
+    val type: String,
 
     @ColumnInfo(name = "model")
-    var model: String,
+    val model: String,
 
     @ColumnInfo(name = "serial_num")
-    var serialNum: String,
+    val serialNum: String,
 
     @ColumnInfo(name = "shipment_num")
-    var shipmentNum: String,
+    val shipmentNum: String,
 
     @ColumnInfo(name = "rfid_card_num")
     val rfidCardNum: String,
 
     @ColumnInfo(name = "actual_location_id")
-    var actualLocationID: Int?,
+    val actualLocationID: Int?,
 
     @ColumnInfo(name = "actual_location")
-    var actualLocation: String?,
+    val actualLocation: String?,
 
     ) {
     fun toInventoryItemForExportModel(num: Int) =
@@ -112,6 +113,13 @@ class InventoryItem(
             rfidCardNum = this.rfidCardNum,
             actualLocationID = this.actualLocationID,
             actualLocation = this.actualLocation
+        )
+
+    fun toInventoryItemForScanningModel() =
+        InventoryItemForScanningModel(
+            id = this.id,
+            shipmentNum = this.shipmentNum,
+            rfidCardNum = this.rfidCardNum
         )
 
 }

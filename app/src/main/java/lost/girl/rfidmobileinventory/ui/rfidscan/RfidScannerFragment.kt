@@ -63,16 +63,24 @@ class RfidScannerFragment :
         super.onViewCreated(view, savedInstanceState)
         val locationID = args.locationId
         val locationName = args.title
+        val scannerType = args.scannerType
         initSetting()
         initRcView()
         initFilterButtons()
         lifecycle.addObserver(viewModel)
+        viewModel.process(RfidScannerViewEvent.SetScannerType(scannerType))
         viewModel.process(RfidScannerViewEvent.SetCurrentLocation(locationID, locationName))
     }
 
     override fun renderViewEffect(viewEffect: RfidScannerViewEffect) {
         when (viewEffect) {
             is RfidScannerViewEffect.InventoryReady -> inventoryReady(viewEffect.message)
+
+            is RfidScannerViewEffect.ShowToast -> showToast(
+                viewEffect.message,
+                viewEffect.errorMessage,
+                viewEffect.isError
+            )
         }
     }
 
@@ -95,12 +103,19 @@ class RfidScannerFragment :
             actionBar.setHomeButtonEnabled(viewState.canBackPress)
             actionBar.setDisplayHomeAsUpEnabled(viewState.canBackPress)
             actionBar.setDisplayShowHomeEnabled(viewState.canBackPress)
+
+            actionBar.title = "${viewState.scannerType ?: ""}  ${viewState.currentLocationName}"
         }
+
+        errorText.visibility =
+            if (!viewState.isReaderInit && viewState.scannerType != null) View.VISIBLE else View.GONE
         startRfidButton.visibility =
-            if (viewState.startRfidScanningButtonVisible) View.VISIBLE else View.GONE
+            if (viewState.startScanningButtonVisible) View.VISIBLE else View.GONE
         stopRfidButton.visibility =
             if (viewState.stopScanningButtonVisible) View.VISIBLE else View.GONE
-        settingPanel.visibility = if (viewState.panelSettingsVisible) View.VISIBLE else View.GONE
+        settingPanel.visibility = if (viewState.panelSettingsVisible) View.VISIBLE else {
+            if (!viewState.isReaderInit) View.INVISIBLE else View.GONE
+        }
         scannerPowerValueCaption.text =
             getString(R.string.current_power, viewState.scannerPowerValue)
         scannerPowerSlider.value = viewState.scannerPowerValue.toFloat()
@@ -136,9 +151,11 @@ class RfidScannerFragment :
             }
 
             override fun onStopTrackingTouch(slider: Slider) {
-                viewModel.process(RfidScannerViewEvent.SetScannerPowerValue(slider.value.toInt()))
+                viewModel.process(RfidScannerViewEvent.SetScanningPower(slider.value.toInt()))
             }
         })
+
+
         binding.scannerPowerSlider.setLabelFormatter { value ->
             value.toInt().toString()
         }
@@ -191,6 +208,15 @@ class RfidScannerFragment :
     private fun filterData() {
         val filter = getFilterString()
         adapter.filter.filter(filter)
+    }
+
+
+    private fun showToast(message: Int, errorMessage: Int, isError: Boolean = false) {
+        UIHelper.showToastMessage(
+            requireContext(),
+            if (isError) getString(errorMessage) else getString(message),
+            if (isError) R.color.toast_red_text else R.color.toast_green_text
+        )
     }
 
 }

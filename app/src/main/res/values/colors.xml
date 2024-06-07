@@ -38,6 +38,7 @@
     <color name="green_percent_text">#A5D6A7</color>
     <color name="green_gradient_start">#66BB6A</color>
     <color name="green_gradient_end">#66BB6A</color>
+    <color name="toast_green_text">#2E7D32</color>
 
 
 <!--    <color name="red_gradient_start">#EF625C</color>-->
@@ -50,6 +51,7 @@
     <color name="red_gradient_end">#EF5350</color>
     <color name="light_red">#EF9A9A</color>
     <color name="light_red_text">#EF9A9A</color>
+    <color name="toast_red_text">#C62828</color>
 
 
 

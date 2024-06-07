@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             tools:text="Статус"
             android:textColor="#D8D2D2"
-            android:textSize="16sp"
+            android:textSize="@dimen/text_small_size"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -58,7 +58,7 @@
                 android:layout_height="wrap_content"
                 tools:text="Не найдено"
                 android:textColor="@color/white"
-                android:textSize="18sp"
+                android:textSize="@dimen/text_medium_size"
                 android:textStyle="bold" />
         </LinearLayout>
 

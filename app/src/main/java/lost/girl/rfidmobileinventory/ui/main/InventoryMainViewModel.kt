@@ -14,6 +14,7 @@ import lost.girl.rfidmobileinventory.domain.usescase.ExportDataToExcelFileUseCas
 import lost.girl.rfidmobileinventory.domain.usescase.GetDataForExcelUseCase
 import lost.girl.rfidmobileinventory.domain.usescase.GetDataFromExcelUseCase
 import lost.girl.rfidmobileinventory.domain.usescase.GetInventoryInfoUseCase
+import lost.girl.rfidmobileinventory.domain.usescase.IsRFIDReaderInitializedUseCase
 import lost.girl.rfidmobileinventory.domain.usescase.LoadDataToDataBaseUseCase
 import lost.girl.rfidmobileinventory.mvi.MviViewModel
 import java.text.SimpleDateFormat
@@ -26,7 +27,8 @@ class InventoryMainViewModel(
     private val getDataForExcelUseCase: GetDataForExcelUseCase,
     private val clearDataBaseUseCase: ClearDataBaseUseCase,
     private val getDataFromExcelUseCase: GetDataFromExcelUseCase,
-    private val exportDataToExcelFileUseCase: ExportDataToExcelFileUseCase
+    private val exportDataToExcelFileUseCase: ExportDataToExcelFileUseCase,
+    private val isRFIDReaderInitializedUseCase: IsRFIDReaderInitializedUseCase
 ) :
     MviViewModel<InventoryMainViewState, InventoryMainViewEffect, InventoryMainViewEvent>(
         application

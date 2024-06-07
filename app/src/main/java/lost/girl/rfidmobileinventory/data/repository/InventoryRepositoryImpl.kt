@@ -7,6 +7,7 @@ import lost.girl.rfidmobileinventory.domain.models.InventoryInfoModel
 import lost.girl.rfidmobileinventory.domain.models.InventoryItemForDetailFullModel
 import lost.girl.rfidmobileinventory.domain.models.InventoryItemForExportModel
 import lost.girl.rfidmobileinventory.domain.models.InventoryItemForListModel
+import lost.girl.rfidmobileinventory.domain.models.InventoryItemForScanningModel
 import lost.girl.rfidmobileinventory.domain.models.InventoryItemFullModel
 import lost.girl.rfidmobileinventory.domain.models.InventoryLocationFullModel
 import lost.girl.rfidmobileinventory.domain.repository.InventoryRepository
@@ -84,8 +85,9 @@ class InventoryRepositoryImpl(
         inventoryStorage.updateLocationInventoryItemByID(locationID, location, id)
     }
 
-    override fun getAllInventoryItemListForRfidScanning(): List<Pair<Int, String>> {
-        return inventoryStorage.getAllInventoryItemList().map { Pair(it.id ?: 0, it.rfidCardNum) }
+    override fun getAllInventoryItemListForRfidScanning(): List<InventoryItemForScanningModel> {
+        return inventoryStorage.getAllInventoryItemList()
+            .map { it.toInventoryItemForScanningModel() }
     }
 }
 

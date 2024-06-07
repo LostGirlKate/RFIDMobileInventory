@@ -10,6 +10,7 @@ import android.widget.SearchView
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import lost.girl.rfidmobileinventory.R
+import lost.girl.rfidmobileinventory.data.readers.ReaderType
 import lost.girl.rfidmobileinventory.databinding.FragmentInventoryListBinding
 import lost.girl.rfidmobileinventory.domain.models.InventoryItemForListModel
 import lost.girl.rfidmobileinventory.mvi.MviFragment
@@ -105,7 +106,7 @@ class InventoryListFragment :
         findNavController().navigate(action)
     }
 
-    private fun openRfidScannerFragment() {
+    private fun openScannerFragment(type: ReaderType) {
         val title = locationList[binding.locationSpinner.selectedItemPosition]
         val locationID = locationListID[binding.locationSpinner.selectedItemPosition]
         if (locationID < 1) {
@@ -119,11 +120,12 @@ class InventoryListFragment :
         } else {
             val action =
                 InventoryListFragmentDirections.actionInventoryListFragmentToRfidScannerFragment(
-                    title, locationID
+                    title, locationID, type
                 )
             findNavController().navigate(action)
         }
     }
+
 
     private fun initFilterButtons() {
         setOnCheckedChangeListenerToFilterButton(
@@ -151,7 +153,8 @@ class InventoryListFragment :
 
 
     private fun initSetting() {
-        binding.openRfidScannerButton.setOnClickListener { openRfidScannerFragment() }
+        binding.openRfidScannerButton.setOnClickListener { openScannerFragment(ReaderType.RFID) }
+        binding.open2dScannerButton.setOnClickListener { openScannerFragment(ReaderType.BARCODE_2D) }
     }
 
     private fun getFilterString(): String =

@@ -1,8 +1,8 @@
-package ru.lostgirl.testforlongwork
+package lost.girl.rfidmobileinventory.data.readers.rfid
 
 import kotlinx.coroutines.delay
 
-class RfidReader {
+class RfidReaderFake {
     private var power: Int = 20
     private var index = -1
     private val tagList  = mutableListOf("00000001000001",

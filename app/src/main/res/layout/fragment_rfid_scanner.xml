@@ -13,6 +13,7 @@
         android:layout_height="wrap_content"
         android:background="#CDDC39"
         android:backgroundTint="#19FF5722"
+        android:visibility="invisible"
         app:cardElevation="2dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -29,7 +30,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/rfid_power_title"
                 android:textColor="@color/white"
-                android:textSize="16sp"
+                android:textSize="@dimen/text_medium_size"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -44,6 +45,7 @@
                 android:value="50"
                 android:valueFrom="0.0"
                 android:valueTo="100"
+                android:visibility="visible"
                 app:haloColor="#FF9800"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -61,7 +63,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/scanner_power_slider"
-                tools:text="@string/current_power" />
+                tools:text="@string/current_power"
+                android:textSize="@dimen/text_medium_size"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -91,7 +94,9 @@
             android:checked="true"
             android:freezesText="false"
             android:textColor="@color/white"
-            android:textSize="16sp" />
+            android:textOff=" "
+            android:textOn=" "
+            android:textSize="@dimen/text_big_size" />
 
         <ToggleButton
             android:id="@+id/filter_button_found"
@@ -102,7 +107,9 @@
             android:background="@drawable/filter_green_button_background"
             android:checked="true"
             android:textColor="@color/white"
-            android:textSize="16sp" />
+            android:textOff=" "
+            android:textOn=" "
+            android:textSize="@dimen/text_big_size" />
 
         <ToggleButton
             android:id="@+id/filter_button_found_in_wrong_place"
@@ -112,7 +119,9 @@
             android:background="@drawable/filter_orange_button_background"
             android:checked="true"
             android:textColor="@color/white"
-            android:textSize="16sp" />
+            android:textOff=" "
+            android:textOn=" "
+            android:textSize="@dimen/text_big_size" />
     </LinearLayout>
 
 
@@ -153,6 +162,20 @@
             app:backgroundTint="@null" />
 
     </FrameLayout>
+
+    <TextView
+        android:id="@+id/error_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/init_error_rfid_message"
+        android:textColor="@color/red_gradient_end"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/settingPanel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
