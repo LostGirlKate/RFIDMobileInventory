@@ -13,11 +13,9 @@ data class InventoryItemForExportModel(
     var actualLocation: String
 ) {
     fun toListOfString(): List<String> {
-        val resultList =
-            "$rowNum,$inventoryNum,$managerName,$location,$type,$model,$serialNum,$shipmentNum,$rfidCardNum,${if (actualLocation == "null") "" else actualLocation}".split(
-                ','
-            )
-        return resultList
+        return "$rowNum,$inventoryNum,$managerName,$location,$type,$model,$serialNum,$shipmentNum,$rfidCardNum,${if (actualLocation == "null") "" else actualLocation}".split(
+            ','
+        )
     }
 
 }

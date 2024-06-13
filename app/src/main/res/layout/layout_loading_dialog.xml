@@ -26,6 +26,7 @@
         android:layout_weight="6"
         android:text="@string/file_save_action_message"
         android:textAlignment="center"
-        android:textSize="@dimen/text_medium_size"
+        android:gravity="center"
+        android:textSize="@dimen/text_caption_size"
         android:textStyle="bold" />
 </LinearLayout>

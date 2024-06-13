@@ -62,6 +62,9 @@
     <string name="init_process_rfid_message">Инициализация считывателя</string>
     <string name="rfid">RFID</string>
     <string name="_2d_scanner">2D scanner</string>
+    <string name="blank_string"> </string>
+    <string name="no">НЕТ</string>
+    <string name="yes">ДА</string>
 
 
 </resources>

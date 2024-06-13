@@ -13,9 +13,7 @@ interface InventoryRepository {
     suspend fun updateInventoryItem(item: InventoryItemFullModel): Boolean
     suspend fun insertInventoryLocation(location: InventoryLocationFullModel): Boolean
     fun getAllLocationList(): List<InventoryLocationFullModel>
-    fun getAllInventoryItemList(): List<InventoryItemForListModel>
     fun getAllInventoryFullList(): List<InventoryItemFullModel>
-    fun insertInventoryItem(item: InventoryItemFullModel)
     fun insertManyInventoryItem(items: List<InventoryItemFullModel>): List<Long>
     fun getInventoryItemByLocationID(locationID: Int): List<InventoryItemForListModel>
     fun getInventoryItemsCounts(locationID: Int): InventoryInfoModel

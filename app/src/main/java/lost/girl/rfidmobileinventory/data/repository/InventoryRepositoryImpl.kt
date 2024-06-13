@@ -32,16 +32,8 @@ class InventoryRepositoryImpl(
         return inventoryStorage.getAllLocationList().map { it.toInventoryLocationFullModel() }
     }
 
-    override fun getAllInventoryItemList(): List<InventoryItemForListModel> {
-        TODO("Not yet implemented")
-    }
-
     override fun getAllInventoryFullList(): List<InventoryItemFullModel> {
         return inventoryStorage.getAllInventoryItemList().map { it.toInventoryItemFullModel() }
-    }
-
-    override fun insertInventoryItem(item: InventoryItemFullModel) {
-        TODO("Not yet implemented")
     }
 
     override fun insertManyInventoryItem(items: List<InventoryItemFullModel>): List<Long> {

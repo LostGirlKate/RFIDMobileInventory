@@ -10,9 +10,7 @@ interface InventoryStorage {
     fun getAllInventoryLocation(): Flow<List<InventoryLocation>>
     suspend fun insertInventoryLocation(location: InventoryLocation)
     fun getAllLocationList(): List<InventoryLocation>
-    fun getAllInventoryItem(): Flow<List<InventoryItem>>
     fun getAllInventoryItemList(): List<InventoryItem>
-    suspend fun insertInventoryItem(item: InventoryItem)
     fun insertManyInventoryItem(items: List<InventoryItem>): List<Long>
     fun getInventoryItemByLocationID(locationID: Int): List<InventoryItem>
     fun getInventoryItemsCounts(locationID: Int): List<InventoryCounts>

@@ -187,13 +187,6 @@ class RfidScannerViewModel(
 
             ReaderType.BARCODE_2D -> if (!allItem.none { it.shipmentNum == scanCode }) {
                 itemId = allItem.first { it.shipmentNum == scanCode }.id ?: 0
-                updateInventoryItem(
-                    viewState.currentLocation,
-                    viewState.currentLocationName,
-                    itemId
-                )
-                if (viewState.inventoryState.percentFound == 100)
-                    viewEffect = RfidScannerViewEffect.InventoryReady(R.string.all_tag_found)
             }
 
             null -> {}

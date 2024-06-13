@@ -39,17 +39,18 @@ class InventoryListFragment :
     ): View {
         // Inflate the layout for this fragment
         binding = FragmentInventoryListBinding.inflate(inflater, container, false)
+
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.searchView
-        initRcView()
         initSpinner()
         initSearch()
         initSetting()
         initFilterButtons()
+        initRcView()
     }
 
     override fun renderViewEffect(viewEffect: InventoryListViewEffect) {
@@ -59,11 +60,6 @@ class InventoryListFragment :
     override fun renderViewState(viewState: InventoryListViewState) = with(binding) {
         val filter = getFilterString()
         adapter.submitListWithFilter(viewState.inventoryItems, filter)
-        binding.tvEmptyList.visibility =
-            if (viewState.inventoryItems.isEmpty()) View.VISIBLE else View.GONE
-
-
-
         for (location in viewState.locations) {
             if (locationListID.none { it == location.id!! }) {
                 locationList.add(location.name)
@@ -115,7 +111,7 @@ class InventoryListFragment :
                 getString(R.string.you_need_choose_location_file),
                 0,
                 false,
-                R.color.light_red_text
+                R.color.textColor
             )
         } else {
             val action =
@@ -187,7 +183,7 @@ class InventoryListFragment :
         adapterSpinner =
             ArrayAdapter<String>(
                 requireContext(),
-                android.R.layout.simple_spinner_item,
+                R.layout.spinner_item,
                 locationList
             )
 

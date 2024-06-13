@@ -35,29 +35,13 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:textSize="@dimen/text_medium_size"
             android:iconifiedByDefault="false"
             android:isScrollContainer="true"
             android:queryHint="@string/search"
+            app:theme="@style/AppSearchView"
             app:layout_constraintEnd_toStartOf="@+id/open_2d_scanner_button"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/location_spinner" />
-
-
-        <TextView
-            android:id="@+id/tv_empty_list"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:elevation="16dp"
-            android:gravity="center"
-            android:text="@string/no_data_found"
-            android:textAllCaps="true"
-            android:textSize="18sp"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/rc_inventory_list"
-            app:layout_constraintEnd_toEndOf="@+id/rc_inventory_list"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/rc_inventory_list" />
 
 
         <androidx.recyclerview.widget.RecyclerView
@@ -94,7 +78,9 @@
                 android:checked="true"
                 android:freezesText="false"
                 android:textColor="@color/white"
-                android:textSize="@dimen/text_big_size" />
+                android:textOff="@string/blank_string"
+                android:textOn="@string/blank_string"
+                android:textSize="@dimen/text_caption_size" />
 
             <ToggleButton
                 android:id="@+id/filter_button_found"
@@ -105,7 +91,9 @@
                 android:background="@drawable/filter_green_button_background"
                 android:checked="true"
                 android:textColor="@color/white"
-                android:textSize="@dimen/text_big_size" />
+                android:textOff="@string/blank_string"
+                android:textOn="@string/blank_string"
+                android:textSize="@dimen/text_caption_size" />
 
             <ToggleButton
                 android:id="@+id/filter_button_found_in_wrong_place"
@@ -115,7 +103,9 @@
                 android:background="@drawable/filter_orange_button_background"
                 android:checked="true"
                 android:textColor="@color/white"
-                android:textSize="@dimen/text_big_size" />
+                android:textOff="@string/blank_string"
+                android:textOn="@string/blank_string"
+                android:textSize="@dimen/text_caption_size" />
         </LinearLayout>
 
         <ImageButton
@@ -125,11 +115,11 @@
             android:layout_marginEnd="8dp"
             android:background="@drawable/orange_background"
             android:backgroundTint="@color/colorPrimary"
+            android:contentDescription="@string/rfid"
             android:src="@drawable/ico_radar"
             app:layout_constraintBottom_toBottomOf="@+id/searchView"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/searchView"
-            android:contentDescription="@string/rfid"/>
+            app:layout_constraintTop_toTopOf="@+id/searchView" />
 
         <ImageButton
             android:id="@+id/open_2d_scanner_button"
@@ -138,11 +128,11 @@
             android:layout_marginEnd="8dp"
             android:background="@drawable/orange_background"
             android:backgroundTint="@color/colorPrimary"
+            android:contentDescription="@string/_2d_scanner"
             android:src="@drawable/ic_scanner"
             app:layout_constraintBottom_toBottomOf="@+id/searchView"
             app:layout_constraintEnd_toStartOf="@id/open_rfid_scanner_button"
-            app:layout_constraintTop_toTopOf="@+id/searchView"
-            android:contentDescription="@string/_2d_scanner"/>
+            app:layout_constraintTop_toTopOf="@+id/searchView" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
