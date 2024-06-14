@@ -78,7 +78,9 @@ class InventoryItemsFilterableAdapter(private val itemClickListener: OnItemClick
         val showFound = filterList[2].toBoolean()
         val showFoundInWrongPlace = filterList[3].toBoolean()
         return list.filter {
-            it.model.lowercase().contains(firstFilter)
+            (it.model.lowercase().contains(firstFilter) ||
+              it.inventoryNum.lowercase().contains(firstFilter)
+            )
                     && (showNotFound || it.state != InventoryItemState.STATE_NOT_FOUND)
                     && (showFound || it.state != InventoryItemState.STATE_FOUND)
                     && (showFoundInWrongPlace || it.state != InventoryItemState.STATE_FOUND_IN_WRONG_PLACE)
