@@ -12,20 +12,16 @@ import lost.girl.rfidmobileinventory.data.storage.InventoryStorage
 import lost.girl.rfidmobileinventory.domain.repository.BarcodeReaderRepository
 import lost.girl.rfidmobileinventory.domain.repository.InventoryRepository
 import lost.girl.rfidmobileinventory.domain.repository.RFIDReaderRepository
-import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
-
 
 val dataModule = module {
     single<InventoryStorage> {
-        (androidContext() as MainApp).database.getDao()
+        MainApp.database.getDao()
     }
 
     single<InventoryRepository> {
         InventoryRepositoryImpl(inventoryStorage = get())
     }
-
-
 
     single<IRfidReader> {
         val reader = Reader()
@@ -44,6 +40,4 @@ val dataModule = module {
     single<BarcodeReaderRepository> {
         BarcodeReaderRepositoryImpl(reader = get())
     }
-
-
 }

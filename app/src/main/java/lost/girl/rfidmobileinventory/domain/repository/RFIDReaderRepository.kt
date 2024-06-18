@@ -7,11 +7,12 @@ interface RFIDReaderRepository {
     fun stopReader()
     fun startInventory(
         power: Int,
-        onError: (String) -> Unit, onTags: (tagsRaw: List<String>) -> Unit
+        onError: (String) -> Unit,
+        onTags: (tagsRaw: List<String>) -> Unit
     )
 
     fun stopInventory()
-    fun gerPower(): Int
+    fun getPower(): Int
 
     fun isReaderInitialized(): Boolean
 }

@@ -4,8 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import android.widget.SearchView
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,34 +11,31 @@ import lost.girl.rfidmobileinventory.R
 import lost.girl.rfidmobileinventory.data.readers.ReaderType
 import lost.girl.rfidmobileinventory.databinding.FragmentInventoryListBinding
 import lost.girl.rfidmobileinventory.domain.models.InventoryItemForListModel
+import lost.girl.rfidmobileinventory.domain.models.InventoryLocationFullModel
 import lost.girl.rfidmobileinventory.mvi.MviFragment
 import lost.girl.rfidmobileinventory.utils.OnItemClickListener
 import lost.girl.rfidmobileinventory.utils.UIHelper
-import lost.girl.rfidmobileinventory.utils.UIHelper.Companion.refreshToggleButton
-import lost.girl.rfidmobileinventory.utils.UIHelper.Companion.setOnCheckedChangeListenerToFilterButton
+import lost.girl.rfidmobileinventory.utils.UIHelper.refreshToggleButton
+import lost.girl.rfidmobileinventory.utils.UIHelper.setOnCheckedChangeListenerToFilterButton
+import lost.girl.rfidmobileinventory.utils.searchablespinner.OnItemSelectListener
+import lost.girl.rfidmobileinventory.utils.searchablespinner.SearchableSpinner
 import org.koin.androidx.viewmodel.ext.android.viewModel
-
 
 class InventoryListFragment :
     MviFragment<InventoryListViewState, InventoryListViewEffect, InventoryListViewEvent, InventoryListViewModel>() {
-    private lateinit var binding: FragmentInventoryListBinding
-    private lateinit var adapter: InventoryItemsFilterableAdapter
-
 
     override val viewModel by viewModel<InventoryListViewModel>()
-
-    private val locationList = ArrayList<String>()
-    private val locationListID = ArrayList<Int>()
-    private lateinit var adapterSpinner: ArrayAdapter<String>
+    private lateinit var binding: FragmentInventoryListBinding
+    private lateinit var adapter: InventoryItemsFilterableAdapter
+    private val locationListName = ArrayList<String>()
+    private val locationList = ArrayList<InventoryLocationFullModel>()
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Inflate the layout for this fragment
         binding = FragmentInventoryListBinding.inflate(inflater, container, false)
-
-
         return binding.root
     }
 
@@ -53,32 +48,28 @@ class InventoryListFragment :
         initRcView()
     }
 
-    override fun renderViewEffect(viewEffect: InventoryListViewEffect) {
-
-    }
+    override fun renderViewEffect(viewEffect: InventoryListViewEffect) {}
 
     override fun renderViewState(viewState: InventoryListViewState) = with(binding) {
         val filter = getFilterString()
         adapter.submitListWithFilter(viewState.inventoryItems, filter)
         for (location in viewState.locations) {
-            if (locationListID.none { it == location.id!! }) {
-                locationList.add(location.name)
-                locationListID.add(location.id!!)
+            if (locationList.none { it.id == location.id!! }) {
+                locationList.add(location)
+                locationListName.add(location.name)
             }
         }
-        adapterSpinner.notifyDataSetChanged()
-        val currentLocation =
-            if (viewState.currentLocationID == -1) 0 else viewState.currentLocationID
-        binding.locationSpinner.setSelection(locationListID.indexOf(currentLocation))
-
+        val currentLocation = viewState.currentLocationID
+        binding.locationSpinner.text =
+            locationList.firstOrNull { it.id == currentLocation }?.name ?: ""
         refreshToggleButton(filterButtonNotFound, viewState.inventoryState.countNotFoundString)
         refreshToggleButton(filterButtonFound, viewState.inventoryState.countFoundString)
         refreshToggleButton(
             filterButtonFoundInWrongPlace,
             viewState.inventoryState.countFoundInWrongPlaceString
         )
+        filterData()
     }
-
 
     private fun initRcView() = with(binding) {
         rcInventoryList.layoutManager = LinearLayoutManager(activity)
@@ -103,8 +94,8 @@ class InventoryListFragment :
     }
 
     private fun openScannerFragment(type: ReaderType) {
-        val title = locationList[binding.locationSpinner.selectedItemPosition]
-        val locationID = locationListID[binding.locationSpinner.selectedItemPosition]
+        val title = binding.locationSpinner.text
+        val locationID = locationList.firstOrNull { it.name == title }?.id ?: 0
         if (locationID < 1) {
             UIHelper.detailDialog(
                 requireContext(),
@@ -116,12 +107,13 @@ class InventoryListFragment :
         } else {
             val action =
                 InventoryListFragmentDirections.actionInventoryListFragmentToRfidScannerFragment(
-                    title, locationID, type
+                    title.toString(),
+                    locationID,
+                    type
                 )
             findNavController().navigate(action)
         }
     }
-
 
     private fun initFilterButtons() {
         setOnCheckedChangeListenerToFilterButton(
@@ -147,17 +139,18 @@ class InventoryListFragment :
         ) { filterData() }
     }
 
-
     private fun initSetting() {
         binding.openRfidScannerButton.setOnClickListener { openScannerFragment(ReaderType.RFID) }
         binding.open2dScannerButton.setOnClickListener { openScannerFragment(ReaderType.BARCODE_2D) }
     }
 
     private fun getFilterString(): String =
-        binding.searchView.query.toString() + "~" + binding.filterButtonNotFound.isChecked.toString() +
-                "~" + binding.filterButtonFound.isChecked.toString() +
-                "~" + binding.filterButtonFoundInWrongPlace.isChecked.toString()
-
+        listOf(
+            binding.searchView.query.toString(),
+            binding.filterButtonNotFound.isChecked.toString(),
+            binding.filterButtonFound.isChecked.toString(),
+            binding.filterButtonFoundInWrongPlace.isChecked.toString()
+        ).joinToString(getString(R.string.filter_delimetr))
 
     private fun filterData() {
         val filter = getFilterString()
@@ -178,30 +171,21 @@ class InventoryListFragment :
         binding.searchView.clearFocus()
     }
 
-
     private fun initSpinner() {
-        adapterSpinner =
-            ArrayAdapter<String>(
-                requireContext(),
-                R.layout.spinner_item,
-                locationList
-            )
-
-        adapterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        binding.locationSpinner.adapter = adapterSpinner
-        binding.locationSpinner.onItemSelectedListener =
-            object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(
-                    parent: AdapterView<*>?,
-                    itemSelected: View?, selectedItemPosition: Int, selectedId: Long
-                ) {
-                    val newLocation = locationListID[selectedItemPosition]
-                    viewModel.process(InventoryListViewEvent.EditCurrentLocation(newLocation))
-                }
-
-                override fun onNothingSelected(parent: AdapterView<*>?) {}
+        val searchableSpinner = SearchableSpinner(requireContext())
+        searchableSpinner.windowTitle = getString(R.string.location_search)
+        searchableSpinner.onItemSelectListener = object : OnItemSelectListener {
+            override fun setOnItemSelectListener(position: Int, selectedString: String) {
+                val newLocation = locationList.firstOrNull { it.name == selectedString }?.id ?: 0
+                viewModel.process(InventoryListViewEvent.EditCurrentLocation(newLocation))
             }
+        }
+        searchableSpinner.searchViewVisibility = SearchableSpinner.SpinnerView.VISIBLE
+        searchableSpinner.negativeButtonVisibility = SearchableSpinner.SpinnerView.VISIBLE
+        searchableSpinner.windowTitleVisibility = SearchableSpinner.SpinnerView.VISIBLE
+        searchableSpinner.setSpinnerListItems(locationListName)
+        binding.locationSpinner.setOnClickListener {
+            searchableSpinner.show()
+        }
     }
 }
-
-

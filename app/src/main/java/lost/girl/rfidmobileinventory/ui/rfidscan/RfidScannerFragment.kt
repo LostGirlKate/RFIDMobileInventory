@@ -17,24 +17,18 @@ import lost.girl.rfidmobileinventory.mvi.MviFragment
 import lost.girl.rfidmobileinventory.ui.list.InventoryItemsFilterableAdapter
 import lost.girl.rfidmobileinventory.utils.OnItemClickListener
 import lost.girl.rfidmobileinventory.utils.UIHelper
-import lost.girl.rfidmobileinventory.utils.UIHelper.Companion.refreshToggleButton
-import lost.girl.rfidmobileinventory.utils.UIHelper.Companion.setOnCheckedChangeListenerToFilterButton
+import lost.girl.rfidmobileinventory.utils.UIHelper.refreshToggleButton
+import lost.girl.rfidmobileinventory.utils.UIHelper.setOnCheckedChangeListenerToFilterButton
 import org.koin.androidx.viewmodel.ext.android.viewModel
-
 
 class RfidScannerFragment :
     MviFragment<RfidScannerViewState, RfidScannerViewEffect, RfidScannerViewEvent, RfidScannerViewModel>() {
+    override val viewModel by viewModel<RfidScannerViewModel>()
     private lateinit var binding: FragmentRfidScannerBinding
     private lateinit var adapter: InventoryItemsFilterableAdapter
     private var canBackPress: Boolean = true
-
-
     private var activeReadyDialog: androidx.appcompat.app.AlertDialog? = null
-
-    override val viewModel by viewModel<RfidScannerViewModel>()
-
     private val args: RfidScannerFragmentArgs by navArgs()
-
     private val onBacPressedCallBack =
         object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -42,7 +36,6 @@ class RfidScannerFragment :
                     findNavController().popBackStack(R.id.inventoryListFragment, false)
                 }
             }
-
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,10 +44,10 @@ class RfidScannerFragment :
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Inflate the layout for this fragment
         binding = FragmentRfidScannerBinding.inflate(layoutInflater)
         return binding.root
     }
@@ -84,6 +77,42 @@ class RfidScannerFragment :
         }
     }
 
+    override fun renderViewState(viewState: RfidScannerViewState) = with(binding) {
+        val actionBar = (activity as AppCompatActivity).supportActionBar
+        if (actionBar != null) {
+            actionBar.setHomeButtonEnabled(viewState.canBackPress)
+            actionBar.setDisplayHomeAsUpEnabled(viewState.canBackPress)
+            actionBar.setDisplayShowHomeEnabled(viewState.canBackPress)
+            actionBar.title = "${viewState.scannerType ?: ""}  ${viewState.currentLocationName}"
+        }
+
+        errorText.visibility =
+            if (!viewState.isReaderInit && viewState.scannerType != null) View.VISIBLE else View.GONE
+        startRfidButton.visibility =
+            if (viewState.startScanningButtonVisible) View.VISIBLE else View.GONE
+        stopRfidButton.visibility =
+            if (viewState.stopScanningButtonVisible) View.VISIBLE else View.GONE
+        settingPanel.visibility = if (viewState.panelSettingsVisible) {
+            View.VISIBLE
+        } else {
+            if (!viewState.isReaderInit) View.INVISIBLE else View.GONE
+        }
+        scannerPowerValueCaption.text =
+            getString(R.string.current_power, viewState.scannerPowerValue)
+        scannerPowerSlider.value = viewState.scannerPowerValue.toFloat()
+        canBackPress = viewState.canBackPress
+        refreshToggleButton(
+            filterButtonNotFound,
+            viewState.inventoryState.countNotFoundString
+        )
+        refreshToggleButton(filterButtonFound, viewState.inventoryState.countFoundString)
+        refreshToggleButton(
+            filterButtonFoundInWrongPlace,
+            viewState.inventoryState.countFoundInWrongPlaceString
+        )
+        val filter = getFilterString()
+        adapter.submitListWithFilter(viewState.inventoryItems, filter)
+    }
     private fun inventoryReady(message: Int) {
         if (activeReadyDialog == null) {
             activeReadyDialog = UIHelper.detailDialog(
@@ -97,47 +126,6 @@ class RfidScannerFragment :
         }
     }
 
-    override fun renderViewState(viewState: RfidScannerViewState) = with(binding) {
-        val actionBar = (activity as AppCompatActivity).supportActionBar
-        if (actionBar != null) {
-            actionBar.setHomeButtonEnabled(viewState.canBackPress)
-            actionBar.setDisplayHomeAsUpEnabled(viewState.canBackPress)
-            actionBar.setDisplayShowHomeEnabled(viewState.canBackPress)
-
-            actionBar.title = "${viewState.scannerType ?: ""}  ${viewState.currentLocationName}"
-        }
-
-        errorText.visibility =
-            if (!viewState.isReaderInit && viewState.scannerType != null) View.VISIBLE else View.GONE
-        startRfidButton.visibility =
-            if (viewState.startScanningButtonVisible) View.VISIBLE else View.GONE
-        stopRfidButton.visibility =
-            if (viewState.stopScanningButtonVisible) View.VISIBLE else View.GONE
-        settingPanel.visibility = if (viewState.panelSettingsVisible) View.VISIBLE else {
-            if (!viewState.isReaderInit) View.INVISIBLE else View.GONE
-        }
-        scannerPowerValueCaption.text =
-            getString(R.string.current_power, viewState.scannerPowerValue)
-        scannerPowerSlider.value = viewState.scannerPowerValue.toFloat()
-        canBackPress = viewState.canBackPress
-
-
-        refreshToggleButton(
-            filterButtonNotFound,
-            viewState.inventoryState.countNotFoundString
-        )
-        refreshToggleButton(filterButtonFound, viewState.inventoryState.countFoundString)
-        refreshToggleButton(
-            filterButtonFoundInWrongPlace,
-            viewState.inventoryState.countFoundInWrongPlaceString
-        )
-
-
-        val filter = getFilterString()
-        adapter.submitListWithFilter(viewState.inventoryItems, filter)
-    }
-
-
     private fun initSetting() {
         binding.startRfidButton.setOnClickListener {
             viewModel.process(RfidScannerViewEvent.SetScanningState(true))
@@ -145,17 +133,13 @@ class RfidScannerFragment :
         binding.stopRfidButton.setOnClickListener {
             viewModel.process(RfidScannerViewEvent.SetScanningState(false))
         }
-
         binding.scannerPowerSlider.addOnSliderTouchListener(object : Slider.OnSliderTouchListener {
-            override fun onStartTrackingTouch(slider: Slider) {
-            }
+            override fun onStartTrackingTouch(slider: Slider) {}
 
             override fun onStopTrackingTouch(slider: Slider) {
                 viewModel.process(RfidScannerViewEvent.SetScanningPower(slider.value.toInt()))
             }
         })
-
-
         binding.scannerPowerSlider.setLabelFormatter { value ->
             value.toInt().toString()
         }
@@ -166,13 +150,11 @@ class RfidScannerFragment :
         adapter = InventoryItemsFilterableAdapter(
             object : OnItemClickListener<InventoryItemForListModel> {
                 override fun onItemClick(item: InventoryItemForListModel) {
-                    // openItemDetail(item)
                 }
             }
         )
         rcItems.adapter = adapter
     }
-
 
     private fun initFilterButtons() {
         setOnCheckedChangeListenerToFilterButton(
@@ -198,18 +180,18 @@ class RfidScannerFragment :
         ) { filterData() }
     }
 
-
     private fun getFilterString(): String =
-        "~" + binding.filterButtonNotFound.isChecked.toString() +
-                "~" + binding.filterButtonFound.isChecked.toString() +
-                "~" + binding.filterButtonFoundInWrongPlace.isChecked.toString()
-
+        listOf(
+            "",
+            binding.filterButtonNotFound.isChecked.toString(),
+            binding.filterButtonFound.isChecked.toString(),
+            binding.filterButtonFoundInWrongPlace.isChecked.toString()
+        ).joinToString(getString(R.string.filter_delimetr))
 
     private fun filterData() {
         val filter = getFilterString()
         adapter.filter.filter(filter)
     }
-
 
     private fun showToast(message: Int, errorMessage: Int, isError: Boolean = false) {
         UIHelper.showToastMessage(
@@ -218,5 +200,4 @@ class RfidScannerFragment :
             if (isError) R.color.toast_red_text else R.color.toast_green_text
         )
     }
-
 }

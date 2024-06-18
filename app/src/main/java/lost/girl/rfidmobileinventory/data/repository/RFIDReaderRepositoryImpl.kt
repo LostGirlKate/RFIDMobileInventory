@@ -27,7 +27,7 @@ class RFIDReaderRepositoryImpl(private val reader: IRfidReader) : RFIDReaderRepo
         reader.stop()
     }
 
-    override fun gerPower(): Int {
+    override fun getPower(): Int {
         return reader.getPower().toPowerPercent()
     }
 

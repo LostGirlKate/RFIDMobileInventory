@@ -1,6 +1,6 @@
 package lost.girl.rfidmobileinventory.domain.models
 
-data class InventoryInfoModel (
+data class InventoryInfoModel(
     val countAllString: String = "0",
     val countFoundString: String = "0",
     val countNotFoundString: String = "0",

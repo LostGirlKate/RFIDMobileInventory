@@ -9,7 +9,6 @@ class ExportDataToExcelFileUseCase(private val context: Context) {
         data: List<List<String>>,
         fileName: String
     ): Boolean {
-
         val columnNames = listOf(
             context.getString(R.string.num),
             context.getString(R.string.inventory_num),

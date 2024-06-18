@@ -19,7 +19,6 @@ interface IRfidReader {
         onError: (String) -> Unit,
         onTags: (tagsRaw: List<Pair<String, Int>>) -> Unit
     )
-
     fun stop()
 
     // мощность power в процентах 0=min 100=max

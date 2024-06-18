@@ -65,15 +65,12 @@ private class ChannelSharedFlowImpl<T>(
         channel.send(value)
     }
 
-
     override val replayCache: List<T> = shared.replayCache
     override val subscriptionCount: StateFlow<Int>
         get() = MutableStateFlow(1)
 
-
     @ExperimentalCoroutinesApi
     override fun resetReplayCache() {
-
     }
 
     override fun tryEmit(value: T): Boolean {

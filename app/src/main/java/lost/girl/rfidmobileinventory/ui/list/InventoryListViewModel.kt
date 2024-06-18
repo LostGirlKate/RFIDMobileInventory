@@ -9,10 +9,10 @@ import lost.girl.rfidmobileinventory.domain.usescase.GetInventoryItemByLocationI
 import lost.girl.rfidmobileinventory.mvi.MviViewModel
 
 class InventoryListViewModel(
-    application: Application,
-    getAllLocationsUseCase: GetAllLocationsUseCase,
     private val getInventoryItemByLocationIDUseCase: GetInventoryItemByLocationIDUseCase,
-    private val getInventoryInfo: GetInventoryInfoUseCase
+    private val getInventoryInfo: GetInventoryInfoUseCase,
+    application: Application,
+    getAllLocationsUseCase: GetAllLocationsUseCase
 ) : MviViewModel<InventoryListViewState, InventoryListViewEffect, InventoryListViewEvent>(
     application
 ) {
@@ -20,17 +20,18 @@ class InventoryListViewModel(
     init {
         viewState = InventoryListViewState(
             locations = getAllLocationsUseCase.execute(),
-            inventoryState = getInventoryInfo.execute(0)
+            inventoryState = getInventoryInfo.execute(-1),
+            inventoryItems = getInventoryItemByLocationIDUseCase.execute(-1)
         )
     }
-
 
     override fun process(viewEvent: InventoryListViewEvent) {
         super.process(viewEvent)
         when (viewEvent) {
-            is InventoryListViewEvent.EditCurrentLocation -> editCurrentLocation(viewEvent.locationID)
+            is InventoryListViewEvent.EditCurrentLocation -> {
+                editCurrentLocation(viewEvent.locationID)
+            }
         }
-
     }
 
     private fun editCurrentLocation(idLocation: Int) = viewModelScope.launch {
@@ -42,5 +43,4 @@ class InventoryListViewModel(
             )
         )
     }
-
 }

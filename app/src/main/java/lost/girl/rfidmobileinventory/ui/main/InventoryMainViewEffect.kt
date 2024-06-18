@@ -17,5 +17,4 @@ sealed class InventoryMainViewEffect {
     object OpenExcelFileLauncher : InventoryMainViewEffect()
 
     object OpenFileManager : InventoryMainViewEffect()
-
 }

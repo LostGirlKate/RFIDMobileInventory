@@ -3,7 +3,6 @@ package lost.girl.rfidmobileinventory.utils
 import android.content.ContentResolver
 import android.net.Uri
 import android.os.Environment
-import android.util.Log
 import android.webkit.MimeTypeMap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -15,13 +14,13 @@ import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.ss.util.WorkbookUtil
 import org.apache.poi.xssf.streaming.SXSSFWorkbook
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
+import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.OutputStream
 import java.text.SimpleDateFormat
 import java.util.Locale
-
 
 object ExcelUtil {
     const val MEM_TYPE_XLS = "application/vnd.ms-excel"
@@ -48,7 +47,6 @@ object ExcelUtil {
                 cell.setCellValue(item[j])
             }
         }
-        Log.d("InvMobRFID", "Start write export file")
 
         return try {
             val outFile = File(
@@ -60,11 +58,10 @@ object ExcelUtil {
                 workbook.write(outputStream)
                 outputStream.flush()
                 outputStream.close()
-                Log.d("InvMobRFID", "Ready export file")
             }
             true
         } catch (e: Exception) {
-            Log.d("InvMobRFID", e.toString())
+            Timber.d("InvMobRFID", e.toString())
             false
         }
     }
@@ -76,10 +73,8 @@ object ExcelUtil {
         var resultArray = arrayOf<Array<String>>()
         try {
             val inputStream = contentResolver.openInputStream(uri)
-            Log.d("InvMobRFID", "FileOpen")
             val mime = MimeTypeMap.getSingleton()
             val extension = mime.getExtensionFromMimeType(contentResolver.getType(uri))
-            Log.d("InvMobRFID", extension!!)
             val workbook =
                 if (extension == "xls") HSSFWorkbook(inputStream) else XSSFWorkbook(inputStream)
             val sheet = workbook.getSheetAt(0)
@@ -98,7 +93,7 @@ object ExcelUtil {
                 resultArray += array
             }
         } catch (e: IOException) {
-            e.printStackTrace()
+            Timber.tag("getDataFromExcel").e(e)
         }
         return resultArray
     }
@@ -125,7 +120,7 @@ object ExcelUtil {
                 else -> {}
             }
         } catch (e: NullPointerException) {
-            e.printStackTrace()
+            Timber.tag("getDataFromExcel").e(e.message!!)
         }
         return value
     }

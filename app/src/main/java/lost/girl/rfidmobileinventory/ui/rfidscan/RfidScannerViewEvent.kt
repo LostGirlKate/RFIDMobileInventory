@@ -9,5 +9,4 @@ sealed class RfidScannerViewEvent {
     data class SetScanningState(val state: Boolean) : RfidScannerViewEvent()
     data class SetScanningPower(val power: Int) : RfidScannerViewEvent()
     data class SetScannerType(val type: ReaderType) : RfidScannerViewEvent()
-
 }

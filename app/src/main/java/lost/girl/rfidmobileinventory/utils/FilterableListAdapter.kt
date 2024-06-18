@@ -16,10 +16,11 @@ abstract class FilterableListAdapter<T, VH : RecyclerView.ViewHolder>(
         return object : Filter() {
             override fun performFiltering(constraint: CharSequence?): FilterResults {
                 return FilterResults().apply {
-                    values = if (constraint.isNullOrEmpty())
+                    values = if (constraint.isNullOrEmpty()) {
                         originalList
-                    else
+                    } else {
                         onFilter(originalList, constraint.toString())
+                    }
                 }
             }
 
@@ -36,11 +37,10 @@ abstract class FilterableListAdapter<T, VH : RecyclerView.ViewHolder>(
 
     abstract fun onFilter(list: List<T>, constraint: String): List<T>
 
-
     private fun submitList(list: List<T>?, filtered: Boolean) {
-        if (!filtered)
+        if (!filtered) {
             originalList = list ?: listOf()
-
+        }
         super.submitList(list)
     }
 
@@ -48,6 +48,4 @@ abstract class FilterableListAdapter<T, VH : RecyclerView.ViewHolder>(
         originalList = list ?: listOf()
         super.submitList(onFilter(originalList, filterString))
     }
-
-
 }

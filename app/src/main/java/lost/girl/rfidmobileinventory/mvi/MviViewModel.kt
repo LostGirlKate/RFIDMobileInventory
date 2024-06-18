@@ -23,7 +23,6 @@ open class MviViewModel<STATE, EFFECT, EVENT>(application: Application) :
             _viewStates.postValue(value)
         }
 
-
     private val _viewEffects: ChannelSharedFlow<EFFECT> = ChannelSharedFlow(viewModelScope)
     internal fun viewEffects(): SharedFlow<EFFECT> = _viewEffects
 
@@ -39,5 +38,4 @@ open class MviViewModel<STATE, EFFECT, EVENT>(application: Application) :
     @CallSuper
     override fun process(viewEvent: EVENT) {
     }
-
 }

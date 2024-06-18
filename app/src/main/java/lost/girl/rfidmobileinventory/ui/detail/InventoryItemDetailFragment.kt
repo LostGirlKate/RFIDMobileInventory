@@ -11,20 +11,23 @@ import lost.girl.rfidmobileinventory.mvi.MviFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class InventoryItemDetailFragment :
-    MviFragment<InventoryItemDetailState, InventoryItemDetailEffect, InventoryItemDetailEvent, InventoryItemDetailViewModel>() {
-
-    private lateinit var binding: FragmentInventoryItemDetailBinding
-    private lateinit var adapter: InventoryItemDetailAdapter
-
+    MviFragment<
+        InventoryItemDetailState,
+        InventoryItemDetailEffect,
+        InventoryItemDetailEvent,
+        InventoryItemDetailViewModel
+        >() {
 
     override val viewModel by viewModel<InventoryItemDetailViewModel>()
+    private lateinit var binding: FragmentInventoryItemDetailBinding
+    private lateinit var adapter: InventoryItemDetailAdapter
     private val args: InventoryItemDetailFragmentArgs by navArgs()
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Inflate the layout for this fragment
         binding = FragmentInventoryItemDetailBinding.inflate(layoutInflater)
         return binding.root
     }
@@ -50,5 +53,4 @@ class InventoryItemDetailFragment :
         adapter = InventoryItemDetailAdapter()
         rcInventoryDetailList.adapter = adapter
     }
-
 }

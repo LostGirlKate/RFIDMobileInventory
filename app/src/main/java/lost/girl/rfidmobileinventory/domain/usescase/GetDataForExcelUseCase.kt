@@ -6,5 +6,4 @@ class GetDataForExcelUseCase(private val inventoryRepository: InventoryRepositor
     fun execute(): List<List<String>> {
         return inventoryRepository.getAllInventoryItemForExport().map { it.toListOfString() }
     }
-
 }

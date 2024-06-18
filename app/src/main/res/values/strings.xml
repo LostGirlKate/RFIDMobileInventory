@@ -21,7 +21,6 @@
     <string name="clear_all_message">Подтвердить закрытие инвентаризации (все текущие данные будут выгружены в Excel файл)</string>
     <string name="current_power">Текущая мощность: %1$d</string>
 
-
     <string name="data_save_message">Данные сохранены</string>
     <string name="data_error_save_message">Ошибка сохранения данных</string>
 
@@ -65,6 +64,9 @@
     <string name="blank_string"> </string>
     <string name="no">НЕТ</string>
     <string name="yes">ДА</string>
+    <string name="reader_type_not_found">Тип не инициализирован</string>
+    <string name="location_search">Выбор местоположения</string>
+    <string name="filter_delimetr">~</string>
 
 
 </resources>

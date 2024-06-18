@@ -18,8 +18,9 @@ data class InventoryMainViewState(
     val loadingWarningTextVisible =
         (inventoryState.inventoryState == InventoryState.STATE_NOT_START)
     val progressPercentTextColor =
-        if (inventoryState.inventoryState == InventoryState.STATE_READY)
+        if (inventoryState.inventoryState == InventoryState.STATE_READY) {
             R.color.green_percent_text
-        else R.color.white
-
+        } else {
+            R.color.white
+        }
 }

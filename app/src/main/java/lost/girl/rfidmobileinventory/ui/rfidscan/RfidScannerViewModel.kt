@@ -1,7 +1,6 @@
 package lost.girl.rfidmobileinventory.ui.rfidscan
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewModelScope
@@ -25,9 +24,7 @@ import lost.girl.rfidmobileinventory.domain.usescase.UpdateInventoryItemUseCase
 import lost.girl.rfidmobileinventory.mvi.MviViewModel
 
 class RfidScannerViewModel(
-    application: Application,
     private val updateInventoryItemUseCase: UpdateInventoryItemUseCase,
-    private val getAllInventoryItemListForRfidScanningUseCase: GetAllInventoryItemListForScanningUseCase,
     private val getInventoryItemByLocationIDUseCase: GetInventoryItemByLocationIDUseCase,
     private val getInventoryInfoUseCase: GetInventoryInfoUseCase,
     private val startRFiDInventoryUseCase: StartRFiDInventoryUseCase,
@@ -37,7 +34,9 @@ class RfidScannerViewModel(
     private val openBarcodeReaderUseCase: OpenBarcodeReaderUseCase,
     private val closeBarcodeReaderUseCase: CloseBarcodeReaderUseCase,
     private val startBarcodeReaderUseCase: StartBarcodeReaderUseCase,
-    private val stopBarcodeReaderUseCase: StopBarcodeReaderUseCase
+    private val stopBarcodeReaderUseCase: StopBarcodeReaderUseCase,
+    application: Application,
+    getAllInventoryItemListForRfidScanningUseCase: GetAllInventoryItemListForScanningUseCase
 
 ) : MviViewModel<RfidScannerViewState, RfidScannerViewEffect, RfidScannerViewEvent>(application),
     DefaultLifecycleObserver {
@@ -52,22 +51,40 @@ class RfidScannerViewModel(
     override fun process(viewEvent: RfidScannerViewEvent) {
         super.process(viewEvent)
         when (viewEvent) {
-            is RfidScannerViewEvent.SetCurrentLocation -> setCurrentLocation(
-                viewEvent.iLocation,
-                viewEvent.locationName
-            )
-
-            is RfidScannerViewEvent.SetScanningState -> setScanningState(viewEvent.state)
-            is RfidScannerViewEvent.SetScanningPower -> setScannerPowerValue(viewEvent.power)
-            is RfidScannerViewEvent.SetScannerType -> setScannerType(viewEvent.type)
+            is RfidScannerViewEvent.SetCurrentLocation -> {
+                setCurrentLocation(
+                    viewEvent.iLocation,
+                    viewEvent.locationName
+                )
+            }
+            is RfidScannerViewEvent.SetScanningState -> {
+                setScanningState(viewEvent.state)
+            }
+            is RfidScannerViewEvent.SetScanningPower -> {
+                setScannerPowerValue(viewEvent.power)
+            }
+            is RfidScannerViewEvent.SetScannerType -> {
+                setScannerType(viewEvent.type)
+            }
         }
+    }
 
+    override fun onPause(owner: LifecycleOwner) {
+        super.onPause(owner)
+        if (viewState.isScanningStart) {
+            setScanningState(false)
+            stopInventory()
+        }
+    }
+
+    override fun onDestroy(owner: LifecycleOwner) {
+        super.onDestroy(owner)
+        if (viewState.scannerType == ReaderType.BARCODE_2D) closeBarcodeReaderUseCase.execute()
     }
 
     private fun setScannerType(type: ReaderType) {
         initReader(type)
     }
-
 
     private fun startInventory() {
         when (viewState.scannerType) {
@@ -79,30 +96,33 @@ class RfidScannerViewModel(
                     }
                 }
             }
-
             ReaderType.BARCODE_2D -> {
-                val start = startBarcodeReaderUseCase.execute()
-                Log.d("start", start.toString())
+                startBarcodeReaderUseCase.execute()
             }
-
-            null -> {}
+            else -> {
+                onError("Тип не инициализирован")
+            }
         }
-
     }
 
-    private fun onError(message: String) {
+    private fun onError(message: String = "") {
         viewEffect = RfidScannerViewEffect.ShowToast(
             R.string.init_rfid_message, R.string.init_error_rfid_message,
             true
         )
     }
 
-
     private fun stopInventory() {
         when (viewState.scannerType) {
-            ReaderType.RFID -> stopRFiDInventoryUseCase.execute()
-            ReaderType.BARCODE_2D -> stopBarcodeReaderUseCase.execute()
-            null -> {}
+            ReaderType.RFID -> {
+                stopRFiDInventoryUseCase.execute()
+            }
+            ReaderType.BARCODE_2D -> {
+                stopBarcodeReaderUseCase.execute()
+            }
+            else -> {
+                onError()
+            }
         }
     }
 
@@ -114,20 +134,15 @@ class RfidScannerViewModel(
                 ReaderType.RFID -> {
                     result = isRFIDReaderInitializedUseCase.execute()
                     if (result) {
-                        power = getRFIDReaderPowerUseCase.execute()// setScannerPowerValue()
+                        power = getRFIDReaderPowerUseCase.execute()
                     }
                 }
-
                 ReaderType.BARCODE_2D -> {
                     result = withContext(Dispatchers.IO) {
                         openBarcodeReaderUseCase.execute { checkItemNewLocationAndUpdate(it) }
                     }
-
-
                 }
             }
-
-
             viewState = viewState.copy(
                 scannerType = type,
                 isReaderInit = result,
@@ -166,7 +181,6 @@ class RfidScannerViewModel(
         )
     }
 
-
     private fun updateInventoryItem(locationID: Int, location: String, id: Int) {
         updateInventoryItemUseCase.execute(locationID, location, id)
         viewState = viewState.copy(
@@ -179,46 +193,30 @@ class RfidScannerViewModel(
 
     private fun checkItemNewLocationAndUpdate(scanCode: String) {
         val allItem = viewState.inventoryItemsFullRFIDList
-        var itemId = 0
-        when (viewState.scannerType) {
-            ReaderType.RFID -> if (!allItem.none { it.rfidCardNum == scanCode }) {
-                itemId = allItem.first { it.rfidCardNum == scanCode }.id ?: 0
+        val itemId =
+            when (viewState.scannerType) {
+                ReaderType.RFID -> {
+                    allItem.firstOrNull { it.rfidCardNum == scanCode }?.id ?: 0
+                }
+                ReaderType.BARCODE_2D -> {
+                    allItem.firstOrNull { it.shipmentNum == scanCode }?.id ?: 0
+                }
+                else -> {
+                    0
+                }
             }
-
-            ReaderType.BARCODE_2D -> if (!allItem.none { it.shipmentNum == scanCode }) {
-                itemId = allItem.first { it.shipmentNum == scanCode }.id ?: 0
-            }
-
-            null -> {}
-        }
         if (itemId > 0) {
             updateInventoryItem(
                 viewState.currentLocation,
                 viewState.currentLocationName,
                 itemId
             )
-            if (viewState.inventoryState.percentFound == 100)
+            if (viewState.inventoryState.percentFound == 100) {
                 viewEffect = RfidScannerViewEffect.InventoryReady(R.string.all_tag_found)
+            }
         }
-
         if (viewState.scannerType == ReaderType.BARCODE_2D) {
             setScanningState(false)
         }
-
     }
-
-
-    override fun onPause(owner: LifecycleOwner) {
-        super.onPause(owner)
-        if (viewState.isScanningStart) {
-            setScanningState(false)
-            stopInventory()
-        }
-    }
-
-    override fun onDestroy(owner: LifecycleOwner) {
-        super.onDestroy(owner)
-        if (viewState.scannerType == ReaderType.BARCODE_2D) closeBarcodeReaderUseCase.execute()
-    }
-
 }

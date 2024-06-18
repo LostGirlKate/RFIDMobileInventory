@@ -10,6 +10,10 @@ import lost.girl.rfidmobileinventory.domain.models.InventoryItemForScanningModel
 import lost.girl.rfidmobileinventory.domain.models.InventoryItemFullModel
 import lost.girl.rfidmobileinventory.domain.models.InventoryItemState
 
+const val INVENTORY_ITEM_STATE_FOUND = "Найдено"
+const val INVENTORY_ITEM_STATE_NOT_FOUND = "Не найдено"
+const val INVENTORY_ITEM_STATE_FOUND_IN_WRONG_PLACE = "Найдено не на своем месте"
+
 @Entity(tableName = "inventory_item")
 class InventoryItem(
     @PrimaryKey(autoGenerate = true)
@@ -48,7 +52,7 @@ class InventoryItem(
     @ColumnInfo(name = "actual_location")
     val actualLocation: String?,
 
-    ) {
+) {
     fun toInventoryItemForExportModel(num: Int) =
         InventoryItemForExportModel(
             rowNum = num.toString(),
@@ -65,9 +69,9 @@ class InventoryItem(
 
     fun toInventoryItemFullModelForDetail(): InventoryItemForDetailFullModel {
         val state = when (this.actualLocationID) {
-            null -> "Не найдено"
-            this.locationID -> "Найдено"
-            else -> "Найдено не на своем месте"
+            null -> INVENTORY_ITEM_STATE_NOT_FOUND
+            this.locationID -> INVENTORY_ITEM_STATE_FOUND
+            else -> INVENTORY_ITEM_STATE_FOUND_IN_WRONG_PLACE
         }
         return InventoryItemForDetailFullModel(
             id = this.id,
@@ -121,5 +125,4 @@ class InventoryItem(
             shipmentNum = this.shipmentNum,
             rfidCardNum = this.rfidCardNum
         )
-
 }

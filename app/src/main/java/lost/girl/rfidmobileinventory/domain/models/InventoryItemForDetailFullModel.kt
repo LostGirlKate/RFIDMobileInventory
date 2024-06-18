@@ -16,7 +16,7 @@ data class InventoryItemForDetailFullModel(
     var actualLocation: String?,
     var status: String
 ) {
-    fun toListOfDetail(context: Context, statusColor: Int):List<InventoryItemDetailModel> {
+    fun toListOfDetail(context: Context, statusColor: Int): List<InventoryItemDetailModel> {
         return this.let {
             listOf(
                 InventoryItemDetailModel(

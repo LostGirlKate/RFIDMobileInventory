@@ -2,7 +2,6 @@ package lost.girl.rfidmobileinventory.data.readers.rfid
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.util.Log
 import com.rscja.deviceapi.RFIDWithUHFUART
 import com.rscja.deviceapi.interfaces.IUHF
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -11,9 +10,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.lang.Thread.sleep
 import kotlin.math.floor
-
 
 class Reader(
     // время ожидания когда ждем новые метки - физика работы ридера такова, что мы не можем  100%
@@ -35,7 +34,6 @@ class Reader(
     private var lastPower = -1
     private var bgJob: Job? = null
 
-
     private var mReader: RFIDWithUHFUART? = null
 
     override var isRunned: Boolean = false
@@ -56,28 +54,26 @@ class Reader(
         isReaderInitialized = try {
             mReader = RFIDWithUHFUART.getInstance()
             val connected = mReader!!.init()
-            Log.d("chainwayReader", "connected = $connected")
+            Timber.tag("chainwayReader").d("connected = %s", connected)
             val freq = connected && mReader!!.setFrequencyMode(4)
             val filter = freq && mReader!!.setFilter(RFIDWithUHFUART.Bank_EPC, 32, 0, "")
             filter
-
-
         } catch (ex: Exception) {
-            Log.d("chainwayReader Error", ex.message ?: "")
+            Timber.tag("chainwayReader Error").d(ex.message ?: "")
             false
         }
         return isReaderInitialized
     }
 
     override fun poweroff() {
-
-        if (!isReaderInitialized)
+        if (!isReaderInitialized) {
             return
+        }
         stop()
         ignoreErr { mReader!!.stopInventory() }
         mReader = null
         isReaderInitialized = false
-        Log.d("chainwayReader", "isReaderInitialized = $isReaderInitialized")
+        Timber.tag("chainwayReader").d("isReaderInitialized = %s", isReaderInitialized)
     }
 
     override fun start(
@@ -86,16 +82,15 @@ class Reader(
         onTags: (tagsRaw: List<String>) -> Unit
     ) {
         if (!isReaderInitialized) {
-
-            Log.d("chainwayReader", "Считыватель не инициализирован")
+            Timber.tag("chainwayReader").d("Считыватель не инициализирован")
             onError("Считыватель не инициализирован")
             return
         }
         val (isOk, _) = setPwr(power)
         if (!isOk) {
-            Log.d("chainwayReader", "Ошибка установки мощности")
+            Timber.tag("chainwayReader").d("Ошибка установки мощности")
             onError("Ошибка при установке мощности")
-            return //onError(_!!)
+            return // onError(_!!)
         }
 
         bgJob?.cancel()
@@ -103,16 +98,17 @@ class Reader(
 
         isRunned = mReader!!.startInventoryTag()
         if (!isRunned) {
-            Log.d("chainwayReader", "Не удалось запустить")
+            Timber.tag("chainwayReader").d("Не удалось запустить")
             onError("Не удалось запустить")
-            bgJob?.cancel() //onError("Не удалось запустить")
+            bgJob?.cancel() // onError("Не удалось запустить")
             return
         }
     }
 
     override fun stop() {
-        if (!isRunned)
+        if (!isRunned) {
             return
+        }
         isRunned = false
         bgJob?.cancel()
         ignoreErr {
@@ -164,7 +160,6 @@ class Reader(
         return Pair(true, null)
     }
 
-
     override fun startSearch(
         power: Int,
         mask: Pair<Int, String>,
@@ -198,7 +193,6 @@ class Reader(
         }
     }
 
-
     @OptIn(DelicateCoroutinesApi::class)
     private fun runBgSearch(onTags: (tagsRaw: List<Pair<String, Int>>) -> Unit): Job {
         return GlobalScope.launch {
@@ -217,8 +211,9 @@ class Reader(
                 }
                 val curr = searchTags[res.epc]
                 val rssi = rescaleRssi(res.rssi.split(",")[0].toDouble().toInt())
-                if (curr == null || curr < rssi)
+                if (curr == null || curr < rssi) {
                     searchTags[res.epc] = rssi
+                }
 
                 if (searchTags.size > 10 || start - System.currentTimeMillis() > 200) {
                     onTags(searchTags.toList())
@@ -234,27 +229,31 @@ class Reader(
     // опираясь на данные калибровки
     private fun rescaleRssi(rawRssi: Int): Int {
         var rssi = rawRssi
-        if (rssi > distanceNear)
+        if (rssi > distanceNear) {
             rssi = distanceNear
-        if (rssi < distanceFar)
+        }
+        if (rssi < distanceFar) {
             rssi = distanceFar
+        }
         val scaled = floor(((rssi - distanceFar) / range) * 20).toInt()
-        Log.d("chainwayReader", "Tag rssi $rawRssi = $scaled")
+        Timber.tag("chainwayReader").d("Tag rssi  %s  =  %s", rawRssi, scaled)
         return scaled
     }
-
 
     // ищем именно одну метку - до записи. Для пользователя все метки физически одинаковые.
     // Нам нужно убедиться что он не перепутает и не наклеит не то. Для этого следим что ридер
     // читает только одну метку. Обычно и мощность нужно ставить пониженную мощность
     override fun readSingleEpc(power: Int): Triple<String?, Boolean, String?> {
-        if (!isReaderInitialized)
+        if (!isReaderInitialized) {
             return Triple(null, false, "Считыватель не инициализирован")
-        if (isRunned)
+        }
+        if (isRunned) {
             return Triple(null, false, "Считыватель занят")
+        }
         val (isOk, err) = setPwr(power)
-        if (!isOk)
+        if (!isOk) {
             return Triple(null, false, err!!)
+        }
         val tags = HashSet<String>()
         bgJob?.cancel()
         bgJob = runBgRead { res -> res.map { tags.add(it) } }
@@ -264,22 +263,27 @@ class Reader(
         }
         sleep(singleTimeout)
         stop()
-        if (tags.isEmpty())
+        if (tags.isEmpty()) {
             return Triple(null, false, "Нет меток")
-        if (tags.size > 1)
+        }
+        if (tags.size > 1) {
             return Triple(null, false, "Много меток (${tags.size}шт.)")
-        Log.d("chainwayReader", "Tag readed single ${tags.first()}")
+        }
+        Timber.tag("chainwayReader").d("Tag readed single %s", tags.first())
         return Triple(tags.first(), true, null)
     }
 
     override fun readEpcs(power: Int): Triple<List<String>, Boolean, String?> {
-        if (!isReaderInitialized)
+        if (!isReaderInitialized) {
             return Triple(listOf(), false, "Считыватель не инициализирован")
-        if (isRunned)
+        }
+        if (isRunned) {
             return Triple(listOf(), false, "Считыватель занят")
+        }
         val (isOk, err) = setPwr(power)
-        if (!isOk)
+        if (!isOk) {
             return Triple(listOf(), false, err!!)
+        }
         val tags = HashSet<String>()
         bgJob?.cancel()
         bgJob = runBgRead { res -> res.map { tags.add(it) } }
@@ -297,14 +301,17 @@ class Reader(
         targetEpc: String,
         newEpc: String
     ): Pair<Boolean, String?> {
-        Log.d("chainwayReader", "Tag try write $newEpc to $targetEpc")
-        if (!isReaderInitialized)
+        Timber.tag("chainwayReader").d("Tag try write %s to %s", newEpc, targetEpc)
+        if (!isReaderInitialized) {
             return Pair(false, "Считыватель не инициализирован")
-        if (isRunned)
+        }
+        if (isRunned) {
             return Pair(false, "Считыватель занят")
+        }
         val (isOk, err) = setPwr(power)
-        if (!isOk)
+        if (!isOk) {
             return Pair(false, err!!)
+        }
         sleep(200)
 
         val ret = mReader!!.writeData(
@@ -316,7 +323,7 @@ class Reader(
         if (!ret) {
             return Pair(false, "Ошибка записи")
         }
-        Log.d("chainwayReader", "Tag write $newEpc")
+        Timber.tag("chainwayReader").d("Tag write %s", newEpc)
         return Pair(true, null)
     }
 
@@ -324,29 +331,37 @@ class Reader(
         power: Int,
         targetEpc: String
     ): Pair<String?, String?> {
-        Log.d("chainwayReader", "Tag try readSingleReserved from $targetEpc")
-        if (!isReaderInitialized)
+        Timber.tag("chainwayReader").d("Tag try readSingleReserved from %s", targetEpc)
+        if (!isReaderInitialized) {
             return Pair(null, "Считыватель не инициализирован")
-        if (isRunned)
+        }
+        if (isRunned) {
             return Pair(null, "Считыватель занят")
+        }
         val (isOk, err) = setPwr(power)
-        if (!isOk)
+        if (!isOk) {
             return Pair(null, err!!)
+        }
         sleep(200)
         val ret = try {
             mReader!!.readData(
                 "00000000",
-                IUHF.Bank_EPC, 32, 96, targetEpc.uppercase(),
-                IUHF.Bank_RESERVED, 0, 4
+                IUHF.Bank_EPC,
+                32,
+                96,
+                targetEpc.uppercase(),
+                IUHF.Bank_RESERVED,
+                0,
+                4
             )
         } catch (ex: Exception) {
-            Log.e("chainwayReader", ex.message!!)
+            Timber.tag("chainwayReader").e(ex.message!!)
             return Pair(null, "Ошибка чтения: ${ex.message}")
         }
         if (ret == null || ret.isEmpty()) {
             return Pair(null, "Не удалось считать данные - пустой ответ")
         }
-        Log.d("chainwayReader", "Tag read $targetEpc Reserved:$ret")
+        Timber.tag("chainwayReader").d("Tag read %s Reserved %s", targetEpc, ret)
         return Pair(ret, null)
     }
 
@@ -355,18 +370,22 @@ class Reader(
         targetEpc: String,
         newReserved: ByteArray
     ): Pair<Boolean, String?> {
-        Log.d("chainwayReader", "Tag try writeSingleReserved to $targetEpc with $newReserved")
+        Timber.tag("chainwayReader")
+            .d("Tag try writeSingleReserved to %s with %s", targetEpc, newReserved)
         if (newReserved.size != 8) {
             return Pair(false, "Неправильный формат. Ожидалось Reserved 8 байт")
         }
-        if (!isReaderInitialized)
+        if (!isReaderInitialized) {
             return Pair(false, "Считыватель не инициализирован")
-        if (isRunned)
+        }
+        if (isRunned) {
             return Pair(false, "Считыватель занят")
+        }
 
         val (isOk, err) = setPwr(power)
-        if (!isOk)
+        if (!isOk) {
             return Pair(false, err!!)
+        }
         sleep(200)
         val ret = try {
             mReader!!.writeData(
@@ -375,13 +394,14 @@ class Reader(
                 IUHF.Bank_RESERVED, 0, 4, newReserved.toHex()
             )
         } catch (ex: Exception) {
-            Log.e("chainwayReader", ex.message!!)
+            Timber.tag("chainwayReader").e(ex.message!!)
             return Pair(false, "Ошибка записи: ${ex.message}")
         }
         if (!ret) {
             return Pair(false, "Не удалось записать данные")
         }
-        Log.d("chainwayReader", "Tag writeSingleReserved $targetEpc Reserved:$newReserved OK")
+        Timber.tag("chainwayReader")
+            .d("Tag writeSingleReserved %s Reserved %s", targetEpc, newReserved)
         return Pair(true, null)
     }
 
@@ -395,7 +415,8 @@ class Reader(
             try {
                 oper()
             } catch (ex: Exception) {
-                Log.d("ignoredErr(chainwayReader)", ex.message ?: "")
+                Timber.tag("ignoredErr(chainwayReader)")
+                    .d(ex.message ?: "")
             }
         }
     }

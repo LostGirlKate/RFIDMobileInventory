@@ -4,9 +4,8 @@ import android.app.AlertDialog
 import android.app.Application
 import android.content.ContentResolver
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import lost.girl.rfidmobileinventory.R
 import lost.girl.rfidmobileinventory.domain.usescase.ClearDataBaseUseCase
@@ -21,14 +20,14 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 class InventoryMainViewModel(
-    application: Application,
     private val getInventoryInfo: GetInventoryInfoUseCase,
     private val loadDataToDataBaseUseCase: LoadDataToDataBaseUseCase,
     private val getDataForExcelUseCase: GetDataForExcelUseCase,
     private val clearDataBaseUseCase: ClearDataBaseUseCase,
     private val getDataFromExcelUseCase: GetDataFromExcelUseCase,
     private val exportDataToExcelFileUseCase: ExportDataToExcelFileUseCase,
-    private val isRFIDReaderInitializedUseCase: IsRFIDReaderInitializedUseCase
+    private val isRFIDReaderInitializedUseCase: IsRFIDReaderInitializedUseCase,
+    application: Application
 ) :
     MviViewModel<InventoryMainViewState, InventoryMainViewEffect, InventoryMainViewEvent>(
         application
@@ -41,33 +40,46 @@ class InventoryMainViewModel(
     override fun process(viewEvent: InventoryMainViewEvent) {
         super.process(viewEvent)
         when (viewEvent) {
-            InventoryMainViewEvent.OpenFileManager -> openFileManager()
+            InventoryMainViewEvent.OpenFileManager -> {
+                openFileManager()
+            }
 
-            is InventoryMainViewEvent.LoadDataFromFile -> loadDataFromExcel(
-                viewEvent.uri,
-                viewEvent.contentResolver,
-                viewEvent.processDialog
-            )
+            is InventoryMainViewEvent.LoadDataFromFile -> {
+                loadDataFromExcel(
+                    viewEvent.uri,
+                    viewEvent.contentResolver,
+                    viewEvent.processDialog
+                )
+            }
 
-            is InventoryMainViewEvent.SaveDataToFile -> exportDataToExcel(
-                viewEvent.processDialog
-            )
+            is InventoryMainViewEvent.SaveDataToFile -> {
+                exportDataToExcel(
+                    viewEvent.processDialog
+                )
+            }
 
-            is InventoryMainViewEvent.CloseInventory -> closeInventory(viewEvent.processDialog)
+            is InventoryMainViewEvent.CloseInventory -> {
+                closeInventory(viewEvent.processDialog)
+            }
 
-            is InventoryMainViewEvent.ShowProcessDialog -> showProcessDialog(
-                viewEvent.message,
-                viewEvent.processEvent
-            )
+            is InventoryMainViewEvent.ShowProcessDialog -> {
+                showProcessDialog(
+                    viewEvent.message,
+                    viewEvent.processEvent
+                )
+            }
 
-            is InventoryMainViewEvent.ShowAlertDialog -> showAlertDialog(
-                viewEvent.message,
-                viewEvent.onOkClickListener
-            )
+            is InventoryMainViewEvent.ShowAlertDialog -> {
+                showAlertDialog(
+                    viewEvent.message,
+                    viewEvent.onOkClickListener
+                )
+            }
 
-            InventoryMainViewEvent.RefreshData -> refreshInventoryState()
+            InventoryMainViewEvent.RefreshData -> {
+                refreshInventoryState()
+            }
         }
-
     }
 
     private fun openFileManager() {
@@ -87,8 +99,7 @@ class InventoryMainViewModel(
         contentResolver: ContentResolver,
         processDialog: AlertDialog?
     ) {
-        viewModelScope.launch {
-            delay(1000)
+        viewModelScope.launch(Dispatchers.IO) {
             val dataArray =
                 getDataFromExcelUseCase.execute(
                     uri,
@@ -101,15 +112,12 @@ class InventoryMainViewModel(
                 !parseResult
             )
         }
-
     }
 
     private fun exportDataToExcel(
         processDialog: AlertDialog?
     ) {
-        viewModelScope.launch {
-            Log.d("InvMobRFID", "Start export file")
-            delay(1000)
+        viewModelScope.launch(Dispatchers.IO) {
             val loadResult = exportData()
             viewEffect = InventoryMainViewEffect.HideAlertProcessDialog(processDialog)
             viewEffect = InventoryMainViewEffect.ShowToast(
@@ -124,23 +132,19 @@ class InventoryMainViewModel(
     }
 
     private fun closeInventory(processDialog: AlertDialog?) {
-        viewModelScope.launch {
-            var totalResult = true
-            var actionResult = exportData()
-            if (!actionResult) totalResult = false
-            actionResult = clearDataBaseUseCase.execute()
-            if (!actionResult) totalResult = false
-            delay(2000)
+        viewModelScope.launch(Dispatchers.IO) {
+            var result = exportData()
+            if (result) {
+                result = clearDataBaseUseCase.execute()
+            }
             refreshInventoryState()
-            Log.d("InvMobRFID", "totalResult $totalResult")
             viewEffect = InventoryMainViewEffect.HideAlertProcessDialog(processDialog)
             viewEffect = InventoryMainViewEffect.ShowToast(
                 R.string.data_save_message, R.string.data_error_save_message,
-                !totalResult
+                !result
             )
         }
     }
-
 
     private suspend fun exportData(): Boolean {
         val dateFormat = SimpleDateFormat("dd.MM.yyyy HH.mm", Locale.US)

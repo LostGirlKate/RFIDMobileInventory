@@ -17,5 +17,4 @@ class InventoryLocation(
         id = this.id,
         name = this.name
     )
-
 }

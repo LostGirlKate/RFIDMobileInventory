@@ -8,15 +8,15 @@ import lost.girl.rfidmobileinventory.data.storage.models.InventoryItem
 import lost.girl.rfidmobileinventory.data.storage.models.InventoryLocation
 
 @Database(entities = [InventoryLocation::class, InventoryItem::class], version = 1)
-abstract class MainDataBase: RoomDatabase() {
+abstract class MainDataBase : RoomDatabase() {
 
     abstract fun getDao(): Dao
 
-    companion object{
+    companion object {
         @Volatile
         private var INSTANCE: MainDataBase? = null
         fun getDataBase(context: Context): MainDataBase {
-            return INSTANCE ?: synchronized(this){
+            return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     MainDataBase::class.java,
@@ -28,5 +28,4 @@ abstract class MainDataBase: RoomDatabase() {
             }
         }
     }
-
 }

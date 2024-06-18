@@ -4,6 +4,6 @@ import lost.girl.rfidmobileinventory.domain.repository.RFIDReaderRepository
 
 class GetRFIDReaderPowerUseCase(private val repository: RFIDReaderRepository) {
     fun execute(): Int {
-        return repository.gerPower()
+        return repository.getPower()
     }
 }

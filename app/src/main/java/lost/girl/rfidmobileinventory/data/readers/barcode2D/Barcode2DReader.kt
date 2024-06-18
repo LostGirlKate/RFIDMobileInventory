@@ -17,7 +17,6 @@ class Barcode2DReader : BarcodeReader {
 
     override fun stop() {
         barcodeDecoder.stopScan()
-
     }
 
     override fun close() {

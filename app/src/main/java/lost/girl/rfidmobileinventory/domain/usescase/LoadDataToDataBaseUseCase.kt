@@ -7,6 +7,6 @@ class LoadDataToDataBaseUseCase(
     private val inventoryRepository: InventoryRepository
 ) {
     suspend fun execute(data: Array<Array<String>>): Boolean {
-       return LoadDataToDataBaseUtil.load(inventoryRepository, data)
+        return LoadDataToDataBaseUtil.load(inventoryRepository, data)
     }
 }

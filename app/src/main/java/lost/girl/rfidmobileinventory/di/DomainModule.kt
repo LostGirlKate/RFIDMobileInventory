@@ -62,7 +62,6 @@ val domainModule = module {
         GetInventoryItemByLocationIDUseCase(inventoryRepository = get())
     }
 
-
     factory<GetInventoryItemDetailUseCase> {
         GetInventoryItemDetailUseCase(repository = get(), context = get())
     }
@@ -74,9 +73,6 @@ val domainModule = module {
     factory<UpdateInventoryItemUseCase> {
         UpdateInventoryItemUseCase(inventoryRepository = get())
     }
-
-
-
 
     factory<InitRFIDReaderUseCase> {
         InitRFIDReaderUseCase(
@@ -104,8 +100,6 @@ val domainModule = module {
         IsRFIDReaderInitializedUseCase(repository = get())
     }
 
-
-
     factory<OpenBarcodeReaderUseCase> {
         OpenBarcodeReaderUseCase(repository = get(), context = get())
     }
@@ -119,5 +113,4 @@ val domainModule = module {
     factory<CloseBarcodeReaderUseCase> {
         CloseBarcodeReaderUseCase(repository = get())
     }
-
 }

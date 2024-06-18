@@ -22,9 +22,10 @@ class InventoryItemDetailAdapter :
             paramName.text = detail.paraName
             paramValue.text = detail.value
             statusBox.visibility = if (detail.isStatus) View.VISIBLE else View.GONE
-            if (detail.isStatus && detail.statusColor > 0)
+            if (detail.isStatus && detail.statusColor > 0) {
                 statusBox.background =
                     ContextCompat.getDrawable(binding.root.context, detail.statusColor)
+            }
         }
 
         companion object {
@@ -61,5 +62,4 @@ class ItemComparator : DiffUtil.ItemCallback<InventoryItemDetailModel>() {
     ): Boolean {
         return oldItem == newItem
     }
-
 }

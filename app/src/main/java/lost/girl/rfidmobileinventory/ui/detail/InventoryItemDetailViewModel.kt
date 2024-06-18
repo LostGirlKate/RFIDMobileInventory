@@ -13,7 +13,8 @@ class InventoryItemDetailViewModel(
     private val getInventoryItemDetailUseCase: GetInventoryItemDetailUseCase
 ) : MviViewModel<InventoryItemDetailState, InventoryItemDetailEffect, InventoryItemDetailEvent>(
     application
-), DefaultLifecycleObserver {
+),
+    DefaultLifecycleObserver {
 
     init {
         viewState = InventoryItemDetailState()
@@ -22,11 +23,17 @@ class InventoryItemDetailViewModel(
     override fun process(viewEvent: InventoryItemDetailEvent) {
         super.process(viewEvent)
         when (viewEvent) {
-            is InventoryItemDetailEvent.OpenDetails -> openDetails(
-                viewEvent.itemId,
-                viewEvent.state
-            )
+            is InventoryItemDetailEvent.OpenDetails -> {
+                openDetails(
+                    viewEvent.itemId,
+                    viewEvent.state
+                )
+            }
         }
+    }
+    override fun onDestroy(owner: LifecycleOwner) {
+        super.onDestroy(owner)
+        viewState = InventoryItemDetailState()
     }
 
     private fun openDetails(id: Int, state: InventoryItemState) {
@@ -42,10 +49,4 @@ class InventoryItemDetailViewModel(
             )
         )
     }
-
-    override fun onDestroy(owner: LifecycleOwner) {
-        super.onDestroy(owner)
-        viewState = InventoryItemDetailState()
-    }
-
 }

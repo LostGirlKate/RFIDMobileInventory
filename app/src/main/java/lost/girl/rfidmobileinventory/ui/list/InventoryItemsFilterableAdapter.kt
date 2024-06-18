@@ -13,7 +13,9 @@ import lost.girl.rfidmobileinventory.domain.models.InventoryItemForListModel
 import lost.girl.rfidmobileinventory.domain.models.InventoryItemState
 import lost.girl.rfidmobileinventory.utils.FilterableListAdapter
 import lost.girl.rfidmobileinventory.utils.OnItemClickListener
-
+const val FILTER_INDEX_NOT_FOUND = 1
+const val FILTER_INDEX_FOUND = 2
+const val FILTER_INDEX_FOUND_IN_WRONG_PLACE = 3
 class InventoryItemsFilterableAdapter(private val itemClickListener: OnItemClickListener<InventoryItemForListModel>) :
     FilterableListAdapter<InventoryItemForListModel, InventoryItemsFilterableAdapter.ItemHolder>(
         ItemComparatorAllItems()
@@ -30,20 +32,26 @@ class InventoryItemsFilterableAdapter(private val itemClickListener: OnItemClick
             itemLocation.text = item.location
             itemNum.text = item.inventoryNum
             when (item.state) {
-                InventoryItemState.STATE_NOT_FOUND -> backgroudConstrain.background =
-                    ContextCompat.getDrawable(binding.root.context, R.drawable.red_item_background)
+                InventoryItemState.STATE_NOT_FOUND ->
+                    backgroudConstrain.background =
+                        ContextCompat.getDrawable(
+                            binding.root.context,
+                            R.drawable.red_item_background
+                        )
 
-                InventoryItemState.STATE_FOUND -> backgroudConstrain.background =
-                    ContextCompat.getDrawable(
-                        binding.root.context,
-                        R.drawable.green_item_background
-                    )
+                InventoryItemState.STATE_FOUND ->
+                    backgroudConstrain.background =
+                        ContextCompat.getDrawable(
+                            binding.root.context,
+                            R.drawable.green_item_background
+                        )
 
-                InventoryItemState.STATE_FOUND_IN_WRONG_PLACE -> backgroudConstrain.background =
-                    ContextCompat.getDrawable(
-                        binding.root.context,
-                        R.drawable.orange_item_background
-                    )
+                InventoryItemState.STATE_FOUND_IN_WRONG_PLACE ->
+                    backgroudConstrain.background =
+                        ContextCompat.getDrawable(
+                            binding.root.context,
+                            R.drawable.orange_item_background
+                        )
             }
             cardView.setOnClickListener {
                 itemClickListener.onItemClick(item)
@@ -74,16 +82,17 @@ class InventoryItemsFilterableAdapter(private val itemClickListener: OnItemClick
     ): List<InventoryItemForListModel> {
         val filterList = constraint.split("~")
         val firstFilter = filterList.first().lowercase()
-        val showNotFound = filterList[1].toBoolean()
-        val showFound = filterList[2].toBoolean()
-        val showFoundInWrongPlace = filterList[3].toBoolean()
+        val showNotFound = filterList[FILTER_INDEX_NOT_FOUND].toBoolean()
+        val showFound = filterList[FILTER_INDEX_FOUND].toBoolean()
+        val showFoundInWrongPlace = filterList[FILTER_INDEX_FOUND_IN_WRONG_PLACE].toBoolean()
         return list.filter {
-            (it.model.lowercase().contains(firstFilter) ||
-              it.inventoryNum.lowercase().contains(firstFilter)
-            )
-                    && (showNotFound || it.state != InventoryItemState.STATE_NOT_FOUND)
-                    && (showFound || it.state != InventoryItemState.STATE_FOUND)
-                    && (showFoundInWrongPlace || it.state != InventoryItemState.STATE_FOUND_IN_WRONG_PLACE)
+            (
+                it.model.lowercase().contains(firstFilter) ||
+                    it.inventoryNum.lowercase().contains(firstFilter)
+                ) &&
+                (showNotFound || it.state != InventoryItemState.STATE_NOT_FOUND) &&
+                (showFound || it.state != InventoryItemState.STATE_FOUND) &&
+                (showFoundInWrongPlace || it.state != InventoryItemState.STATE_FOUND_IN_WRONG_PLACE)
         }
     }
 }

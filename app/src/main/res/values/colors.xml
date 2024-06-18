@@ -87,4 +87,6 @@
 
     <color name="gray_80">#808080</color>
     <color name="grey_c2">#C2C2C2</color>
+
+    <color name="separatorColor">#80bdc3c7</color>
 </resources>

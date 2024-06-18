@@ -18,20 +18,14 @@ abstract class MviFragment<STATE, EFFECT, EVENT, ViewModel : MviViewModel<STATE,
         renderViewState(it)
     }
 
-    private val viewEffectObserver = Observer<EFFECT> {
-        renderViewEffect(it)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.viewStates().observe(viewLifecycleOwner, viewStateObserver)
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.viewEffects().collect {renderViewEffect(it)}
+                viewModel.viewEffects().collect { renderViewEffect(it) }
             }
         }
-
-      //  viewModel.viewEffects().observe(viewLifecycleOwner, viewEffectObserver)
     }
 
     abstract fun renderViewState(viewState: STATE)

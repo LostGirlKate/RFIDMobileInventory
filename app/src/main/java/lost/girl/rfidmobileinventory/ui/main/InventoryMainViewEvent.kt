@@ -9,8 +9,7 @@ sealed class InventoryMainViewEvent {
         val uri: Uri,
         val contentResolver: ContentResolver,
         val processDialog: AlertDialog? = null
-    ) : InventoryMainViewEvent(
-    )
+    ) : InventoryMainViewEvent()
 
     object OpenFileManager : InventoryMainViewEvent()
     object RefreshData : InventoryMainViewEvent()
@@ -26,5 +25,4 @@ sealed class InventoryMainViewEvent {
 
     data class ShowAlertDialog(val message: Int, val onOkClickListener: () -> Unit) :
         InventoryMainViewEvent()
-
 }

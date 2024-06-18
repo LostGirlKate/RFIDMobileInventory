@@ -16,26 +16,22 @@ import lost.girl.rfidmobileinventory.R
 import lost.girl.rfidmobileinventory.databinding.FragmentInventoryMainBinding
 import lost.girl.rfidmobileinventory.mvi.MviFragment
 import lost.girl.rfidmobileinventory.utils.ExcelUtil
-import lost.girl.rfidmobileinventory.utils.UIHelper.Companion.alertDialog
-import lost.girl.rfidmobileinventory.utils.UIHelper.Companion.alertProcessDialog
-import lost.girl.rfidmobileinventory.utils.UIHelper.Companion.showToastMessage
+import lost.girl.rfidmobileinventory.utils.UIHelper.alertDialog
+import lost.girl.rfidmobileinventory.utils.UIHelper.alertProcessDialog
+import lost.girl.rfidmobileinventory.utils.UIHelper.showToastMessage
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class InventoryMainFragment :
     MviFragment<InventoryMainViewState, InventoryMainViewEffect, InventoryMainViewEvent, InventoryMainViewModel>() {
-
-    private lateinit var binding: FragmentInventoryMainBinding
-
     override val viewModel by viewModel<InventoryMainViewModel>()
-
-
+    private lateinit var binding: FragmentInventoryMainBinding
     private var activeProcessDialog: AlertDialog? = null
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Inflate the layout for this fragment
         binding = FragmentInventoryMainBinding.inflate(layoutInflater)
         return binding.root
     }
@@ -45,39 +41,6 @@ class InventoryMainFragment :
         initButtons()
         viewModel.process(InventoryMainViewEvent.RefreshData)
     }
-
-
-    private fun initButtons() = with(binding) {
-        openInventoryButton.setOnClickListener {
-            findNavController().navigate(R.id.action_inventoryMainFragment_to_inventoryListFragment)
-        }
-
-        loadFromFileButton.setOnClickListener {
-            viewModel.process(InventoryMainViewEvent.OpenFileManager)
-        }
-
-        exportButton.setOnClickListener {
-            viewModel.process(
-                InventoryMainViewEvent.ShowProcessDialog(
-                    R.string.file_save_action_message,
-                    InventoryMainViewEvent.SaveDataToFile()
-                )
-            )
-        }
-
-        closeInventoryButton.setOnClickListener {
-            viewModel.process(InventoryMainViewEvent.ShowAlertDialog(R.string.clear_all_message) {
-                viewModel.process(
-                    InventoryMainViewEvent.ShowProcessDialog(
-                        R.string.file_save_action_message,
-                        InventoryMainViewEvent.CloseInventory()
-                    )
-                )
-            }
-            )
-        }
-    }
-
 
     override fun renderViewEffect(viewEffect: InventoryMainViewEffect) {
         when (viewEffect) {
@@ -103,7 +66,6 @@ class InventoryMainFragment :
 
             InventoryMainViewEffect.OpenFileManager -> openFileManager()
         }
-
     }
 
     override fun renderViewState(viewState: InventoryMainViewState) = with(binding) {
@@ -113,7 +75,6 @@ class InventoryMainFragment :
         countFoundText.text = viewState.inventoryState.countFoundString
         countNotFoundText.text = viewState.inventoryState.countNotFoundString
         countFoundInWrongPlaceText.text = viewState.inventoryState.countFoundInWrongPlaceString
-
         mainInfoBlock.visibility = if (viewState.mainInfoBlockVisible) View.VISIBLE else View.GONE
         openInventoryButton.visibility =
             if (viewState.openInventoryButtonVisible) View.VISIBLE else View.GONE
@@ -131,6 +92,34 @@ class InventoryMainFragment :
             )
         )
     }
+    private fun initButtons() = with(binding) {
+        openInventoryButton.setOnClickListener {
+            findNavController().navigate(R.id.action_inventoryMainFragment_to_inventoryListFragment)
+        }
+        loadFromFileButton.setOnClickListener {
+            viewModel.process(InventoryMainViewEvent.OpenFileManager)
+        }
+        exportButton.setOnClickListener {
+            viewModel.process(
+                InventoryMainViewEvent.ShowProcessDialog(
+                    R.string.file_save_action_message,
+                    InventoryMainViewEvent.SaveDataToFile()
+                )
+            )
+        }
+        closeInventoryButton.setOnClickListener {
+            viewModel.process(
+                InventoryMainViewEvent.ShowAlertDialog(R.string.clear_all_message) {
+                    viewModel.process(
+                        InventoryMainViewEvent.ShowProcessDialog(
+                            R.string.file_save_action_message,
+                            InventoryMainViewEvent.CloseInventory()
+                        )
+                    )
+                }
+            )
+        }
+    }
 
     private fun showToast(message: Int, errorMessage: Int, isError: Boolean = false) {
         showToastMessage(
@@ -142,22 +131,29 @@ class InventoryMainFragment :
 
     private fun showProcessDialog(message: Int, processEvent: InventoryMainViewEvent) {
         val dialog = alertProcessDialog(
-            requireContext(), getString(message)
+            requireContext(),
+            getString(message)
         )
         activeProcessDialog = dialog
         dialog.show()
         when (processEvent) {
-            is InventoryMainViewEvent.LoadDataFromFile -> viewModel.process(
-                processEvent.copy(processDialog = activeProcessDialog)
-            )
+            is InventoryMainViewEvent.LoadDataFromFile -> {
+                viewModel.process(
+                    processEvent.copy(processDialog = activeProcessDialog)
+                )
+            }
 
-            is InventoryMainViewEvent.SaveDataToFile -> viewModel.process(
-                processEvent.copy(processDialog = activeProcessDialog)
-            )
+            is InventoryMainViewEvent.SaveDataToFile -> {
+                viewModel.process(
+                    processEvent.copy(processDialog = activeProcessDialog)
+                )
+            }
 
-            is InventoryMainViewEvent.CloseInventory -> viewModel.process(
-                processEvent.copy(processDialog = activeProcessDialog)
-            )
+            is InventoryMainViewEvent.CloseInventory -> {
+                viewModel.process(
+                    processEvent.copy(processDialog = activeProcessDialog)
+                )
+            }
 
             else -> {}
         }
@@ -197,8 +193,8 @@ class InventoryMainFragment :
             1
         )
         val mimetypes = arrayOf(
-            ExcelUtil.MEM_TYPE_XLS,  // .xls
-            ExcelUtil.MEM_TYPE_XLSX // .xlsx
+            ExcelUtil.MEM_TYPE_XLS,
+            ExcelUtil.MEM_TYPE_XLSX
         )
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
         intent.addCategory(Intent.CATEGORY_OPENABLE)

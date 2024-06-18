@@ -11,13 +11,17 @@ data class InventoryCounts(
     val countFoundInWrongPlace: Int
 ) {
     fun toInventoryInfoModel(): InventoryInfoModel {
+        // расчет статуса инвентаризации на основании общего и найденного кол-ва меток
         val state = when (this.countAll) {
             0 -> InventoryState.STATE_NOT_START
             (this.countFound + this.countFoundInWrongPlace) -> InventoryState.STATE_READY
             else -> InventoryState.STATE_WORK
         }
-        val percentFound = if (this.countAll > 0)
-            ((this.countFound + this.countFoundInWrongPlace) / (this.countAll.toDouble()) * 100).toInt() else 0
+        val percentFound = if (this.countAll > 0) {
+            ((this.countFound + this.countFoundInWrongPlace) / (this.countAll.toDouble()) * 100).toInt()
+        } else {
+            0
+        }
 
         val percentFoundString = "$percentFound%"
 
