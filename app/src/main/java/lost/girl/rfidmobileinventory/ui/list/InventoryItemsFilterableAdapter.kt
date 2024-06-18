@@ -31,27 +31,27 @@ class InventoryItemsFilterableAdapter(private val itemClickListener: OnItemClick
             itemName.text = item.model
             itemLocation.text = item.location
             itemNum.text = item.inventoryNum
-            when (item.state) {
-                InventoryItemState.STATE_NOT_FOUND ->
-                    backgroudConstrain.background =
-                        ContextCompat.getDrawable(
-                            binding.root.context,
-                            R.drawable.red_item_background
-                        )
+            backgroudConstrain.background = when (item.state) {
+                InventoryItemState.STATE_NOT_FOUND -> {
+                    ContextCompat.getDrawable(
+                        binding.root.context,
+                        R.drawable.red_item_background
+                    )
+                }
 
-                InventoryItemState.STATE_FOUND ->
-                    backgroudConstrain.background =
-                        ContextCompat.getDrawable(
-                            binding.root.context,
-                            R.drawable.green_item_background
-                        )
+                InventoryItemState.STATE_FOUND -> {
+                    ContextCompat.getDrawable(
+                        binding.root.context,
+                        R.drawable.green_item_background
+                    )
+                }
 
-                InventoryItemState.STATE_FOUND_IN_WRONG_PLACE ->
-                    backgroudConstrain.background =
-                        ContextCompat.getDrawable(
-                            binding.root.context,
-                            R.drawable.orange_item_background
-                        )
+                InventoryItemState.STATE_FOUND_IN_WRONG_PLACE -> {
+                    ContextCompat.getDrawable(
+                        binding.root.context,
+                        R.drawable.orange_item_background
+                    )
+                }
             }
             cardView.setOnClickListener {
                 itemClickListener.onItemClick(item)

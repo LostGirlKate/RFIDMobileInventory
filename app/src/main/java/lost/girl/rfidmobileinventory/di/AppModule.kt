@@ -9,7 +9,6 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val appModule = module {
-
     viewModel<InventoryMainViewModel> {
         InventoryMainViewModel(
             application = androidApplication(),
@@ -22,7 +21,6 @@ val appModule = module {
             isRFIDReaderInitializedUseCase = get()
         )
     }
-
     viewModel<InventoryListViewModel> {
         InventoryListViewModel(
             application = androidApplication(),
@@ -31,7 +29,6 @@ val appModule = module {
             getInventoryItemByLocationIDUseCase = get()
         )
     }
-
     viewModel<RfidScannerViewModel> {
         RfidScannerViewModel(
             application = androidApplication(),
@@ -49,7 +46,6 @@ val appModule = module {
             stopBarcodeReaderUseCase = get()
         )
     }
-
     viewModel<InventoryItemDetailViewModel> {
         InventoryItemDetailViewModel(
             application = androidApplication(),

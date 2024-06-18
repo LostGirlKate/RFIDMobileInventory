@@ -13,9 +13,18 @@ data class InventoryItemForExportModel(
     var actualLocation: String
 ) {
     fun toListOfString(): List<String> {
-        return "$rowNum,$inventoryNum,$managerName,$location,$type,$model,$serialNum,$shipmentNum,$rfidCardNum,${if (actualLocation == "null") "" else actualLocation}".split(
+        return """$rowNum,
+            $inventoryNum,
+            $managerName,
+            $location,
+            $type,
+            $model,
+            $serialNum,
+            $shipmentNum,
+            $rfidCardNum,
+            ${if (actualLocation == "null") "" else actualLocation}
+        """.trimMargin().split(
             ','
         )
     }
-
 }

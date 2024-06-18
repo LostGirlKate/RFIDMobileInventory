@@ -33,13 +33,11 @@ object ExcelUtil {
     ): Boolean {
         val workbook = SXSSFWorkbook()
         val sheet = workbook.createSheet(WorkbookUtil.createSafeSheetName("mysheet"))
-
         val row: Row = sheet.createRow(0)
         for ((i, item) in columnNames.withIndex()) {
             val cell = row.createCell(i)
             cell.setCellValue(item)
         }
-
         for ((i, item) in data.withIndex()) {
             val rowData: Row = sheet.createRow(i + 1)
             for (j in item.indices) {
@@ -47,7 +45,6 @@ object ExcelUtil {
                 cell.setCellValue(item[j])
             }
         }
-
         return try {
             val outFile = File(
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
@@ -78,7 +75,6 @@ object ExcelUtil {
             val workbook =
                 if (extension == "xls") HSSFWorkbook(inputStream) else XSSFWorkbook(inputStream)
             val sheet = workbook.getSheetAt(0)
-
             val rowsCount = sheet.physicalNumberOfRows
             val formulaEvaluator: FormulaEvaluator =
                 workbook.creationHelper.createFormulaEvaluator()
@@ -104,7 +100,9 @@ object ExcelUtil {
             val cell = row.getCell(c)
             val cellValue = formulaEvaluator.evaluate(cell)
             when (cellValue.cellType) {
-                Cell.CELL_TYPE_BOOLEAN -> value = "" + cellValue.booleanValue
+                Cell.CELL_TYPE_BOOLEAN -> {
+                    value = "" + cellValue.booleanValue
+                }
                 Cell.CELL_TYPE_NUMERIC -> {
                     val numericValue = cellValue.numberValue
                     value = if (HSSFDateUtil.isCellDateFormatted(cell)) {
@@ -116,7 +114,9 @@ object ExcelUtil {
                     }
                 }
 
-                Cell.CELL_TYPE_STRING -> value = "" + cellValue.stringValue
+                Cell.CELL_TYPE_STRING -> {
+                    value = "" + cellValue.stringValue
+                }
                 else -> {}
             }
         } catch (e: NullPointerException) {

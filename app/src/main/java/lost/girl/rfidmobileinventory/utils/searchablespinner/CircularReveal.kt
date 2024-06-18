@@ -16,18 +16,14 @@ internal object CircularReveal {
         animationDuration: Int
     ) {
         val rootView = dialog.window!!.decorView
-
         val circularRevealAnimator: Animator
         val clickedViewRect = Rect()
         rootView.getGlobalVisibleRect(clickedViewRect)
-
         val width = rootView.measuredWidth
         val height = rootView.measuredHeight
-
         // calculate all necessary dimension for reveal
         val cx = clickedViewRect.exactCenterX().toInt()
         val cy = clickedViewRect.exactCenterY().toInt()
-
         val minRadiusForReveal =
             if (toReveal) {
                 0F
@@ -43,7 +39,6 @@ internal object CircularReveal {
             } else {
                 0F
             }
-
         circularRevealAnimator =
             ViewAnimationUtils.createCircularReveal(
                 rootView,
@@ -52,7 +47,6 @@ internal object CircularReveal {
                 minRadiusForReveal,
                 maxRadiusForReveal
             )
-
         circularRevealAnimator.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator) {
                 super.onAnimationEnd(animation)

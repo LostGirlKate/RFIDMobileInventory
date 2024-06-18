@@ -17,7 +17,6 @@ class InventoryItemDetailFragment :
         InventoryItemDetailEvent,
         InventoryItemDetailViewModel
         >() {
-
     override val viewModel by viewModel<InventoryItemDetailViewModel>()
     private lateinit var binding: FragmentInventoryItemDetailBinding
     private lateinit var adapter: InventoryItemDetailAdapter
@@ -41,8 +40,7 @@ class InventoryItemDetailFragment :
         viewModel.process(InventoryItemDetailEvent.OpenDetails(itemID, state))
     }
 
-    override fun renderViewEffect(viewEffect: InventoryItemDetailEffect) {
-    }
+    override fun renderViewEffect(viewEffect: InventoryItemDetailEffect) {}
 
     override fun renderViewState(viewState: InventoryItemDetailState) {
         adapter.submitList(viewState.details)

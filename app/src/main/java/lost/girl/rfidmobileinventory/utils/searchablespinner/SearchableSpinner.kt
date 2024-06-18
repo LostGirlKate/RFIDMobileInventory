@@ -32,35 +32,30 @@ const val VERTICAL_INSET = 40
 
 @Suppress("MemberVisibilityCanBePrivate", "RedundantSetter", "RedundantGetter")
 class SearchableSpinner(private val context: Context) : DefaultLifecycleObserver {
-    lateinit var onItemSelectListener: OnItemSelectListener
     private lateinit var dialog: AlertDialog
     private lateinit var dialogView: View
     private lateinit var recyclerAdapter: SpinnerRecyclerAdapter
-
+    lateinit var onItemSelectListener: OnItemSelectListener
     var windowTopBackgroundColor: Int? = null
         @ColorInt get() = field
         set(@ColorInt colorInt) {
             field = colorInt
         }
-
     var windowTitleTextColor: Int = ContextCompat.getColor(context, android.R.color.white)
         @ColorInt get() = field
         set(@ColorInt colorInt) {
             field = colorInt
         }
-
     var negativeButtonBackgroundColor: Int? = null
         @ColorInt get() = field
         set(@ColorInt colorInt) {
             field = colorInt
         }
-
     var negativeButtonTextColor: Int = ContextCompat.getColor(context, android.R.color.white)
         @ColorInt get() = field
         set(@ColorInt colorInt) {
             field = colorInt
         }
-
     var animationDuration: Int = DEFAULT_ANIMATION_DURATION
     var spinnerCancelable: Boolean = false
     var windowTitle: String? = null
@@ -184,7 +179,6 @@ class SearchableSpinner(private val context: Context) : DefaultLifecycleObserver
                 animationDuration
             )
         }
-
         if (spinnerCancelable || negativeButtonVisibility != SpinnerView.VISIBLE) {
             setOnCancelListener {
                 if (::recyclerAdapter.isInitialized) {
@@ -194,14 +188,12 @@ class SearchableSpinner(private val context: Context) : DefaultLifecycleObserver
                 }
             }
         }
-
         dialog.setOnKeyListener { _, keyCode, event ->
             if (event?.action == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
                 this@SearchableSpinner.dismiss()
             }
             false
         }
-
         // init WindowTittle
         if (windowTitle != null || windowTitleVisibility.visibility == SearchView.VISIBLE) {
             dialogView.textViewTitle.visibility = View.VISIBLE
@@ -210,7 +202,6 @@ class SearchableSpinner(private val context: Context) : DefaultLifecycleObserver
         } else {
             dialogView.textViewTitle.visibility = windowTitleVisibility.visibility
         }
-
         // init SearchView
         if (searchViewVisibility.visibility == SearchView.VISIBLE) {
             dialogView.searchView.queryHint = searchQueryHint
@@ -228,7 +219,6 @@ class SearchableSpinner(private val context: Context) : DefaultLifecycleObserver
         } else {
             dialogView.searchView.visibility = searchViewVisibility.visibility
         }
-
         // init NegativeButton
         if (negativeButtonVisibility.visibility == SearchView.VISIBLE) {
             dialogView.buttonClose.setOnClickListener {
@@ -240,7 +230,6 @@ class SearchableSpinner(private val context: Context) : DefaultLifecycleObserver
         } else {
             dialogView.buttonClose.visibility = negativeButtonVisibility.visibility
         }
-
         // set Recycler Adapter
         if (::recyclerAdapter.isInitialized) {
             recyclerAdapter.highlightSelectedItem = highlightSelectedItem

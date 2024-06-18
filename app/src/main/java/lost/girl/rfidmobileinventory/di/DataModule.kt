@@ -18,25 +18,20 @@ val dataModule = module {
     single<InventoryStorage> {
         MainApp.database.getDao()
     }
-
     single<InventoryRepository> {
         InventoryRepositoryImpl(inventoryStorage = get())
     }
-
     single<IRfidReader> {
         val reader = Reader()
         reader.poweron(context = get())
         reader
     }
-
     single<RFIDReaderRepository> {
         RFIDReaderRepositoryImpl(reader = get())
     }
-
     single<BarcodeReader> {
         Barcode2DReader()
     }
-
     single<BarcodeReaderRepository> {
         BarcodeReaderRepositoryImpl(reader = get())
     }

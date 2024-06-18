@@ -21,6 +21,10 @@ import lost.girl.rfidmobileinventory.databinding.CustomDialogBinding
 import lost.girl.rfidmobileinventory.databinding.CustomFilterDialogBinding
 import lost.girl.rfidmobileinventory.databinding.LayoutLoadingDialogBinding
 
+const val DIALOG_PERCENT_WIDTH = 90.0
+const val DIM_AMOUNT = 0.5f
+const val ABSOLUTE_SIZE_SPAN = 50
+
 object UIHelper {
     fun showToastMessage(context: Context, msg: String, textColor: Int) {
         val spannableString = SpannableString(msg)
@@ -36,7 +40,7 @@ object UIHelper {
             0
         )
         spannableString.setSpan(
-            AbsoluteSizeSpan(50),
+            AbsoluteSizeSpan(ABSOLUTE_SIZE_SPAN),
             0,
             spannableString.length,
             0
@@ -64,25 +68,21 @@ object UIHelper {
             .setView(binding.root)
             .setCancelable(false)
         val dialog: androidx.appcompat.app.AlertDialog? = dialogBuilder.show()
-
         binding.btnOk.setOnClickListener {
             dialog?.dismiss()
             onOkClickListener()
         }
-
         binding.btnCancel.setOnClickListener {
             dialog?.dismiss()
         }
-
-        val percent = 90.0 / 100
+        val percent = DIALOG_PERCENT_WIDTH / 100
         val dm = Resources.getSystem().displayMetrics
         val rect = dm.run { Rect(0, 0, widthPixels, heightPixels) }
         val percentWidth = rect.width() * percent
-
         val layoutParams = WindowManager.LayoutParams()
         layoutParams.copyFrom(dialog!!.window?.attributes)
         layoutParams.width = percentWidth.toInt()
-        layoutParams.dimAmount = 0.5f
+        layoutParams.dimAmount = DIM_AMOUNT
         dialog.window?.attributes = layoutParams
     }
 
@@ -92,19 +92,17 @@ object UIHelper {
         boxColor: Int,
         showBox: Boolean,
         textColor: Int,
-        cancelable: Boolean = false
+        cancelable: Boolean = false,
     ): androidx.appcompat.app.AlertDialog {
         val binding = CustomFilterDialogBinding.inflate(LayoutInflater.from(context))
         binding.messageText.text = message
         binding.messageText.setTextColor(context.getColor(textColor))
-
         if (showBox) {
             binding.cardView.findViewById<ConstraintLayout>(R.id.card_view_color).background =
                 AppCompatResources.getDrawable(context, boxColor)
         } else {
             binding.cardView.visibility = View.GONE
         }
-
         val dialogBuilder = MaterialAlertDialogBuilder(
             context,
             R.style.MaterialAlertDialog_rounded
@@ -115,17 +113,15 @@ object UIHelper {
         binding.btnOk.setOnClickListener {
             dialog?.dismiss()
         }
-        val percent = 90.0 / 100
+        val percent = DIALOG_PERCENT_WIDTH / 100
         val dm = Resources.getSystem().displayMetrics
         val rect = dm.run { Rect(0, 0, widthPixels, heightPixels) }
         val percentWidth = rect.width() * percent
-
         val layoutParams = WindowManager.LayoutParams()
         layoutParams.copyFrom(dialog!!.window?.attributes)
         layoutParams.width = percentWidth.toInt()
-        layoutParams.dimAmount = 0.5f
+        layoutParams.dimAmount = DIM_AMOUNT
         dialog.window?.attributes = layoutParams
-
         return dialog
     }
 
@@ -135,7 +131,7 @@ object UIHelper {
         checkedTextColor: Int,
         message: String,
         boxColor: Int,
-        action: () -> Unit
+        action: () -> Unit,
     ) {
         button.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
@@ -146,7 +142,6 @@ object UIHelper {
                 action()
             }
         }
-
         button.setOnLongClickListener {
             detailDialog(context, message, boxColor, true, R.color.white)
             true

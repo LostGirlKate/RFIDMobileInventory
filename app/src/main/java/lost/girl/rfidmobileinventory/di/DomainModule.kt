@@ -25,85 +25,66 @@ import lost.girl.rfidmobileinventory.domain.usescase.UpdateInventoryItemUseCase
 import org.koin.dsl.module
 
 val domainModule = module {
-
     factory<ClearDataBaseUseCase> {
         ClearDataBaseUseCase(inventoryRepository = get(), context = get())
     }
-
     factory<ExportDataToExcelFileUseCase> {
         ExportDataToExcelFileUseCase(context = get())
     }
-
     factory<GetAllInventoryItemListForScanningUseCase> {
         GetAllInventoryItemListForScanningUseCase(inventoryRepository = get())
     }
-
     factory<GetAllInventoryItemUseCase> {
         GetAllInventoryItemUseCase(inventoryRepository = get())
     }
-
     factory<GetAllLocationsUseCase> {
         GetAllLocationsUseCase(inventoryRepository = get())
     }
-
     factory<GetDataForExcelUseCase> {
         GetDataForExcelUseCase(inventoryRepository = get())
     }
-
     factory<GetDataFromExcelUseCase> {
         GetDataFromExcelUseCase()
     }
-
     factory<GetInventoryInfoUseCase> {
         GetInventoryInfoUseCase(inventoryRepository = get())
     }
-
     factory<GetInventoryItemByLocationIDUseCase> {
         GetInventoryItemByLocationIDUseCase(inventoryRepository = get())
     }
-
     factory<GetInventoryItemDetailUseCase> {
         GetInventoryItemDetailUseCase(repository = get(), context = get())
     }
-
     factory<LoadDataToDataBaseUseCase> {
         LoadDataToDataBaseUseCase(inventoryRepository = get())
     }
-
     factory<UpdateInventoryItemUseCase> {
         UpdateInventoryItemUseCase(inventoryRepository = get())
     }
-
     factory<InitRFIDReaderUseCase> {
         InitRFIDReaderUseCase(
             repository = get(),
             context = get()
         )
     }
-
     factory<StartRFiDInventoryUseCase> {
         StartRFiDInventoryUseCase(repository = get())
     }
-
     factory<StopRFIDInventoryUseCase> {
         StopRFIDInventoryUseCase(repository = get())
     }
-
     factory<GetRFIDReaderPowerUseCase> {
         GetRFIDReaderPowerUseCase(repository = get())
     }
     factory<StopRFIDReaderUseCase> {
         StopRFIDReaderUseCase(repository = get())
     }
-
     factory<IsRFIDReaderInitializedUseCase> {
         IsRFIDReaderInitializedUseCase(repository = get())
     }
-
     factory<OpenBarcodeReaderUseCase> {
         OpenBarcodeReaderUseCase(repository = get(), context = get())
     }
-
     factory<StartBarcodeReaderUseCase> {
         StartBarcodeReaderUseCase(repository = get())
     }
