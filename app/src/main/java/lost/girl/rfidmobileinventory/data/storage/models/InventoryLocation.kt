@@ -5,13 +5,14 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import lost.girl.rfidmobileinventory.domain.models.InventoryLocationFullModel
 
+// Местоположение (справочник)
 @Entity(tableName = "inventory_location")
 class InventoryLocation(
     @PrimaryKey(autoGenerate = true)
     val id: Int?,
 
     @ColumnInfo(name = "name")
-    val name: String
+    val name: String,
 ) {
     fun toInventoryLocationFullModel() = InventoryLocationFullModel(
         id = this.id,

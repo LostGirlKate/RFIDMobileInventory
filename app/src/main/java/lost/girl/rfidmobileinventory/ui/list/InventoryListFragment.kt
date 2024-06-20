@@ -33,7 +33,7 @@ class InventoryListFragment :
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         binding = FragmentInventoryListBinding.inflate(inflater, container, false)
         return binding.root
@@ -43,7 +43,7 @@ class InventoryListFragment :
         super.onViewCreated(view, savedInstanceState)
         initSpinner()
         initSearch()
-        initSetting()
+        initButtons()
         initFilterButtons()
         initRcView()
     }
@@ -59,9 +59,8 @@ class InventoryListFragment :
                 locationListName.add(location.name)
             }
         }
-        val currentLocation = viewState.currentLocationID
         binding.locationSpinner.text =
-            locationList.firstOrNull { it.id == currentLocation }?.name ?: ""
+            locationList.firstOrNull { it.id == viewState.currentLocationID }?.name ?: ""
         refreshToggleButton(filterButtonNotFound, viewState.inventoryState.countNotFoundString)
         refreshToggleButton(filterButtonFound, viewState.inventoryState.countFoundString)
         refreshToggleButton(
@@ -71,6 +70,7 @@ class InventoryListFragment :
         filterData()
     }
 
+    // Инициализация RecyclerView
     private fun initRcView() = with(binding) {
         rcInventoryList.layoutManager = LinearLayoutManager(activity)
         adapter = InventoryItemsFilterableAdapter(
@@ -83,6 +83,7 @@ class InventoryListFragment :
         rcInventoryList.adapter = adapter
     }
 
+    // Открытие окна с детализацией по ТМЦ
     private fun openItemDetail(item: InventoryItemForListModel) {
         val action =
             InventoryListFragmentDirections.actionInventoryListFragmentToInventoryItemDetailFragment(
@@ -93,6 +94,7 @@ class InventoryListFragment :
         findNavController().navigate(action)
     }
 
+    // Открытие окна для сканирования, доступно только если выбран фильтр по местоположению
     private fun openScannerFragment(type: ReaderType) {
         val title = binding.locationSpinner.text
         val locationID = locationList.firstOrNull { it.name == title }?.id ?: 0
@@ -115,6 +117,7 @@ class InventoryListFragment :
         }
     }
 
+    // Инициализация фильтров по статусам
     private fun initFilterButtons() {
         setOnCheckedChangeListenerToFilterButton(
             requireContext(),
@@ -139,11 +142,13 @@ class InventoryListFragment :
         ) { filterData() }
     }
 
-    private fun initSetting() {
+    // Инициализация кнопок для перехода в режим сканирования
+    private fun initButtons() {
         binding.openRfidScannerButton.setOnClickListener { openScannerFragment(ReaderType.RFID) }
         binding.open2dScannerButton.setOnClickListener { openScannerFragment(ReaderType.BARCODE_2D) }
     }
 
+    // Получение актуального фильтра для адаптера
     private fun getFilterString(): String =
         listOf(
             binding.searchView.query.toString(),
@@ -152,11 +157,13 @@ class InventoryListFragment :
             binding.filterButtonFoundInWrongPlace.isChecked.toString()
         ).joinToString(getString(R.string.filter_delimetr))
 
+    // Фильтрация данных с списке ТМЦ
     private fun filterData() {
         val filter = getFilterString()
         adapter.filter.filter(filter)
     }
 
+    // Инициализация SearchView
     private fun initSearch() {
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
@@ -171,6 +178,7 @@ class InventoryListFragment :
         binding.searchView.clearFocus()
     }
 
+    // Инициализация SearchableSpinner выбор местоположения
     private fun initSpinner() {
         val searchableSpinner = SearchableSpinner(requireContext())
         searchableSpinner.windowTitle = getString(R.string.location_search)
@@ -180,9 +188,6 @@ class InventoryListFragment :
                 viewModel.process(InventoryListViewEvent.EditCurrentLocation(newLocation))
             }
         }
-        searchableSpinner.searchViewVisibility = SearchableSpinner.SpinnerView.VISIBLE
-        searchableSpinner.negativeButtonVisibility = SearchableSpinner.SpinnerView.VISIBLE
-        searchableSpinner.windowTitleVisibility = SearchableSpinner.SpinnerView.VISIBLE
         searchableSpinner.setSpinnerListItems(locationListName)
         binding.locationSpinner.setOnClickListener {
             searchableSpinner.show()

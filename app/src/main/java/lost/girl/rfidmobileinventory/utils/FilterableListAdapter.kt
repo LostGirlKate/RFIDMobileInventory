@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 
 abstract class FilterableListAdapter<T, VH : RecyclerView.ViewHolder>(
-    diffCallback: DiffUtil.ItemCallback<T>
+    diffCallback: DiffUtil.ItemCallback<T>,
 ) : ListAdapter<T, VH>(diffCallback), Filterable {
 
     private var originalList: List<T> = currentList.toList()
@@ -49,3 +49,8 @@ abstract class FilterableListAdapter<T, VH : RecyclerView.ViewHolder>(
         super.submitList(onFilter(originalList, filterString))
     }
 }
+
+interface OnItemClickListener<T> {
+    fun onItemClick(item: T)
+}
+

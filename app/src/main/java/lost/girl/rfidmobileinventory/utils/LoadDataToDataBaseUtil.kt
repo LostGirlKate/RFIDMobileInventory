@@ -14,6 +14,7 @@ const val COLUMN_INDEX_SERIAL_NUM = 6
 const val COLUMN_INDEX_SHIPMENT_NUM = 7
 const val COLUMN_INDEX_RFID_CARD_NUM = 8
 
+// Загрузка массива данных в BD с учетом индексов колонок
 object LoadDataToDataBaseUtil {
     suspend fun load(
         inventoryRepository: InventoryRepository,
@@ -39,10 +40,12 @@ object LoadDataToDataBaseUtil {
                     allLocation = inventoryRepository.getAllLocationList()
                 }
                 loadedLocationID = allLocation.firstOrNull { it.name == loadedLocation }?.id ?: 0
+                // добавлем ТМЦ в список
                 itemList.add(
                     getInventoryItemByArray(array, loadedLocationID)
                 )
             }
+            // сохраняем весь список ТМЦ в BD
             inventoryRepository.insertManyInventoryItem(itemList)
         } catch (ex: Exception) {
             Timber.tag("LoadDataToDataBaseUtil").e(ex)
@@ -51,6 +54,7 @@ object LoadDataToDataBaseUtil {
         return result
     }
 
+    // Объект ТМЦ из массива строк
     private fun getInventoryItemByArray(
         array: Array<String>,
         loadedLocationID: Int,

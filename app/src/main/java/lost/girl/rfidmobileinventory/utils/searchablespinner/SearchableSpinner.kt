@@ -64,7 +64,7 @@ class SearchableSpinner(private val context: Context) : DefaultLifecycleObserver
     var dismissSpinnerOnItemClick: Boolean = true
     var highlightSelectedItem: Boolean = true
     var negativeButtonVisibility: SpinnerView = SpinnerView.VISIBLE
-    var windowTitleVisibility: SpinnerView = SpinnerView.GONE
+    var windowTitleVisibility: SpinnerView = SpinnerView.VISIBLE
     var searchViewVisibility: SpinnerView = SpinnerView.VISIBLE
     var selectedItemPosition: Int = -1
     var selectedItem: String? = null
@@ -132,7 +132,6 @@ class SearchableSpinner(private val context: Context) : DefaultLifecycleObserver
             )
     }
 
-    // Private helper methods
     override fun onDestroy(owner: LifecycleOwner) {
         super.onDestroy(owner)
         dismissDialogOnDestroy()

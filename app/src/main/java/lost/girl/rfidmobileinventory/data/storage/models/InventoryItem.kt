@@ -9,11 +9,21 @@ import lost.girl.rfidmobileinventory.domain.models.InventoryItemForListModel
 import lost.girl.rfidmobileinventory.domain.models.InventoryItemForScanningModel
 import lost.girl.rfidmobileinventory.domain.models.InventoryItemFullModel
 import lost.girl.rfidmobileinventory.domain.models.InventoryItemState
+import lost.girl.rfidmobileinventory.domain.models.toStr
 
-const val INVENTORY_ITEM_STATE_FOUND = "Найдено"
-const val INVENTORY_ITEM_STATE_NOT_FOUND = "Не найдено"
-const val INVENTORY_ITEM_STATE_FOUND_IN_WRONG_PLACE = "Найдено не на своем месте"
-
+// Единица инвентаризации (ТМЦ)
+// id - идентификатор
+// inventoryNum - инвентарный номер бухгалтерии
+// managerName - сотрудник
+// locationID - id местоположения
+// location - местоположение (начальное из файла)
+// type - тип
+// model - модель
+// serialNum - серийный номер
+// shipmentNum - номер партии (шк EAN-13)
+// rfidCardNum - RFID Dec
+// actualLocationID - id актуального местоположения
+// actualLocation - актуальное местоположение (назначается при проведении инвентаризации)
 @Entity(tableName = "inventory_item")
 class InventoryItem(
     @PrimaryKey(autoGenerate = true)
@@ -23,7 +33,7 @@ class InventoryItem(
     val inventoryNum: String,
 
     @ColumnInfo(name = "manager_name")
-    var managerName: String,
+    val managerName: String,
 
     @ColumnInfo(name = "location_id")
     val locationID: Int?,
@@ -51,7 +61,6 @@ class InventoryItem(
 
     @ColumnInfo(name = "actual_location")
     val actualLocation: String?,
-
 ) {
     fun toInventoryItemForExportModel(num: Int) =
         InventoryItemForExportModel(
@@ -67,13 +76,8 @@ class InventoryItem(
             actualLocation = this.actualLocation.toString()
         )
 
-    fun toInventoryItemFullModelForDetail(): InventoryItemForDetailFullModel {
-        val state = when (this.actualLocationID) {
-            null -> INVENTORY_ITEM_STATE_NOT_FOUND
-            this.locationID -> INVENTORY_ITEM_STATE_FOUND
-            else -> INVENTORY_ITEM_STATE_FOUND_IN_WRONG_PLACE
-        }
-        return InventoryItemForDetailFullModel(
+    fun toInventoryItemFullModelForDetail() =
+        InventoryItemForDetailFullModel(
             id = this.id,
             inventoryNum = this.inventoryNum,
             managerName = this.managerName,
@@ -84,24 +88,17 @@ class InventoryItem(
             shipmentNum = this.shipmentNum,
             rfidCardNum = this.rfidCardNum,
             actualLocation = this.actualLocation,
-            status = state
+            status = getState().toStr()
         )
-    }
 
-    fun toInventoryItemModelForList(): InventoryItemForListModel {
-        val state = when (this.actualLocationID) {
-            null -> InventoryItemState.STATE_NOT_FOUND
-            this.locationID -> InventoryItemState.STATE_FOUND
-            else -> InventoryItemState.STATE_FOUND_IN_WRONG_PLACE
-        }
-        return InventoryItemForListModel(
+    fun toInventoryItemModelForList() =
+        InventoryItemForListModel(
             id = this.id,
             model = this.model,
-            state = state,
+            state = getState(),
             inventoryNum = this.inventoryNum,
             location = this.actualLocation ?: this.location
         )
-    }
 
     fun toInventoryItemFullModel() =
         InventoryItemFullModel(
@@ -125,4 +122,12 @@ class InventoryItem(
             shipmentNum = this.shipmentNum,
             rfidCardNum = this.rfidCardNum
         )
+
+    // вычисление статуса ТМЦ
+    private fun getState() =
+        when (this.actualLocationID) {
+            null -> InventoryItemState.STATE_NOT_FOUND
+            this.locationID -> InventoryItemState.STATE_FOUND
+            else -> InventoryItemState.STATE_FOUND_IN_WRONG_PLACE
+        }
 }

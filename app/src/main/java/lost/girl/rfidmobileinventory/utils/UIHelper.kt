@@ -26,6 +26,8 @@ const val DIM_AMOUNT = 0.5f
 const val ABSOLUTE_SIZE_SPAN = 50
 
 object UIHelper {
+
+    // Отображение Tast с настройкой цвета текста
     fun showToastMessage(context: Context, msg: String, textColor: Int) {
         val spannableString = SpannableString(msg)
         spannableString.setSpan(
@@ -49,6 +51,7 @@ object UIHelper {
         toast.show()
     }
 
+    // Показать ProcessDialog с настройкой текста
     fun alertProcessDialog(context: Context, msg: String): AlertDialog {
         val builder: AlertDialog.Builder = AlertDialog.Builder(context)
         val binding = LayoutLoadingDialogBinding.inflate(LayoutInflater.from(context))
@@ -58,6 +61,7 @@ object UIHelper {
         return builder.create()
     }
 
+    // Показать AlertDialog с подтверждением действия
     fun alertDialog(context: Context, msg: String, onOkClickListener: () -> Unit) {
         val binding = CustomDialogBinding.inflate(LayoutInflater.from(context))
         binding.messageText.text = msg
@@ -67,25 +71,19 @@ object UIHelper {
         )
             .setView(binding.root)
             .setCancelable(false)
-        val dialog: androidx.appcompat.app.AlertDialog? = dialogBuilder.show()
+        val dialog: androidx.appcompat.app.AlertDialog = dialogBuilder.show()
         binding.btnOk.setOnClickListener {
-            dialog?.dismiss()
+            dialog.dismiss()
             onOkClickListener()
         }
         binding.btnCancel.setOnClickListener {
-            dialog?.dismiss()
+            dialog.dismiss()
         }
-        val percent = DIALOG_PERCENT_WIDTH / 100
-        val dm = Resources.getSystem().displayMetrics
-        val rect = dm.run { Rect(0, 0, widthPixels, heightPixels) }
-        val percentWidth = rect.width() * percent
-        val layoutParams = WindowManager.LayoutParams()
-        layoutParams.copyFrom(dialog!!.window?.attributes)
-        layoutParams.width = percentWidth.toInt()
-        layoutParams.dimAmount = DIM_AMOUNT
-        dialog.window?.attributes = layoutParams
+
+        alertDialogSetParams(dialog)
     }
 
+    // Показать FilterDialog с подсказкой по фильтрам со статусами ТМЦ
     fun detailDialog(
         context: Context,
         message: String,
@@ -109,22 +107,28 @@ object UIHelper {
         )
             .setView(binding.root)
             .setCancelable(cancelable)
-        val dialog: androidx.appcompat.app.AlertDialog? = dialogBuilder.show()
+        val dialog: androidx.appcompat.app.AlertDialog = dialogBuilder.show()
         binding.btnOk.setOnClickListener {
-            dialog?.dismiss()
+            dialog.dismiss()
         }
+        alertDialogSetParams(dialog)
+        return dialog
+    }
+
+    // Настройка размеров для AlertDialog
+    private fun alertDialogSetParams(dialog: androidx.appcompat.app.AlertDialog) {
         val percent = DIALOG_PERCENT_WIDTH / 100
         val dm = Resources.getSystem().displayMetrics
         val rect = dm.run { Rect(0, 0, widthPixels, heightPixels) }
         val percentWidth = rect.width() * percent
         val layoutParams = WindowManager.LayoutParams()
-        layoutParams.copyFrom(dialog!!.window?.attributes)
+        layoutParams.copyFrom(dialog.window?.attributes)
         layoutParams.width = percentWidth.toInt()
         layoutParams.dimAmount = DIM_AMOUNT
         dialog.window?.attributes = layoutParams
-        return dialog
     }
 
+    // настройка кнопки фильтра (отображение подсказки при LongClick и настройка OnCheckedChangeListener)
     fun setOnCheckedChangeListenerToFilterButton(
         context: Context,
         button: ToggleButton,
@@ -136,11 +140,10 @@ object UIHelper {
         button.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 button.setTextColor(context.getColor(R.color.white))
-                action()
             } else {
                 button.setTextColor(context.getColor(checkedTextColor))
-                action()
             }
+            action()
         }
         button.setOnLongClickListener {
             detailDialog(context, message, boxColor, true, R.color.white)
@@ -148,6 +151,7 @@ object UIHelper {
         }
     }
 
+    // Обновление текста на кнопке фильтра
     fun refreshToggleButton(button: ToggleButton, text: String) {
         button.textOff = text
         button.textOn = text

@@ -3,8 +3,6 @@ package lost.girl.rfidmobileinventory.data.storage.roomdb
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import androidx.room.Update
-import kotlinx.coroutines.flow.Flow
 import lost.girl.rfidmobileinventory.data.storage.InventoryStorage
 import lost.girl.rfidmobileinventory.data.storage.models.InventoryCounts
 import lost.girl.rfidmobileinventory.data.storage.models.InventoryItem
@@ -12,13 +10,6 @@ import lost.girl.rfidmobileinventory.data.storage.models.InventoryLocation
 
 @Dao
 interface Dao : InventoryStorage {
-
-    @Update
-    override suspend fun updateInventoryItem(item: InventoryItem)
-
-    @Query("select * from inventory_location order by name")
-    override fun getAllInventoryLocation(): Flow<List<InventoryLocation>>
-
     @Insert
     override suspend fun insertInventoryLocation(location: InventoryLocation)
 
@@ -52,15 +43,6 @@ interface Dao : InventoryStorage {
 
     @Query("select * from inventory_item where  id like :id")
     override fun getInventoryItemDetail(id: Int): InventoryItem
-
-    @Query(
-        "UPDATE inventory_item SET actual_location_id = :locationID , actual_location = :location WHERE id in (:items) "
-    )
-    override fun updateLocationInventoryItem(
-        locationID: Int,
-        location: String,
-        items: List<String>,
-    )
 
     @Query("UPDATE inventory_item SET actual_location_id = :locationID , actual_location = :location WHERE id = :id ")
     override fun updateLocationInventoryItemByID(

@@ -6,24 +6,28 @@ import com.rscja.barcode.BarcodeFactory
 import com.rscja.barcode.BarcodeUtility
 
 class Barcode2DReader : BarcodeReader {
-    override var isOpen = false
 
+    override var isOpen = false
     private var barcodeDecoder =
         BarcodeFactory.getInstance().barcodeDecoder
 
+    // старт сканирования
     override fun start(): Boolean {
         return barcodeDecoder.startScan()
     }
 
+    // остановка сканирования
     override fun stop() {
         barcodeDecoder.stopScan()
     }
 
+    // закрытие 2D сканера
     override fun close() {
         isOpen = false
         barcodeDecoder.close()
     }
 
+    // инициализация 2D сканера с установкой callback для обработки результата сканировния
     override suspend fun open(context: Context, onSuccess: (String) -> Unit): Boolean {
         isOpen = barcodeDecoder.open(context)
         BarcodeUtility.getInstance().enableVibrate(context, true)

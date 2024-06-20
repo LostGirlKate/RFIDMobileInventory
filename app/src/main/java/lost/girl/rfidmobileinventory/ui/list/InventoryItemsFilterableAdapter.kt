@@ -11,11 +11,14 @@ import lost.girl.rfidmobileinventory.R
 import lost.girl.rfidmobileinventory.databinding.InventoryItemBinding
 import lost.girl.rfidmobileinventory.domain.models.InventoryItemForListModel
 import lost.girl.rfidmobileinventory.domain.models.InventoryItemState
+import lost.girl.rfidmobileinventory.domain.models.toColor
 import lost.girl.rfidmobileinventory.utils.FilterableListAdapter
 import lost.girl.rfidmobileinventory.utils.OnItemClickListener
+
 const val FILTER_INDEX_NOT_FOUND = 1
 const val FILTER_INDEX_FOUND = 2
 const val FILTER_INDEX_FOUND_IN_WRONG_PLACE = 3
+
 class InventoryItemsFilterableAdapter(private val itemClickListener: OnItemClickListener<InventoryItemForListModel>) :
     FilterableListAdapter<InventoryItemForListModel, InventoryItemsFilterableAdapter.ItemHolder>(
         ItemComparatorAllItems()
@@ -26,33 +29,15 @@ class InventoryItemsFilterableAdapter(private val itemClickListener: OnItemClick
 
         fun setData(
             item: InventoryItemForListModel,
-            itemClickListener: OnItemClickListener<InventoryItemForListModel>
+            itemClickListener: OnItemClickListener<InventoryItemForListModel>,
         ) = with(binding) {
             itemName.text = item.model
             itemLocation.text = item.location
             itemNum.text = item.inventoryNum
-            backgroudConstrain.background = when (item.state) {
-                InventoryItemState.STATE_NOT_FOUND -> {
-                    ContextCompat.getDrawable(
-                        binding.root.context,
-                        R.drawable.red_item_background
-                    )
-                }
-
-                InventoryItemState.STATE_FOUND -> {
-                    ContextCompat.getDrawable(
-                        binding.root.context,
-                        R.drawable.green_item_background
-                    )
-                }
-
-                InventoryItemState.STATE_FOUND_IN_WRONG_PLACE -> {
-                    ContextCompat.getDrawable(
-                        binding.root.context,
-                        R.drawable.orange_item_background
-                    )
-                }
-            }
+            backgroudConstrain.background = ContextCompat.getDrawable(
+                binding.root.context,
+                item.state.toColor()
+            )
             cardView.setOnClickListener {
                 itemClickListener.onItemClick(item)
             }
@@ -78,7 +63,7 @@ class InventoryItemsFilterableAdapter(private val itemClickListener: OnItemClick
 
     override fun onFilter(
         list: List<InventoryItemForListModel>,
-        constraint: String
+        constraint: String,
     ): List<InventoryItemForListModel> {
         val filterList = constraint.split("~")
         val firstFilter = filterList.first().lowercase()
@@ -100,7 +85,7 @@ class InventoryItemsFilterableAdapter(private val itemClickListener: OnItemClick
 class ItemComparatorAllItems : DiffUtil.ItemCallback<InventoryItemForListModel>() {
     override fun areItemsTheSame(
         oldItem: InventoryItemForListModel,
-        newItem: InventoryItemForListModel
+        newItem: InventoryItemForListModel,
     ): Boolean {
         return oldItem.id == newItem.id
     }
@@ -108,7 +93,7 @@ class ItemComparatorAllItems : DiffUtil.ItemCallback<InventoryItemForListModel>(
     @SuppressLint("DiffUtilEquals")
     override fun areContentsTheSame(
         oldItem: InventoryItemForListModel,
-        newItem: InventoryItemForListModel
+        newItem: InventoryItemForListModel,
     ): Boolean {
         return oldItem == newItem
     }

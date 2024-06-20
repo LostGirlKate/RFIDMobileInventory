@@ -12,7 +12,7 @@ class InventoryListViewModel(
     private val getInventoryItemByLocationIDUseCase: GetInventoryItemByLocationIDUseCase,
     private val getInventoryInfo: GetInventoryInfoUseCase,
     application: Application,
-    getAllLocationsUseCase: GetAllLocationsUseCase
+    getAllLocationsUseCase: GetAllLocationsUseCase,
 ) : MviViewModel<InventoryListViewState, InventoryListViewEffect, InventoryListViewEvent>(
     application
 ) {
@@ -34,6 +34,7 @@ class InventoryListViewModel(
         }
     }
 
+    // Обновление данных(общего списка ТМЦ и информации об инвентаризации) с учетом выбранного фильтра по местоположению
     private fun editCurrentLocation(idLocation: Int) = viewModelScope.launch {
         viewState = viewState.copy(
             currentLocationID = idLocation,

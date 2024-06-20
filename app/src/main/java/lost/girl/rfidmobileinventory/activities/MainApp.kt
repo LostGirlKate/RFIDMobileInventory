@@ -17,11 +17,6 @@ class MainApp : Application() {
         instance = this
     }
 
-    companion object {
-        private var instance: MainApp? = null
-        val database by lazy { MainDataBase.getDataBase(instance!!.applicationContext) }
-    }
-
     override fun onCreate() {
         super.onCreate()
         plant(DebugTree())
@@ -30,5 +25,10 @@ class MainApp : Application() {
             androidContext(this@MainApp)
             modules(listOf(appModule, domainModule, dataModule))
         }
+    }
+
+    companion object {
+        private var instance: MainApp? = null
+        val database by lazy { MainDataBase.getDataBase(instance!!.applicationContext) }
     }
 }

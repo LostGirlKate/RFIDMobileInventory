@@ -35,6 +35,7 @@ open class MviViewModel<STATE, EFFECT, EVENT>(application: Application) :
             _viewEffects.tryEmit(value)
         }
 
+    // Обработка событий поступающих из UI
     @CallSuper
     override fun process(viewEvent: EVENT) {
     }

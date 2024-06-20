@@ -4,10 +4,11 @@ import android.content.Context
 import lost.girl.rfidmobileinventory.R
 import lost.girl.rfidmobileinventory.utils.ExcelUtil
 
+// use case Выгрузить данные в Excel файл
 class ExportDataToExcelFileUseCase(private val context: Context) {
     suspend fun execute(
         data: List<List<String>>,
-        fileName: String
+        fileName: String,
     ): Boolean {
         val columnNames = listOf(
             context.getString(R.string.num),

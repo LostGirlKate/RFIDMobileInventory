@@ -21,6 +21,7 @@ class InventoryItemDetailAdapter :
         fun setData(detail: InventoryItemDetailModel) = with(binding) {
             paramName.text = detail.paraName
             paramValue.text = detail.value
+            // отображаем box с цветом статуса только на параметре - Статус
             statusBox.visibility = if (detail.isStatus) View.VISIBLE else View.GONE
             if (detail.isStatus && detail.statusColor > 0) {
                 statusBox.background =

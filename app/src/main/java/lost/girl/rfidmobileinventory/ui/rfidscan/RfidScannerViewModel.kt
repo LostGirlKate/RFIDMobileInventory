@@ -36,10 +36,12 @@ class RfidScannerViewModel(
     private val startBarcodeReaderUseCase: StartBarcodeReaderUseCase,
     private val stopBarcodeReaderUseCase: StopBarcodeReaderUseCase,
     application: Application,
-    getAllInventoryItemListForRfidScanningUseCase: GetAllInventoryItemListForScanningUseCase
+    getAllInventoryItemListForRfidScanningUseCase: GetAllInventoryItemListForScanningUseCase,
 
-) : MviViewModel<RfidScannerViewState, RfidScannerViewEffect, RfidScannerViewEvent>(application),
+    ) :
+    MviViewModel<RfidScannerViewState, RfidScannerViewEffect, RfidScannerViewEvent>(application),
     DefaultLifecycleObserver {
+
     init {
         viewState =
             RfidScannerViewState(
@@ -57,18 +59,22 @@ class RfidScannerViewModel(
                     viewEvent.locationName
                 )
             }
+
             is RfidScannerViewEvent.SetScanningState -> {
                 setScanningState(viewEvent.state)
             }
+
             is RfidScannerViewEvent.SetScanningPower -> {
                 setScannerPowerValue(viewEvent.power)
             }
+
             is RfidScannerViewEvent.SetScannerType -> {
                 setScannerType(viewEvent.type)
             }
         }
     }
 
+    // При сворачивании окна останавливаем считывание если оно было запущено
     override fun onPause(owner: LifecycleOwner) {
         super.onPause(owner)
         if (viewState.isScanningStart) {
@@ -77,34 +83,42 @@ class RfidScannerViewModel(
         }
     }
 
+    // При уничтожении закрываем 2D сканер, если работа велась с ним
     override fun onDestroy(owner: LifecycleOwner) {
         super.onDestroy(owner)
         if (viewState.scannerType == ReaderType.BARCODE_2D) closeBarcodeReaderUseCase.execute()
     }
 
+    // Установка типа считывателя
     private fun setScannerType(type: ReaderType) {
         initReader(type)
     }
 
+    // Старт инвентаризации (для RFID начинаем считывание, для 2D начинаем сканирование)
     private fun startInventory() {
         when (viewState.scannerType) {
             ReaderType.RFID -> {
+                // получаем мощность из настроек
                 val power = viewState.scannerPowerValue
+                // стартуем считывание, при успешном - запускаем проверку метки на наличие в списке ТМЦ
                 startRFiDInventoryUseCase.execute(power, onError = this::onError) {
                     for (tag in it) {
                         checkItemNewLocationAndUpdate(tag)
                     }
                 }
             }
+
             ReaderType.BARCODE_2D -> {
                 startBarcodeReaderUseCase.execute()
             }
+
             else -> {
-                onError("Тип не инициализирован")
+                onError()
             }
         }
     }
 
+    // Ошибки инициализации считывателя
     private fun onError(message: String = "") {
         viewEffect = RfidScannerViewEffect.ShowToast(
             R.string.init_rfid_message, R.string.init_error_rfid_message,
@@ -112,37 +126,44 @@ class RfidScannerViewModel(
         )
     }
 
+    // Останавливаем инвентаризацию (для RFID останавливаем считывание, для 2D останавливаем сканирование)
     private fun stopInventory() {
         when (viewState.scannerType) {
             ReaderType.RFID -> {
                 stopRFiDInventoryUseCase.execute()
             }
+
             ReaderType.BARCODE_2D -> {
                 stopBarcodeReaderUseCase.execute()
             }
+
             else -> {
                 onError()
             }
         }
     }
 
+    // инициализация считывателя
     private fun initReader(type: ReaderType) {
         viewModelScope.launch {
-            var result = false
-            var power = 0
-            when (type) {
+            val result = when (type) {
                 ReaderType.RFID -> {
-                    result = isRFIDReaderInitializedUseCase.execute()
-                    if (result) {
-                        power = getRFIDReaderPowerUseCase.execute()
-                    }
+                    // проверяем инициализирован ли счытыватель
+                    isRFIDReaderInitializedUseCase.execute()
                 }
+
                 ReaderType.BARCODE_2D -> {
-                    result = withContext(Dispatchers.IO) {
+                    withContext(Dispatchers.IO) {
+                        // инициализируем 2D сканер с callback для обработки результата сканировния
                         openBarcodeReaderUseCase.execute { checkItemNewLocationAndUpdate(it) }
                     }
                 }
             }
+            // если RFID счытыватель инициализирован - получем его мощность
+            val power = if (result && type == ReaderType.RFID) {
+                getRFIDReaderPowerUseCase.execute()
+            } else 0
+            // обновляем состояние окна по результату инициализации
             viewState = viewState.copy(
                 scannerType = type,
                 isReaderInit = result,
@@ -153,6 +174,7 @@ class RfidScannerViewModel(
         }
     }
 
+    // Установка текущего местоположения
     private fun setCurrentLocation(locationId: Int, locationName: String) {
         viewState = viewState.copy(
             currentLocation = locationId,
@@ -164,6 +186,7 @@ class RfidScannerViewModel(
         )
     }
 
+    // Установка состояние сканирования
     private fun setScanningState(state: Boolean) {
         viewState = viewState.copy(
             canBackPress = !state,
@@ -172,15 +195,21 @@ class RfidScannerViewModel(
             panelSettingsVisible = (!state && viewState.scannerType == ReaderType.RFID),
             stopScanningButtonVisible = state
         )
-        if (state) startInventory() else stopInventory()
+        if (state) {
+            startInventory()
+        } else {
+            stopInventory()
+        }
     }
 
+    // Обновления мощности при ручной настройке
     private fun setScannerPowerValue(value: Int) {
         viewState = viewState.copy(
             scannerPowerValue = value
         )
     }
 
+    // Обновление актуального местоположения ТМЦ
     private fun updateInventoryItem(locationID: Int, location: String, id: Int) {
         updateInventoryItemUseCase.execute(locationID, location, id)
         viewState = viewState.copy(
@@ -191,30 +220,38 @@ class RfidScannerViewModel(
         )
     }
 
+    // Проверка наличия метки в списке ТМЦ
     private fun checkItemNewLocationAndUpdate(scanCode: String) {
         val allItem = viewState.inventoryItemsFullRFIDList
+        //ищем id ТМЦ (RFID по rfidCardNum, 2D по shipmentNum)
         val itemId =
             when (viewState.scannerType) {
                 ReaderType.RFID -> {
                     allItem.firstOrNull { it.rfidCardNum == scanCode }?.id ?: 0
                 }
+
                 ReaderType.BARCODE_2D -> {
                     allItem.firstOrNull { it.shipmentNum == scanCode }?.id ?: 0
                 }
+
                 else -> {
                     0
                 }
             }
+        // если метка найдена обновляем актальное местоположение у ТМЦ
         if (itemId > 0) {
             updateInventoryItem(
                 viewState.currentLocation,
                 viewState.currentLocationName,
                 itemId
             )
+            // после обновления проверяем текущее состояние инвентаризации
+            // (если 100% найдено, тогда сообщаем - Все метки найдены)
             if (viewState.inventoryState.percentFound == 100) {
                 viewEffect = RfidScannerViewEffect.InventoryReady(R.string.all_tag_found)
             }
         }
+        // если активен 2D сканер - останавливаем его после каждого успешного сканирования
         if (viewState.scannerType == ReaderType.BARCODE_2D) {
             setScanningState(false)
         }

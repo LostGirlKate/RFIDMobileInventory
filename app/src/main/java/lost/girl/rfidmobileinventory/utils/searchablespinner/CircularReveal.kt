@@ -21,7 +21,6 @@ internal object CircularReveal {
         rootView.getGlobalVisibleRect(clickedViewRect)
         val width = rootView.measuredWidth
         val height = rootView.measuredHeight
-        // calculate all necessary dimension for reveal
         val cx = clickedViewRect.exactCenterX().toInt()
         val cy = clickedViewRect.exactCenterY().toInt()
         val minRadiusForReveal =

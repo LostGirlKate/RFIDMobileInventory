@@ -27,7 +27,7 @@ class InventoryMainViewModel(
     private val getDataFromExcelUseCase: GetDataFromExcelUseCase,
     private val exportDataToExcelFileUseCase: ExportDataToExcelFileUseCase,
     private val isRFIDReaderInitializedUseCase: IsRFIDReaderInitializedUseCase,
-    application: Application
+    application: Application,
 ) :
     MviViewModel<InventoryMainViewState, InventoryMainViewEffect, InventoryMainViewEvent>(
         application
@@ -94,10 +94,11 @@ class InventoryMainViewModel(
         viewEffect = InventoryMainViewEffect.ShowAlertDialog(message, onOkClickListener)
     }
 
+    // Загрузка данных из файла и сохранение их в BD
     private fun loadDataFromExcel(
         uri: Uri,
         contentResolver: ContentResolver,
-        processDialog: AlertDialog?
+        processDialog: AlertDialog?,
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             val dataArray =
@@ -114,8 +115,9 @@ class InventoryMainViewModel(
         }
     }
 
+    // Экспорт данных в Excel файл
     private fun exportDataToExcel(
-        processDialog: AlertDialog?
+        processDialog: AlertDialog?,
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             val loadResult = exportData()
@@ -127,10 +129,12 @@ class InventoryMainViewModel(
         }
     }
 
+    // Обновление информации об инвентаризации
     private fun refreshInventoryState() {
         viewState = viewState.copy(inventoryState = getInventoryInfo.execute())
     }
 
+    // Завершение  нвентаризации (сохранение данных в файл и при успешном сохранении очистка BD)
     private fun closeInventory(processDialog: AlertDialog?) {
         viewModelScope.launch(Dispatchers.IO) {
             var result = exportData()
@@ -146,6 +150,7 @@ class InventoryMainViewModel(
         }
     }
 
+    // Экспорт данных в Excel
     private suspend fun exportData(): Boolean {
         val dateFormat = SimpleDateFormat("dd.MM.yyyy HH.mm", Locale.US)
         val fileName = "inventory_${dateFormat.format(System.currentTimeMillis())}.xlsx"
@@ -156,6 +161,7 @@ class InventoryMainViewModel(
         )
     }
 
+    // Сохранение массива данных в BD
     private suspend fun parseDataToDataBase(data: Array<Array<String>>): Boolean {
         val result = loadDataToDataBaseUseCase.execute(data)
         viewState = viewState.copy(inventoryState = getInventoryInfo.execute())

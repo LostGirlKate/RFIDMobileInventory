@@ -2,19 +2,20 @@ package lost.girl.rfidmobileinventory.domain.models
 
 import lost.girl.rfidmobileinventory.data.storage.models.InventoryItem
 
+// Модель данных ТМЦ с полным списком параметров
 data class InventoryItemFullModel(
     val id: Int?,
     val inventoryNum: String,
-    var managerName: String,
-    var locationID: Int?,
-    var location: String,
-    var type: String,
-    var model: String,
-    var serialNum: String,
-    var shipmentNum: String,
+    val managerName: String,
+    val locationID: Int?,
+    val location: String,
+    val type: String,
+    val model: String,
+    val serialNum: String,
+    val shipmentNum: String,
     val rfidCardNum: String,
-    var actualLocationID: Int?,
-    var actualLocation: String?
+    val actualLocationID: Int?,
+    val actualLocation: String?,
 ) {
     fun toInventoryItem() = InventoryItem(
         id = this.id,

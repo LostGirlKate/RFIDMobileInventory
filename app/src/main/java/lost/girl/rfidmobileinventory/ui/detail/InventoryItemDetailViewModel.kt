@@ -9,8 +9,8 @@ import lost.girl.rfidmobileinventory.domain.usescase.GetInventoryItemDetailUseCa
 import lost.girl.rfidmobileinventory.mvi.MviViewModel
 
 class InventoryItemDetailViewModel(
+    private val getInventoryItemDetailUseCase: GetInventoryItemDetailUseCase,
     application: Application,
-    private val getInventoryItemDetailUseCase: GetInventoryItemDetailUseCase
 ) : MviViewModel<InventoryItemDetailState, InventoryItemDetailEffect, InventoryItemDetailEvent>(
     application
 ),
@@ -31,11 +31,13 @@ class InventoryItemDetailViewModel(
             }
         }
     }
+
     override fun onDestroy(owner: LifecycleOwner) {
         super.onDestroy(owner)
         viewState = InventoryItemDetailState()
     }
 
+    // Получение списка параметров ТМЦ со значениями из BD
     private fun openDetails(id: Int, state: InventoryItemState) {
         val statusColor = when (state) {
             InventoryItemState.STATE_NOT_FOUND -> R.drawable.red_item_background

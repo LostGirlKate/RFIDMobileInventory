@@ -28,7 +28,9 @@ abstract class MviFragment<STATE, EFFECT, EVENT, ViewModel : MviViewModel<STATE,
         }
     }
 
+    // Отрисовка состояния окна
     abstract fun renderViewState(viewState: STATE)
 
+    // Вызов реализаций эффектов окна
     abstract fun renderViewEffect(viewEffect: EFFECT)
 }

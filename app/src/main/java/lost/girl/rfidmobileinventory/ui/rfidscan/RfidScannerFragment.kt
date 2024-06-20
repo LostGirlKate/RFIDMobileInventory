@@ -46,7 +46,7 @@ class RfidScannerFragment :
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         binding = FragmentRfidScannerBinding.inflate(layoutInflater)
         return binding.root
@@ -67,13 +67,17 @@ class RfidScannerFragment :
 
     override fun renderViewEffect(viewEffect: RfidScannerViewEffect) {
         when (viewEffect) {
-            is RfidScannerViewEffect.InventoryReady -> inventoryReady(viewEffect.message)
+            is RfidScannerViewEffect.InventoryReady -> {
+                inventoryReady(viewEffect.message)
+            }
 
-            is RfidScannerViewEffect.ShowToast -> showToast(
-                viewEffect.message,
-                viewEffect.errorMessage,
-                viewEffect.isError
-            )
+            is RfidScannerViewEffect.ShowToast -> {
+                showToast(
+                    viewEffect.message,
+                    viewEffect.errorMessage,
+                    viewEffect.isError
+                )
+            }
         }
     }
 
@@ -113,6 +117,8 @@ class RfidScannerFragment :
         val filter = getFilterString()
         adapter.submitListWithFilter(viewState.inventoryItems, filter)
     }
+
+    // Оповещение о выполнении инвентаризации (все метки найдены)
     private fun inventoryReady(message: Int) {
         if (activeReadyDialog == null) {
             activeReadyDialog = UIHelper.detailDialog(
@@ -126,6 +132,7 @@ class RfidScannerFragment :
         }
     }
 
+    // Инициализация кнопок и слайдера настройки мощности
     private fun initSetting() {
         binding.startRfidButton.setOnClickListener {
             viewModel.process(RfidScannerViewEvent.SetScanningState(true))
@@ -145,6 +152,7 @@ class RfidScannerFragment :
         }
     }
 
+    // Инициализация RecyclerView
     private fun initRcView() = with(binding) {
         rcItems.layoutManager = LinearLayoutManager(activity)
         adapter = InventoryItemsFilterableAdapter(
@@ -156,6 +164,7 @@ class RfidScannerFragment :
         rcItems.adapter = adapter
     }
 
+    // Инициализация фильтров по статусам
     private fun initFilterButtons() {
         setOnCheckedChangeListenerToFilterButton(
             requireContext(),
@@ -180,6 +189,7 @@ class RfidScannerFragment :
         ) { filterData() }
     }
 
+    // Получение актуального фильтра для адаптера
     private fun getFilterString(): String =
         listOf(
             "",
@@ -188,11 +198,13 @@ class RfidScannerFragment :
             binding.filterButtonFoundInWrongPlace.isChecked.toString()
         ).joinToString(getString(R.string.filter_delimetr))
 
+    // Фильтрация данных с списке ТМЦ
     private fun filterData() {
         val filter = getFilterString()
         adapter.filter.filter(filter)
     }
 
+    // Показать Toast
     private fun showToast(message: Int, errorMessage: Int, isError: Boolean = false) {
         UIHelper.showToastMessage(
             requireContext(),

@@ -67,6 +67,7 @@
     <string name="reader_type_not_found">Тип не инициализирован</string>
     <string name="location_search">Выбор местоположения</string>
     <string name="filter_delimetr">~</string>
+    <string name="reader_type_not_founded">Тип не инициализирован</string>
 
 
 </resources>

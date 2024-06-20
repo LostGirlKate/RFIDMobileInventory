@@ -26,6 +26,7 @@ object ExcelUtil {
     const val MEM_TYPE_XLS = "application/vnd.ms-excel"
     const val MEM_TYPE_XLSX = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 
+    // Сохранение массива данных в Excel файл
     suspend fun exportDataToExcelFile(
         data: List<List<String>>,
         fileName: String,
@@ -63,6 +64,7 @@ object ExcelUtil {
         }
     }
 
+    // Получение массива данных из Excel файла
     fun getDataFromExcel(
         uri: Uri,
         contentResolver: ContentResolver
@@ -94,6 +96,7 @@ object ExcelUtil {
         return resultArray
     }
 
+    // Преобразование значения ячейки в строку
     private fun getCellAsString(row: Row, c: Int, formulaEvaluator: FormulaEvaluator): String {
         var value = ""
         try {

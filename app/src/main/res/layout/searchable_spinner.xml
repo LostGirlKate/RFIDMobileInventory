@@ -10,11 +10,10 @@
     android:orientation="vertical"
     app:cardCornerRadius="10dp">
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/headLayouts"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:id="@+id/headLayout"
@@ -22,7 +21,10 @@
             android:layout_height="wrap_content"
             android:background="?attr/colorPrimary"
             android:elevation="10dp"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <TextView
                 android:id="@+id/textViewTitle"
@@ -44,13 +46,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
-                app:theme="@style/AppSearchView"
-                android:queryHint="@string/search"
-                android:isScrollContainer="true"
                 android:background="@drawable/round_button_background"
                 android:backgroundTint="@color/colorBackground"
                 android:focusable="true"
-                app:iconifiedByDefault="false" />
+                android:isScrollContainer="true"
+                android:queryHint="@string/search"
+                app:iconifiedByDefault="false"
+                app:theme="@style/AppSearchView" />
 
         </LinearLayout>
 
@@ -58,7 +60,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/headLayout"
-            android:background="@color/colorBackground">
+            android:background="@color/colorBackground"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/headLayout">
 
             <TextView
                 android:id="@+id/textViewError"
@@ -84,10 +90,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <Button
                 android:id="@+id/buttonClose"
@@ -99,11 +105,11 @@
                 android:elevation="20dp"
                 android:padding="0dp"
                 android:textColor="@android:color/white"
-                tools:text = "Cancel"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:text="Cancel" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

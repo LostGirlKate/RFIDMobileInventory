@@ -13,14 +13,8 @@ import lost.girl.rfidmobileinventory.domain.models.InventoryLocationFullModel
 import lost.girl.rfidmobileinventory.domain.repository.InventoryRepository
 
 class InventoryRepositoryImpl(
-    private val inventoryStorage: InventoryStorage
+    private val inventoryStorage: InventoryStorage,
 ) : InventoryRepository {
-
-    override suspend fun updateInventoryItem(item: InventoryItemFullModel): Boolean {
-        val inventoryItem = item.toInventoryItem()
-        inventoryStorage.updateInventoryItem(inventoryItem)
-        return true
-    }
 
     override suspend fun insertInventoryLocation(location: InventoryLocationFullModel): Boolean {
         val inventoryLocation = location.toInventoryLocation()
@@ -65,14 +59,6 @@ class InventoryRepositoryImpl(
         return inventoryStorage.getInventoryItemDetail(id).toInventoryItemFullModelForDetail()
     }
 
-    override fun updateLocationInventoryItem(
-        locationID: Int,
-        location: String,
-        items: List<String>
-    ) {
-        inventoryStorage.updateLocationInventoryItem(locationID, location, items)
-    }
-
     override fun updateLocationInventoryItemByID(locationID: Int, location: String, id: Int) {
         inventoryStorage.updateLocationInventoryItemByID(locationID, location, id)
     }
@@ -82,4 +68,3 @@ class InventoryRepositoryImpl(
             .map { it.toInventoryItemForScanningModel() }
     }
 }
-

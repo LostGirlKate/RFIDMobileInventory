@@ -17,6 +17,7 @@ class InventoryItemDetailFragment :
         InventoryItemDetailEvent,
         InventoryItemDetailViewModel
         >() {
+
     override val viewModel by viewModel<InventoryItemDetailViewModel>()
     private lateinit var binding: FragmentInventoryItemDetailBinding
     private lateinit var adapter: InventoryItemDetailAdapter
@@ -46,6 +47,7 @@ class InventoryItemDetailFragment :
         adapter.submitList(viewState.details)
     }
 
+    // Инициализация RecyclerView
     private fun initRcView() = with(binding) {
         rcInventoryDetailList.layoutManager = LinearLayoutManager(activity)
         adapter = InventoryItemDetailAdapter()

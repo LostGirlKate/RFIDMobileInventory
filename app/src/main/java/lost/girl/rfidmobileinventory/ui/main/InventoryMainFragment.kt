@@ -30,7 +30,7 @@ class InventoryMainFragment :
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         binding = FragmentInventoryMainBinding.inflate(layoutInflater)
         return binding.root
@@ -44,8 +44,6 @@ class InventoryMainFragment :
 
     override fun renderViewEffect(viewEffect: InventoryMainViewEffect) {
         when (viewEffect) {
-            is InventoryMainViewEffect.OpenExcelFileLauncher -> openFileManager()
-
             is InventoryMainViewEffect.ShowAlertDialog -> showAlertDialog(
                 viewEffect.message,
                 viewEffect.onOkClickListener
@@ -92,6 +90,8 @@ class InventoryMainFragment :
             )
         )
     }
+
+    // Инициализация кнопок
     private fun initButtons() = with(binding) {
         openInventoryButton.setOnClickListener {
             findNavController().navigate(R.id.action_inventoryMainFragment_to_inventoryListFragment)
@@ -121,6 +121,7 @@ class InventoryMainFragment :
         }
     }
 
+    // Отображение Toast
     private fun showToast(message: Int, errorMessage: Int, isError: Boolean = false) {
         showToastMessage(
             requireContext(),
@@ -129,6 +130,8 @@ class InventoryMainFragment :
         )
     }
 
+    // Показать ProcessDialog при выполнении долгих расчетов, в параметр передаем Event,
+    // который запустится после начала отображения ProcessDialog
     private fun showProcessDialog(message: Int, processEvent: InventoryMainViewEvent) {
         val dialog = alertProcessDialog(
             requireContext(),
@@ -159,25 +162,27 @@ class InventoryMainFragment :
         }
     }
 
+    // Показать AlertDialog для подтверждения действия (onOkClickListener) или подсказки
     private fun showAlertDialog(msg: Int, onOkClickListener: () -> Unit) {
         alertDialog(requireContext(), getString(msg)) {
             onOkClickListener()
         }
     }
 
+    // Launcher с настройкой обработки файла для загрузки данных
     private val openExcelFileLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 val data: Intent? = result.data
                 val excelFileUri: Uri? = data?.data
-                excelFileUri?.let {
-                    activity?.let { it1 ->
+                excelFileUri?.let { uri ->
+                    activity?.let { activity ->
                         viewModel.process(
                             InventoryMainViewEvent.ShowProcessDialog(
                                 R.string.file_load_action_message,
                                 InventoryMainViewEvent.LoadDataFromFile(
-                                    it,
-                                    it1.contentResolver
+                                    uri,
+                                    activity.contentResolver
                                 )
                             )
                         )
@@ -186,6 +191,7 @@ class InventoryMainFragment :
             }
         }
 
+    // Открыть окно выбора файл для загрузки
     private fun openFileManager() {
         ActivityCompat.requestPermissions(
             requireActivity(),

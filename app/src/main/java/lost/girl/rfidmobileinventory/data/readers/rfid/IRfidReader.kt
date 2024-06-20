@@ -3,6 +3,7 @@ package lost.girl.rfidmobileinventory.data.readers.rfid
 import android.content.Context
 
 interface IRfidReader {
+
     val isRunned: Boolean
     val isReaderInitialized: Boolean
     fun poweron(context: Context): Boolean
