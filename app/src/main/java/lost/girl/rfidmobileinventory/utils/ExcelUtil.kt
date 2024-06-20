@@ -43,7 +43,7 @@ object ExcelUtil {
             val rowData: Row = sheet.createRow(i + 1)
             for (j in item.indices) {
                 val cell = rowData.createCell(j)
-                cell.setCellValue(item[j])
+                cell.setCellValue(item[j].trim())
             }
         }
         return try {
@@ -86,7 +86,7 @@ object ExcelUtil {
                 var array = arrayOf<String>()
                 for (c in 0 until cellsCount) {
                     val value: String = getCellAsString(row, c, formulaEvaluator)
-                    array += value
+                    array += value.trim()
                 }
                 resultArray += array
             }
