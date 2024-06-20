@@ -46,6 +46,7 @@ class InventoryListFragment :
         initButtons()
         initFilterButtons()
         initRcView()
+        lifecycle.addObserver(viewModel)
     }
 
     override fun renderViewEffect(viewEffect: InventoryListViewEffect) {}
@@ -185,12 +186,17 @@ class InventoryListFragment :
         searchableSpinner.onItemSelectListener = object : OnItemSelectListener {
             override fun setOnItemSelectListener(position: Int, selectedString: String) {
                 val newLocation = locationList.firstOrNull { it.name == selectedString }?.id ?: 0
-                viewModel.process(InventoryListViewEvent.EditCurrentLocation(newLocation))
+                refreshInventoryData(newLocation)
             }
         }
         searchableSpinner.setSpinnerListItems(locationListName)
         binding.locationSpinner.setOnClickListener {
             searchableSpinner.show()
         }
+    }
+
+    // Обновление информации об инвентаризации по местоположению
+    fun refreshInventoryData(locationID: Int) {
+        viewModel.process(InventoryListViewEvent.EditCurrentLocation(locationID))
     }
 }

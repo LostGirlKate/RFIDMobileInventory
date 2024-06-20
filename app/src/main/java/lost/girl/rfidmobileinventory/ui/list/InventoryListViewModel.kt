@@ -1,6 +1,8 @@
 package lost.girl.rfidmobileinventory.ui.list
 
 import android.app.Application
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import lost.girl.rfidmobileinventory.domain.usescase.GetAllLocationsUseCase
@@ -15,13 +17,22 @@ class InventoryListViewModel(
     getAllLocationsUseCase: GetAllLocationsUseCase,
 ) : MviViewModel<InventoryListViewState, InventoryListViewEffect, InventoryListViewEvent>(
     application
-) {
+),
+    DefaultLifecycleObserver {
 
     init {
         viewState = InventoryListViewState(
-            locations = getAllLocationsUseCase.execute(),
-            inventoryState = getInventoryInfo.execute(-1),
-            inventoryItems = getInventoryItemByLocationIDUseCase.execute(-1)
+            locations = getAllLocationsUseCase.execute()
+        )
+    }
+
+    override fun onResume(owner: LifecycleOwner) {
+        super.onResume(owner)
+        viewState = viewState.copy(
+            inventoryState = getInventoryInfo.execute(viewState.currentLocationID),
+            inventoryItems = getInventoryItemByLocationIDUseCase.execute(
+                viewState.currentLocationID
+            )
         )
     }
 
