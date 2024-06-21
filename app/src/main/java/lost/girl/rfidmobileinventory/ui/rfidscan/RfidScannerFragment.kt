@@ -115,7 +115,10 @@ class RfidScannerFragment :
             viewState.inventoryState.countFoundInWrongPlaceString
         )
         val filter = getFilterString()
-        adapter.submitListWithFilter(viewState.inventoryItems, filter)
+        adapter.submitListWithFilter(
+            viewState.inventoryItems,
+            filter
+        )
     }
 
     // Оповещение о выполнении инвентаризации (все метки найдены)
@@ -159,7 +162,8 @@ class RfidScannerFragment :
             object : OnItemClickListener<InventoryItemForListModel> {
                 override fun onItemClick(item: InventoryItemForListModel) {
                 }
-            }
+            },
+            getString(R.string.filter_delimetr)
         )
         rcItems.adapter = adapter
     }

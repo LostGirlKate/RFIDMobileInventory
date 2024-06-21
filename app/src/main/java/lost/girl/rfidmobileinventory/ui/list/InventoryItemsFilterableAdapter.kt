@@ -1,11 +1,9 @@
 package lost.girl.rfidmobileinventory.ui.list
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import lost.girl.rfidmobileinventory.R
 import lost.girl.rfidmobileinventory.databinding.InventoryItemBinding
@@ -13,15 +11,20 @@ import lost.girl.rfidmobileinventory.domain.models.InventoryItemForListModel
 import lost.girl.rfidmobileinventory.domain.models.InventoryItemState
 import lost.girl.rfidmobileinventory.domain.models.toColor
 import lost.girl.rfidmobileinventory.utils.FilterableListAdapter
+import lost.girl.rfidmobileinventory.utils.ItemComparatorAllItems
 import lost.girl.rfidmobileinventory.utils.OnItemClickListener
 
 const val FILTER_INDEX_NOT_FOUND = 1
 const val FILTER_INDEX_FOUND = 2
 const val FILTER_INDEX_FOUND_IN_WRONG_PLACE = 3
 
-class InventoryItemsFilterableAdapter(private val itemClickListener: OnItemClickListener<InventoryItemForListModel>) :
+class InventoryItemsFilterableAdapter(
+    private val itemClickListener: OnItemClickListener<InventoryItemForListModel>,
+    delimiter: String,
+) :
     FilterableListAdapter<InventoryItemForListModel, InventoryItemsFilterableAdapter.ItemHolder>(
-        ItemComparatorAllItems()
+        ItemComparatorAllItems(),
+        delimiter
     ) {
 
     class ItemHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -64,8 +67,9 @@ class InventoryItemsFilterableAdapter(private val itemClickListener: OnItemClick
     override fun onFilter(
         list: List<InventoryItemForListModel>,
         constraint: String,
+        delimiter: String,
     ): List<InventoryItemForListModel> {
-        val filterList = constraint.split("~")
+        val filterList = constraint.split(delimiter)
         val firstFilter = filterList.first().lowercase()
         val showNotFound = filterList[FILTER_INDEX_NOT_FOUND].toBoolean()
         val showFound = filterList[FILTER_INDEX_FOUND].toBoolean()
@@ -79,22 +83,5 @@ class InventoryItemsFilterableAdapter(private val itemClickListener: OnItemClick
                 (showFound || it.state != InventoryItemState.STATE_FOUND) &&
                 (showFoundInWrongPlace || it.state != InventoryItemState.STATE_FOUND_IN_WRONG_PLACE)
         }
-    }
-}
-
-class ItemComparatorAllItems : DiffUtil.ItemCallback<InventoryItemForListModel>() {
-    override fun areItemsTheSame(
-        oldItem: InventoryItemForListModel,
-        newItem: InventoryItemForListModel,
-    ): Boolean {
-        return oldItem.id == newItem.id
-    }
-
-    @SuppressLint("DiffUtilEquals")
-    override fun areContentsTheSame(
-        oldItem: InventoryItemForListModel,
-        newItem: InventoryItemForListModel,
-    ): Boolean {
-        return oldItem == newItem
     }
 }

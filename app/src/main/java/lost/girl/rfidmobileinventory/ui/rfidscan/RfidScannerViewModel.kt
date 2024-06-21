@@ -83,12 +83,6 @@ class RfidScannerViewModel(
         }
     }
 
-    // При уничтожении закрываем 2D сканер, если работа велась с ним
-    override fun onDestroy(owner: LifecycleOwner) {
-        super.onDestroy(owner)
-        if (viewState.scannerType == ReaderType.BARCODE_2D) closeBarcodeReaderUseCase.execute()
-    }
-
     // Установка типа считывателя
     private fun setScannerType(type: ReaderType) {
         initReader(type)

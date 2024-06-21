@@ -16,6 +16,9 @@ interface BarcodeReader {
     // закрытие 2D сканера
     fun close()
 
-    // инициализация 2D сканера с установкой callback для обработки результата сканировния
-    suspend fun open(context: Context, onSuccess: (String) -> Unit): Boolean
+    // инициализация 2D сканера
+    fun open(context: Context): Boolean
+
+    // установка callback для обработки результата сканировния
+    suspend fun setOnSuccess(onSuccess: (String) -> Unit): Boolean
 }

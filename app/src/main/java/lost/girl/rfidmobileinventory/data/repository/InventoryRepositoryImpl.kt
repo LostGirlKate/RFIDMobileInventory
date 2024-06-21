@@ -1,8 +1,8 @@
 package lost.girl.rfidmobileinventory.data.repository
 
-import android.content.Context
 import lost.girl.rfidmobileinventory.data.storage.InventoryStorage
 import lost.girl.rfidmobileinventory.data.storage.roomdb.ClearDataBase
+import lost.girl.rfidmobileinventory.data.storage.roomdb.MainDataBase
 import lost.girl.rfidmobileinventory.domain.models.InventoryInfoModel
 import lost.girl.rfidmobileinventory.domain.models.InventoryItemForDetailFullModel
 import lost.girl.rfidmobileinventory.domain.models.InventoryItemForExportModel
@@ -50,8 +50,8 @@ class InventoryRepositoryImpl(
         }
     }
 
-    override suspend fun clearAll(context: Context): Boolean {
-        ClearDataBase.execute(context)
+    override suspend fun clearAll(dataBase: MainDataBase): Boolean {
+        ClearDataBase.execute(dataBase)
         return true
     }
 

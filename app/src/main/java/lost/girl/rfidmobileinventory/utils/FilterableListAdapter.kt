@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 abstract class FilterableListAdapter<T, VH : RecyclerView.ViewHolder>(
     diffCallback: DiffUtil.ItemCallback<T>,
+    private val delimiter: String,
 ) : ListAdapter<T, VH>(diffCallback), Filterable {
 
     private var originalList: List<T> = currentList.toList()
@@ -19,7 +20,7 @@ abstract class FilterableListAdapter<T, VH : RecyclerView.ViewHolder>(
                     values = if (constraint.isNullOrEmpty()) {
                         originalList
                     } else {
-                        onFilter(originalList, constraint.toString())
+                        onFilter(originalList, constraint.toString(), delimiter)
                     }
                 }
             }
@@ -35,7 +36,7 @@ abstract class FilterableListAdapter<T, VH : RecyclerView.ViewHolder>(
         submitList(list, false)
     }
 
-    abstract fun onFilter(list: List<T>, constraint: String): List<T>
+    abstract fun onFilter(list: List<T>, constraint: String, delimiter: String): List<T>
 
     private fun submitList(list: List<T>?, filtered: Boolean) {
         if (!filtered) {
@@ -46,7 +47,7 @@ abstract class FilterableListAdapter<T, VH : RecyclerView.ViewHolder>(
 
     fun submitListWithFilter(list: List<T>?, filterString: String) {
         originalList = list ?: listOf()
-        super.submitList(onFilter(originalList, filterString))
+        super.submitList(onFilter(originalList, filterString, delimiter))
     }
 }
 

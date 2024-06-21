@@ -79,7 +79,8 @@ class InventoryListFragment :
                 override fun onItemClick(item: InventoryItemForListModel) {
                     openItemDetail(item)
                 }
-            }
+            },
+            getString(R.string.filter_delimetr)
         )
         rcInventoryList.adapter = adapter
     }

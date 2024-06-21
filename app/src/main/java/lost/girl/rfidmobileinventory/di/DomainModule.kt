@@ -27,11 +27,11 @@ import org.koin.dsl.module
 val domainModule = module {
 
     factory<ClearDataBaseUseCase> {
-        ClearDataBaseUseCase(inventoryRepository = get(), context = get())
+        ClearDataBaseUseCase(inventoryRepository = get(), dataBase = get())
     }
 
     factory<ExportDataToExcelFileUseCase> {
-        ExportDataToExcelFileUseCase(context = get())
+        ExportDataToExcelFileUseCase(resourcesProvider = get())
     }
 
     factory<GetAllInventoryItemListForScanningUseCase> {
@@ -63,7 +63,7 @@ val domainModule = module {
     }
 
     factory<GetInventoryItemDetailUseCase> {
-        GetInventoryItemDetailUseCase(repository = get(), context = get())
+        GetInventoryItemDetailUseCase(repository = get(), resourcesProvider = get())
     }
 
     factory<LoadDataToDataBaseUseCase> {
@@ -76,8 +76,7 @@ val domainModule = module {
 
     factory<InitRFIDReaderUseCase> {
         InitRFIDReaderUseCase(
-            repository = get(),
-            context = get()
+            reader = get()
         )
     }
 
@@ -102,7 +101,7 @@ val domainModule = module {
     }
 
     factory<OpenBarcodeReaderUseCase> {
-        OpenBarcodeReaderUseCase(repository = get(), context = get())
+        OpenBarcodeReaderUseCase(reader = get())
     }
 
     factory<StartBarcodeReaderUseCase> {

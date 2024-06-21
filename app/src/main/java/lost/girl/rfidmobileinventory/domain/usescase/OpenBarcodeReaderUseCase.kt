@@ -1,14 +1,12 @@
 package lost.girl.rfidmobileinventory.domain.usescase
 
-import android.content.Context
-import lost.girl.rfidmobileinventory.domain.repository.BarcodeReaderRepository
+import lost.girl.rfidmobileinventory.data.readers.barcode2D.BarcodeReader
 
 // use case Открытие(инициализация) 2D сканера
 class OpenBarcodeReaderUseCase(
-    private val repository: BarcodeReaderRepository,
-    private val context: Context,
+    private val reader: BarcodeReader,
 ) {
     suspend fun execute(onSuccess: (String) -> Unit): Boolean {
-        return repository.open(context, onSuccess)
+        return reader.setOnSuccess(onSuccess)
     }
 }

@@ -1,16 +1,15 @@
 package lost.girl.rfidmobileinventory.ui.detail
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import lost.girl.rfidmobileinventory.R
 import lost.girl.rfidmobileinventory.databinding.InventoryDetailItemBinding
 import lost.girl.rfidmobileinventory.domain.models.InventoryItemDetailModel
+import lost.girl.rfidmobileinventory.utils.ItemComparator
 
 class InventoryItemDetailAdapter :
     ListAdapter<InventoryItemDetailModel, InventoryItemDetailAdapter.ItemHolder>(ItemComparator()) {
@@ -48,19 +47,3 @@ class InventoryItemDetailAdapter :
     }
 }
 
-class ItemComparator : DiffUtil.ItemCallback<InventoryItemDetailModel>() {
-    override fun areItemsTheSame(
-        oldItem: InventoryItemDetailModel,
-        newItem: InventoryItemDetailModel
-    ): Boolean {
-        return oldItem.paraName == newItem.paraName
-    }
-
-    @SuppressLint("DiffUtilEquals")
-    override fun areContentsTheSame(
-        oldItem: InventoryItemDetailModel,
-        newItem: InventoryItemDetailModel
-    ): Boolean {
-        return oldItem == newItem
-    }
-}

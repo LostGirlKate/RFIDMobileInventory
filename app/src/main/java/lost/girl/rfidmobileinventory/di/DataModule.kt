@@ -9,12 +9,18 @@ import lost.girl.rfidmobileinventory.data.repository.BarcodeReaderRepositoryImpl
 import lost.girl.rfidmobileinventory.data.repository.InventoryRepositoryImpl
 import lost.girl.rfidmobileinventory.data.repository.RFIDReaderRepositoryImpl
 import lost.girl.rfidmobileinventory.data.storage.InventoryStorage
+import lost.girl.rfidmobileinventory.data.storage.roomdb.MainDataBase
 import lost.girl.rfidmobileinventory.domain.repository.BarcodeReaderRepository
 import lost.girl.rfidmobileinventory.domain.repository.InventoryRepository
 import lost.girl.rfidmobileinventory.domain.repository.RFIDReaderRepository
+import lost.girl.rfidmobileinventory.utils.ResourcesProvider
 import org.koin.dsl.module
 
 val dataModule = module {
+
+    single<MainDataBase> {
+        MainApp.database
+    }
 
     single<InventoryStorage> {
         MainApp.database.getDao()
@@ -35,10 +41,16 @@ val dataModule = module {
     }
 
     single<BarcodeReader> {
-        Barcode2DReader()
+        val reader = Barcode2DReader()
+        reader.open(context = get())
+        reader
     }
 
     single<BarcodeReaderRepository> {
         BarcodeReaderRepositoryImpl(reader = get())
+    }
+
+    single<ResourcesProvider> {
+        ResourcesProvider(context = get())
     }
 }

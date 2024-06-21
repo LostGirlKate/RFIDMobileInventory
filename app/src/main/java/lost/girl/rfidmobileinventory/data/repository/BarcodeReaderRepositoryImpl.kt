@@ -1,6 +1,5 @@
 package lost.girl.rfidmobileinventory.data.repository
 
-import android.content.Context
 import lost.girl.rfidmobileinventory.data.readers.barcode2D.BarcodeReader
 import lost.girl.rfidmobileinventory.domain.repository.BarcodeReaderRepository
 
@@ -21,8 +20,8 @@ class BarcodeReaderRepositoryImpl(private val reader: BarcodeReader) : BarcodeRe
         reader.close()
     }
 
-    // инициализация 2D сканера с установкой callback для обработки результата сканировния
-    override suspend fun open(context: Context, onSuccess: (String) -> Unit): Boolean {
-        return reader.open(context, onSuccess)
+    // установка callback для обработки результата сканировния
+    override suspend fun setOnSuccess(onSuccess: (String) -> Unit): Boolean {
+        return reader.setOnSuccess(onSuccess)
     }
 }

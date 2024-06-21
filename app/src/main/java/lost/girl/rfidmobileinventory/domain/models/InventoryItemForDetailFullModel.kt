@@ -1,7 +1,7 @@
 package lost.girl.rfidmobileinventory.domain.models
 
-import android.content.Context
 import lost.girl.rfidmobileinventory.R
+import lost.girl.rfidmobileinventory.utils.ResourcesProvider
 
 // Модель данных ТМЦ с полным списком параметров (+статус для отображения) для окна детализации
 data class InventoryItemForDetailFullModel(
@@ -18,27 +18,48 @@ data class InventoryItemForDetailFullModel(
     val status: String,
 ) {
     // Преобразование объекта в список параметров
-    fun toListOfDetail(context: Context, statusColor: Int): List<InventoryItemDetailModel> {
+    fun toListOfDetail(
+        resourcesProvider: ResourcesProvider,
+        statusColor: Int,
+    ): List<InventoryItemDetailModel> {
         return this.let {
             listOf(
                 InventoryItemDetailModel(
-                    context.getString(R.string.status),
+                    resourcesProvider.getString(R.string.status),
                     it.status,
                     true,
                     statusColor
                 ),
-                InventoryItemDetailModel(context.getString(R.string.type), it.type),
-                InventoryItemDetailModel(context.getString(R.string.model), it.model),
-                InventoryItemDetailModel(context.getString(R.string.location), it.location),
+                InventoryItemDetailModel(resourcesProvider.getString(R.string.type), it.type),
+                InventoryItemDetailModel(resourcesProvider.getString(R.string.model), it.model),
                 InventoryItemDetailModel(
-                    context.getString(R.string.location_fact),
+                    resourcesProvider.getString(R.string.location),
+                    it.location
+                ),
+                InventoryItemDetailModel(
+                    resourcesProvider.getString(R.string.location_fact),
                     it.actualLocation.orEmpty()
                 ),
-                InventoryItemDetailModel(context.getString(R.string.inventory_num), it.inventoryNum),
-                InventoryItemDetailModel(context.getString(R.string.serial_num), it.serialNum),
-                InventoryItemDetailModel(context.getString(R.string.shipment_num), it.shipmentNum),
-                InventoryItemDetailModel(context.getString(R.string.rfid_dec), it.rfidCardNum),
-                InventoryItemDetailModel(context.getString(R.string.manager_name), it.managerName)
+                InventoryItemDetailModel(
+                    resourcesProvider.getString(R.string.inventory_num),
+                    it.inventoryNum
+                ),
+                InventoryItemDetailModel(
+                    resourcesProvider.getString(R.string.serial_num),
+                    it.serialNum
+                ),
+                InventoryItemDetailModel(
+                    resourcesProvider.getString(R.string.shipment_num),
+                    it.shipmentNum
+                ),
+                InventoryItemDetailModel(
+                    resourcesProvider.getString(R.string.rfid_dec),
+                    it.rfidCardNum
+                ),
+                InventoryItemDetailModel(
+                    resourcesProvider.getString(R.string.manager_name),
+                    it.managerName
+                )
             )
         }
     }

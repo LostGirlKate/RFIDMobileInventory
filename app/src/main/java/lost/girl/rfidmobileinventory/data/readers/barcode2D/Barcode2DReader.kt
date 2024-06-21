@@ -28,9 +28,13 @@ class Barcode2DReader : BarcodeReader {
     }
 
     // инициализация 2D сканера с установкой callback для обработки результата сканировния
-    override suspend fun open(context: Context, onSuccess: (String) -> Unit): Boolean {
+    override fun open(context: Context): Boolean {
         isOpen = barcodeDecoder.open(context)
         BarcodeUtility.getInstance().enableVibrate(context, true)
+        return isOpen
+    }
+
+    override suspend fun setOnSuccess(onSuccess: (String) -> Unit): Boolean {
         barcodeDecoder.setDecodeCallback { barcodeEntity ->
             if (barcodeEntity.resultCode == BarcodeDecoder.DECODE_SUCCESS) {
                 onSuccess(barcodeEntity.barcodeData)

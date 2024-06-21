@@ -1,6 +1,6 @@
 package lost.girl.rfidmobileinventory.domain.repository
 
-import android.content.Context
+import lost.girl.rfidmobileinventory.data.storage.roomdb.MainDataBase
 import lost.girl.rfidmobileinventory.domain.models.InventoryInfoModel
 import lost.girl.rfidmobileinventory.domain.models.InventoryItemForDetailFullModel
 import lost.girl.rfidmobileinventory.domain.models.InventoryItemForExportModel
@@ -33,7 +33,7 @@ interface InventoryRepository {
     fun getAllInventoryItemForExport(): List<InventoryItemForExportModel>
 
     // очистка DB
-    suspend fun clearAll(context: Context): Boolean
+    suspend fun clearAll(dataBase: MainDataBase): Boolean
 
     // Информация об 1 ТМЦ по id
     fun getInventoryItemDetail(id: Int): InventoryItemForDetailFullModel

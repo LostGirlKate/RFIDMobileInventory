@@ -1,14 +1,12 @@
 package lost.girl.rfidmobileinventory.domain.usescase
 
-import android.content.Context
-import lost.girl.rfidmobileinventory.domain.repository.RFIDReaderRepository
+import lost.girl.rfidmobileinventory.data.readers.rfid.IRfidReader
 
 // use case Инициализация RFID ридера
 class InitRFIDReaderUseCase(
-    private val repository: RFIDReaderRepository,
-    private val context: Context,
+    private val reader: IRfidReader,
 ) {
     suspend fun execute(): Boolean {
-        return repository.initReader(context)
+        return reader.isReaderInitialized
     }
 }
