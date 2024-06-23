@@ -158,7 +158,10 @@ class InventoryMainFragment :
                 )
             }
 
-            else -> {}
+            else -> {
+                dialog.dismiss()
+                showToast(R.string.data_error_load_message, R.string.data_error_load_message, true)
+            }
         }
     }
 

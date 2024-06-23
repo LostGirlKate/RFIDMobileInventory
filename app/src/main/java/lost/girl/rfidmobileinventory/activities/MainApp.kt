@@ -1,7 +1,6 @@
 package lost.girl.rfidmobileinventory.activities
 
 import android.app.Application
-import lost.girl.rfidmobileinventory.data.storage.roomdb.MainDataBase
 import lost.girl.rfidmobileinventory.di.appModule
 import lost.girl.rfidmobileinventory.di.dataModule
 import lost.girl.rfidmobileinventory.di.domainModule
@@ -13,10 +12,6 @@ import timber.log.Timber.DebugTree
 import timber.log.Timber.Forest.plant
 
 class MainApp : Application() {
-    init {
-        instance = this
-    }
-
     override fun onCreate() {
         super.onCreate()
         plant(DebugTree())
@@ -25,10 +20,5 @@ class MainApp : Application() {
             androidContext(this@MainApp)
             modules(listOf(appModule, domainModule, dataModule))
         }
-    }
-
-    companion object {
-        private var instance: MainApp? = null
-        val database by lazy { MainDataBase.getDataBase(instance!!.applicationContext) }
     }
 }

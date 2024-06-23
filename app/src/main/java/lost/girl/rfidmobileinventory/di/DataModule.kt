@@ -1,6 +1,6 @@
 package lost.girl.rfidmobileinventory.di
 
-import lost.girl.rfidmobileinventory.activities.MainApp
+import androidx.room.Room
 import lost.girl.rfidmobileinventory.data.readers.barcode2D.Barcode2DReader
 import lost.girl.rfidmobileinventory.data.readers.barcode2D.BarcodeReader
 import lost.girl.rfidmobileinventory.data.readers.rfid.IRfidReader
@@ -14,16 +14,23 @@ import lost.girl.rfidmobileinventory.domain.repository.BarcodeReaderRepository
 import lost.girl.rfidmobileinventory.domain.repository.InventoryRepository
 import lost.girl.rfidmobileinventory.domain.repository.RFIDReaderRepository
 import lost.girl.rfidmobileinventory.utils.ResourcesProvider
+import org.koin.android.ext.koin.androidApplication
 import org.koin.dsl.module
 
 val dataModule = module {
 
     single<MainDataBase> {
-        MainApp.database
+        Room.databaseBuilder(
+            androidApplication(),
+            MainDataBase::class.java,
+            "inventory.db"
+        )
+            .allowMainThreadQueries()
+            .build()
     }
 
     single<InventoryStorage> {
-        MainApp.database.getDao()
+        get<MainDataBase>().getDao()
     }
 
     single<InventoryRepository> {
