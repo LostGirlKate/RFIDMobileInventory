@@ -1,5 +1,8 @@
 package lost.girl.rfidmobileinventory.ui.rfidscan
 
+import android.content.Context.AUDIO_SERVICE
+import android.media.AudioManager
+import android.media.SoundPool
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +16,7 @@ import com.google.android.material.slider.Slider
 import lost.girl.rfidmobileinventory.R
 import lost.girl.rfidmobileinventory.databinding.FragmentRfidScannerBinding
 import lost.girl.rfidmobileinventory.domain.models.InventoryItemForListModel
+import lost.girl.rfidmobileinventory.domain.models.InventoryItemState
 import lost.girl.rfidmobileinventory.mvi.MviFragment
 import lost.girl.rfidmobileinventory.ui.list.InventoryItemsFilterableAdapter
 import lost.girl.rfidmobileinventory.utils.OnItemClickListener
@@ -20,15 +24,21 @@ import lost.girl.rfidmobileinventory.utils.UIHelper
 import lost.girl.rfidmobileinventory.utils.UIHelper.refreshToggleButton
 import lost.girl.rfidmobileinventory.utils.UIHelper.setOnCheckedChangeListenerToFilterButton
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import timber.log.Timber
+
+const val MAX_STREAM_COUNT = 10
 
 class RfidScannerFragment :
     MviFragment<RfidScannerViewState, RfidScannerViewEffect, RfidScannerViewEvent, RfidScannerViewModel>() {
     override val viewModel by viewModel<RfidScannerViewModel>()
     private lateinit var binding: FragmentRfidScannerBinding
     private lateinit var adapter: InventoryItemsFilterableAdapter
+    private lateinit var soundPool: SoundPool
+    private lateinit var am: AudioManager
     private var canBackPress: Boolean = true
     private var activeReadyDialog: androidx.appcompat.app.AlertDialog? = null
     private val args: RfidScannerFragmentArgs by navArgs()
+    private var soundMap: HashMap<Int, Int> = HashMap()
     private val onBacPressedCallBack =
         object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -63,6 +73,7 @@ class RfidScannerFragment :
         lifecycle.addObserver(viewModel)
         viewModel.process(RfidScannerViewEvent.SetScannerType(scannerType))
         viewModel.process(RfidScannerViewEvent.SetCurrentLocation(locationID, locationName))
+        initSound()
     }
 
     override fun renderViewEffect(viewEffect: RfidScannerViewEffect) {
@@ -78,6 +89,15 @@ class RfidScannerFragment :
                     viewEffect.isError
                 )
             }
+
+            is RfidScannerViewEffect.PlaySound -> {
+                playSound(viewEffect.id)
+            }
+
+            is RfidScannerViewEffect.ShowAlertDialog -> showAlertDialog(
+                viewEffect.message,
+                viewEffect.onOkClickListener
+            )
         }
     }
 
@@ -103,7 +123,13 @@ class RfidScannerFragment :
         }
         scannerPowerValueCaption.text =
             getString(R.string.current_power, viewState.scannerPowerValue)
-        scannerPowerSlider.value = viewState.scannerPowerValue.toFloat()
+        scannerPowerSlider.value = when (viewState.scannerPowerValue in 0..100) {
+            true -> viewState.scannerPowerValue.toFloat()
+            else -> {
+                if (viewState.scannerPowerValue < 0) 1F else 100F
+            }
+        }
+
         canBackPress = viewState.canBackPress
         refreshToggleButton(
             filterButtonNotFound,
@@ -121,6 +147,13 @@ class RfidScannerFragment :
         )
     }
 
+    // Показать AlertDialog для подтверждения действия (onOkClickListener) или подсказки
+    private fun showAlertDialog(msg: Int, onOkClickListener: () -> Unit) {
+        UIHelper.alertDialog(requireContext(), getString(msg)) {
+            onOkClickListener()
+        }
+    }
+
     // Оповещение о выполнении инвентаризации (все метки найдены)
     private fun inventoryReady(message: Int) {
         if (activeReadyDialog == null) {
@@ -132,6 +165,37 @@ class RfidScannerFragment :
                 R.color.green_percent_text,
                 true
             )
+        }
+    }
+
+    // Инициализация AudioManager для звуков
+    private fun initSound() {
+        soundPool = SoundPool.Builder()
+            .setMaxStreams(MAX_STREAM_COUNT)
+            .build()
+        soundMap[1] = soundPool.load(context, R.raw.barcodebeep, 1)
+        soundMap[2] = soundPool.load(context, R.raw.serror, 1)
+        am = context?.getSystemService(AUDIO_SERVICE) as AudioManager // 实例化AudioManager对象
+    }
+
+    // Произрывание звукового сигнала
+    private fun playSound(id: Int) {
+        val audioMaxVolume =
+            am.getStreamMaxVolume(AudioManager.STREAM_MUSIC).toFloat()
+        val audioCurrentVolume =
+            am.getStreamVolume(AudioManager.STREAM_MUSIC).toFloat()
+        val volumeRatio = audioCurrentVolume / audioMaxVolume
+        try {
+            soundPool.play(
+                soundMap[id]!!,
+                volumeRatio,
+                volumeRatio,
+                1,
+                0,
+                1f
+            )
+        } catch (e: Exception) {
+            Timber.d("InvMobRFID", e.toString())
         }
     }
 
@@ -161,6 +225,22 @@ class RfidScannerFragment :
         adapter = InventoryItemsFilterableAdapter(
             object : OnItemClickListener<InventoryItemForListModel> {
                 override fun onItemClick(item: InventoryItemForListModel) {
+                }
+
+                override fun onLongClick(item: InventoryItemForListModel): Boolean {
+                    if (item.state == InventoryItemState.STATE_FOUND_IN_WRONG_PLACE) {
+                        viewModel.process(
+                            RfidScannerViewEvent.ShowAlertDialog(R.string.reset_inventory_item_state) {
+                                viewModel.process(
+                                    RfidScannerViewEvent.ResetInventoryItemState(
+                                        item
+                                    )
+                                )
+                            }
+                        )
+                    }
+
+                    return true
                 }
             },
             getString(R.string.filter_delimetr)

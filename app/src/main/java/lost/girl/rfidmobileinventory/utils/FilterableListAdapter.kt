@@ -53,5 +53,6 @@ abstract class FilterableListAdapter<T, VH : RecyclerView.ViewHolder>(
 
 interface OnItemClickListener<T> {
     fun onItemClick(item: T)
+    fun onLongClick(item: T): Boolean
 }
 

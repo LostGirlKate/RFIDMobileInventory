@@ -79,7 +79,9 @@ object LoadDataToDataBaseUtil {
             managerName = managerName,
             type = type,
             serialNum = serialNum,
-            shipmentNum = shipmentNum
+            shipmentNum = shipmentNum,
+            prevLocationID = null,
+            prevLocation = null
         )
     }
 }

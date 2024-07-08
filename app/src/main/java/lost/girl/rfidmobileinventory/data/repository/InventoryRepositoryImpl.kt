@@ -67,4 +67,8 @@ class InventoryRepositoryImpl(
         return inventoryStorage.getAllInventoryItemList()
             .map { it.toInventoryItemForScanningModel() }
     }
+
+    override fun resetLocationInventoryItemByID(id: Int) {
+        inventoryStorage.resetLocationInventoryItemByID(id)
+    }
 }

@@ -43,4 +43,7 @@ interface InventoryRepository {
 
     // общий список ТМЦ для сканирования
     fun getAllInventoryItemListForRfidScanning(): List<InventoryItemForScanningModel>
+
+    // reset актуального местоположения ТМЦ по id
+    fun resetLocationInventoryItemByID(id: Int)
 }

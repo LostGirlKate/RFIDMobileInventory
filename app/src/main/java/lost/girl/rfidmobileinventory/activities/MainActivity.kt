@@ -1,9 +1,11 @@
 package lost.girl.rfidmobileinventory.activities
 
+import android.app.KeyguardManager
 import android.content.Context
 import android.graphics.Rect
 import android.os.Bundle
 import android.view.MotionEvent
+import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
@@ -19,7 +21,6 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var appBarConfiguration: AppBarConfiguration
-
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
         if (ev.action == MotionEvent.ACTION_DOWN) {
             val v = currentFocus
@@ -47,6 +48,11 @@ class MainActivity : AppCompatActivity() {
         val navController = navHostFragment.navController
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        val lock = (getSystemService(KEYGUARD_SERVICE) as KeyguardManager).newKeyguardLock(
+            KEYGUARD_SERVICE
+        )
+        lock.disableKeyguard()
     }
 
     override fun onSupportNavigateUp(): Boolean {

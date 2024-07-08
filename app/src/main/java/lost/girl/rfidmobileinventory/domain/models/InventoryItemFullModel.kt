@@ -16,6 +16,8 @@ data class InventoryItemFullModel(
     val rfidCardNum: String,
     val actualLocationID: Int?,
     val actualLocation: String?,
+    val prevLocationID: Int?,
+    val prevLocation: String?,
 ) {
     fun toInventoryItem() = InventoryItem(
         id = this.id,
@@ -29,6 +31,8 @@ data class InventoryItemFullModel(
         shipmentNum = this.shipmentNum,
         rfidCardNum = this.rfidCardNum,
         actualLocationID = this.actualLocationID,
-        actualLocation = this.actualLocation
+        actualLocation = this.actualLocation,
+        prevLocationID = this.prevLocationID,
+        prevLocation = this.prevLocation
     )
 }

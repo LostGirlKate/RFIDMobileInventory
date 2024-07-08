@@ -15,18 +15,18 @@ data class InventoryItemForExportModel(
 ) {
     // Преобразование объекта в List<String> для выгрузки
     fun toListOfString(): List<String> {
-        return """$rowNum,
-            $inventoryNum,
-            $managerName,
-            $location,
-            $type,
-            $model,
-            $serialNum,
-            $shipmentNum,
-            $rfidCardNum,
+        return """$rowNum|
+            $inventoryNum|
+            $managerName|
+            $location|
+            $type|
+            $model|
+            $serialNum|
+            $shipmentNum|
+            $rfidCardNum|
             ${if (actualLocation == "null") "" else actualLocation}
         """.trimMargin().split(
-            ','
+            '|'
         )
     }
 }

@@ -5,4 +5,5 @@ data class InventoryItemForScanningModel(
     val id: Int?,
     val shipmentNum: String,
     val rfidCardNum: String,
+    val actualLocationID: Int?,
 )

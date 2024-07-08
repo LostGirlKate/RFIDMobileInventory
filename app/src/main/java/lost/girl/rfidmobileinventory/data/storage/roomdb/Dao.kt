@@ -44,10 +44,15 @@ interface Dao : InventoryStorage {
     @Query("select * from inventory_item where  id like :id")
     override fun getInventoryItemDetail(id: Int): InventoryItem
 
-    @Query("UPDATE inventory_item SET actual_location_id = :locationID , actual_location = :location WHERE id = :id ")
+    @Query("UPDATE inventory_item SET prev_location = actual_location , prev_location_id = actual_location_id,  actual_location_id = :locationID , actual_location = :location WHERE id = :id ")
     override fun updateLocationInventoryItemByID(
         locationID: Int,
         location: String,
+        id: Int,
+    )
+
+    @Query("UPDATE inventory_item SET actual_location_id = prev_location_id , actual_location = prev_location,  prev_location = null , prev_location_id = null WHERE id = :id ")
+    override fun resetLocationInventoryItemByID(
         id: Int,
     )
 }

@@ -28,7 +28,8 @@ val appModule = module {
             application = androidApplication(),
             getAllLocationsUseCase = get(),
             getInventoryInfo = get(),
-            getInventoryItemByLocationIDUseCase = get()
+            getInventoryItemByLocationIDUseCase = get(),
+            resetLocationInventoryItemByID = get()
         )
     }
 
@@ -46,7 +47,8 @@ val appModule = module {
             openBarcodeReaderUseCase = get(),
             closeBarcodeReaderUseCase = get(),
             startBarcodeReaderUseCase = get(),
-            stopBarcodeReaderUseCase = get()
+            stopBarcodeReaderUseCase = get(),
+            resetLocationInventoryItemByID = get()
         )
     }
 

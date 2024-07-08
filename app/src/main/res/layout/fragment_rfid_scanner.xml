@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
+    android:keepScreenOn="true"
     tools:context=".ui.rfidscan.RfidScannerFragment">
 
     <androidx.cardview.widget.CardView
@@ -175,6 +176,8 @@
         android:textSize="20sp"
         android:textStyle="bold"
         android:visibility="invisible"
+        android:textAlignment="center"
+        android:paddingBottom="8dp"
         app:layout_constraintBottom_toBottomOf="@+id/settingPanel"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -16,6 +16,7 @@ import lost.girl.rfidmobileinventory.domain.usescase.InitRFIDReaderUseCase
 import lost.girl.rfidmobileinventory.domain.usescase.IsRFIDReaderInitializedUseCase
 import lost.girl.rfidmobileinventory.domain.usescase.LoadDataToDataBaseUseCase
 import lost.girl.rfidmobileinventory.domain.usescase.OpenBarcodeReaderUseCase
+import lost.girl.rfidmobileinventory.domain.usescase.ResetLocationInventoryItemByIDUseCase
 import lost.girl.rfidmobileinventory.domain.usescase.StartBarcodeReaderUseCase
 import lost.girl.rfidmobileinventory.domain.usescase.StartRFiDInventoryUseCase
 import lost.girl.rfidmobileinventory.domain.usescase.StopBarcodeReaderUseCase
@@ -114,5 +115,9 @@ val domainModule = module {
 
     factory<CloseBarcodeReaderUseCase> {
         CloseBarcodeReaderUseCase(repository = get())
+    }
+
+    factory<ResetLocationInventoryItemByIDUseCase> {
+        ResetLocationInventoryItemByIDUseCase(repository = get())
     }
 }

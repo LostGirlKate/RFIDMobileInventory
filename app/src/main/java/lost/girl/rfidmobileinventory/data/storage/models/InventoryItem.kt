@@ -61,6 +61,12 @@ class InventoryItem(
 
     @ColumnInfo(name = "actual_location")
     val actualLocation: String?,
+
+    @ColumnInfo(name = "prev_location_id")
+    val prevLocationID: Int?,
+
+    @ColumnInfo(name = "prev_location")
+    val prevLocation: String?,
 ) {
     fun toInventoryItemForExportModel(num: Int) =
         InventoryItemForExportModel(
@@ -97,7 +103,9 @@ class InventoryItem(
             model = this.model,
             state = getState(),
             inventoryNum = this.inventoryNum,
-            location = this.actualLocation ?: this.location
+            location = this.actualLocation ?: this.location,
+            managerName = this.managerName,
+            rfidCardNum = "RFID: ${this.rfidCardNum}"
         )
 
     fun toInventoryItemFullModel() =
@@ -113,14 +121,17 @@ class InventoryItem(
             shipmentNum = this.shipmentNum,
             rfidCardNum = this.rfidCardNum,
             actualLocationID = this.actualLocationID,
-            actualLocation = this.actualLocation
+            actualLocation = this.actualLocation,
+            prevLocationID = this.prevLocationID,
+            prevLocation = this.prevLocation
         )
 
     fun toInventoryItemForScanningModel() =
         InventoryItemForScanningModel(
             id = this.id,
             shipmentNum = this.shipmentNum,
-            rfidCardNum = this.rfidCardNum
+            rfidCardNum = this.rfidCardNum,
+            actualLocationID = this.actualLocationID
         )
 
     // вычисление статуса ТМЦ

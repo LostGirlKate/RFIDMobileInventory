@@ -29,4 +29,7 @@ interface InventoryStorage {
 
     // update актуального местоположения ТМЦ по id
     fun updateLocationInventoryItemByID(locationID: Int, location: String, id: Int)
+
+    // reset актуального местоположения ТМЦ по id
+    fun resetLocationInventoryItemByID(id: Int)
 }

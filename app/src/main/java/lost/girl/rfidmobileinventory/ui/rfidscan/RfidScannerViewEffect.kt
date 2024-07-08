@@ -7,4 +7,12 @@ sealed class RfidScannerViewEffect {
     // Показать Toast
     data class ShowToast(val message: Int, val errorMessage: Int, val isError: Boolean = false) :
         RfidScannerViewEffect()
+
+    // Звуковой сигнал если метка найдена
+    data class PlaySound(val id: Int) :
+        RfidScannerViewEffect()
+
+    // Показать AlertDialog для подтверждения действия (onOkClickListener) или подсказки
+    data class ShowAlertDialog(val message: Int, val onOkClickListener: () -> Unit) :
+        RfidScannerViewEffect()
 }

@@ -7,4 +7,6 @@ data class InventoryItemForListModel(
     val state: InventoryItemState,
     val location: String,
     val inventoryNum: String,
+    val managerName: String,
+    val rfidCardNum: String,
 )

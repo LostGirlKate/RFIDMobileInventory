@@ -1,0 +1,70 @@
+<resources>
+    <!-- Base application theme. -->
+    <style name="Theme.RFIDMobileInventory" parent="Theme.MaterialComponents.DayNight">
+        <item name="colorPrimary">@color/colorPrimaryDark</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorAccent">@color/colorPrimaryDark</item>
+        <item name="android:windowBackground">@drawable/main_background</item>
+        <item name="colorOnBackground">@color/banner_background</item>
+        <item name="colorSurface">@color/colorPrimaryDark</item>
+        <item name="colorOnSurface">@color/shrine_pink_900</item>
+        <item name="colorSecondary">@color/shrine_pink_100</item>
+
+
+        <item name="android:editTextColor">@color/textColor</item>
+        <item name="android:textColorHint">@color/textColor</item>
+        <item name="android:textColorPrimary">@color/textColor</item>
+        <item name="android:textColorSecondary">@color/textColor</item>
+        <item name="android:textColorTertiary">@color/textColor</item>
+        <item name="android:textColorPrimaryInverse">@color/textColor</item>
+        <item name="android:textColorSecondaryInverse">@color/textColor</item>
+        <item name="android:textColorTertiaryInverse">@color/textColor</item>
+        <item name="android:textColor">@color/textColor</item>
+        <item name="android:textAppearance">@color/textColor</item>
+        <item name="android:textSize">@dimen/text_medium_size</item>
+        <item name="colorControlHighlight">@color/textColor</item>
+
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
+    <style name="Theme.App.SplashScreen" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/colorPrimaryDark</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_screen</item>
+        <item name="postSplashScreenTheme">@style/Theme.RFIDMobileInventory</item>
+        <item name="splashScreenIconSize">450dp</item>
+    </style>
+
+    <style name="AppSearchView" parent="Widget.AppCompat.SearchView">
+        <item name="android:textSize">@dimen/text_big_size</item>
+    </style>
+
+    <style name="MaterialAlertDialog_rounded" parent="@style/ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="shapeAppearanceOverlay">@style/DialogCorners</item>
+
+    </style>
+
+    <style name="DialogCorners">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
+    </style>
+
+    <style name="ShapeAppearanceOverlay.App.CornerSize50Percent" parent="">
+        <item name="cornerSize">50%</item>
+    </style>
+
+    <style name="App.Slider" parent="@style/Widget.MaterialComponents.Slider">
+        <item name="labelStyle">@style/App.Tooltip</item>
+    </style>
+
+    <style name="App.Tooltip" parent="Widget.MaterialComponents.Tooltip">
+        <!-- background color of the Tooltip -->
+        <item name="backgroundTint">@color/colorPrimaryDark</item>
+        <!-- textAppearance of the Tooltip -->
+        <item name="android:textAppearance">@style/TextAppearance.App.Tooltip</item>
+    </style>
+
+    <style name="TextAppearance.App.Tooltip" parent="TextAppearance.MaterialComponents.Tooltip">
+        <item name="android:textColor">@color/white</item>
+    </style>
+</resources>

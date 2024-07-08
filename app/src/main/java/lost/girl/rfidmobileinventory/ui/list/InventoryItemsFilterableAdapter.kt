@@ -37,12 +37,17 @@ class InventoryItemsFilterableAdapter(
             itemName.text = item.model
             itemLocation.text = item.location
             itemNum.text = item.inventoryNum
+            managerName.text = item.managerName
+            rfidNum.text = item.rfidCardNum
             backgroudConstrain.background = ContextCompat.getDrawable(
                 binding.root.context,
                 item.state.toColor()
             )
             cardView.setOnClickListener {
                 itemClickListener.onItemClick(item)
+            }
+            cardView.setOnLongClickListener {
+                itemClickListener.onLongClick(item)
             }
         }
 

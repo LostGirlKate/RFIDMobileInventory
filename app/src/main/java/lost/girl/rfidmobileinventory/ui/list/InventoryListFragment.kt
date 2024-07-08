@@ -11,6 +11,7 @@ import lost.girl.rfidmobileinventory.R
 import lost.girl.rfidmobileinventory.data.readers.ReaderType
 import lost.girl.rfidmobileinventory.databinding.FragmentInventoryListBinding
 import lost.girl.rfidmobileinventory.domain.models.InventoryItemForListModel
+import lost.girl.rfidmobileinventory.domain.models.InventoryItemState
 import lost.girl.rfidmobileinventory.domain.models.InventoryLocationFullModel
 import lost.girl.rfidmobileinventory.mvi.MviFragment
 import lost.girl.rfidmobileinventory.utils.OnItemClickListener
@@ -49,7 +50,14 @@ class InventoryListFragment :
         lifecycle.addObserver(viewModel)
     }
 
-    override fun renderViewEffect(viewEffect: InventoryListViewEffect) {}
+    override fun renderViewEffect(viewEffect: InventoryListViewEffect) {
+        when (viewEffect) {
+            is InventoryListViewEffect.ShowAlertDialog -> showAlertDialog(
+                viewEffect.message,
+                viewEffect.onOkClickListener
+            )
+        }
+    }
 
     override fun renderViewState(viewState: InventoryListViewState) = with(binding) {
         val filter = getFilterString()
@@ -71,6 +79,13 @@ class InventoryListFragment :
         filterData()
     }
 
+    // Показать AlertDialog для подтверждения действия (onOkClickListener) или подсказки
+    private fun showAlertDialog(msg: Int, onOkClickListener: () -> Unit) {
+        UIHelper.alertDialog(requireContext(), getString(msg)) {
+            onOkClickListener()
+        }
+    }
+
     // Инициализация RecyclerView
     private fun initRcView() = with(binding) {
         rcInventoryList.layoutManager = LinearLayoutManager(activity)
@@ -78,6 +93,22 @@ class InventoryListFragment :
             object : OnItemClickListener<InventoryItemForListModel> {
                 override fun onItemClick(item: InventoryItemForListModel) {
                     openItemDetail(item)
+                }
+
+                override fun onLongClick(item: InventoryItemForListModel): Boolean {
+                    if (item.state == InventoryItemState.STATE_FOUND_IN_WRONG_PLACE) {
+                        viewModel.process(
+                            InventoryListViewEvent.ShowAlertDialog(R.string.reset_inventory_item_state) {
+                                viewModel.process(
+                                    InventoryListViewEvent.ResetInventoryItemState(
+                                        item
+                                    )
+                                )
+                            }
+                        )
+                    }
+
+                    return true
                 }
             },
             getString(R.string.filter_delimetr)

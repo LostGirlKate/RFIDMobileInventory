@@ -19,6 +19,7 @@
     <string name="found_in_wrong_place">Найдено не на своем месте</string>
     <string name="tmc_found_in_wrong_place">ТМЦ найдено, но не на своем месте</string>
     <string name="clear_all_message">Подтвердить закрытие инвентаризации (все текущие данные будут выгружены в Excel файл)</string>
+    <string name="reset_inventory_item_state">Подтвердить удаление ТМЦ из результатов</string>
     <string name="current_power">Текущая мощность: %1$d</string>
 
     <string name="data_save_message">Данные сохранены</string>
@@ -57,7 +58,7 @@
 
 
     <string name="init_rfid_message">Считыватель инициализирован</string>
-    <string name="init_error_rfid_message">Ошибка инициализации считывателя</string>
+    <string name="init_error_rfid_message">Ошибка инициализации считывателя (выключите использование ридера сторонними приложениями и перезапустите текущее)</string>
     <string name="init_process_rfid_message">Инициализация считывателя</string>
     <string name="rfid">RFID</string>
     <string name="_2d_scanner">2D scanner</string>

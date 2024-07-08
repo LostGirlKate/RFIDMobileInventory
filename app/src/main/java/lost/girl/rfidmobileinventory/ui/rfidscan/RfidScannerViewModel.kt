@@ -9,6 +9,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import lost.girl.rfidmobileinventory.R
 import lost.girl.rfidmobileinventory.data.readers.ReaderType
+import lost.girl.rfidmobileinventory.domain.models.InventoryItemForListModel
 import lost.girl.rfidmobileinventory.domain.usescase.CloseBarcodeReaderUseCase
 import lost.girl.rfidmobileinventory.domain.usescase.GetAllInventoryItemListForScanningUseCase
 import lost.girl.rfidmobileinventory.domain.usescase.GetInventoryInfoUseCase
@@ -16,6 +17,7 @@ import lost.girl.rfidmobileinventory.domain.usescase.GetInventoryItemByLocationI
 import lost.girl.rfidmobileinventory.domain.usescase.GetRFIDReaderPowerUseCase
 import lost.girl.rfidmobileinventory.domain.usescase.IsRFIDReaderInitializedUseCase
 import lost.girl.rfidmobileinventory.domain.usescase.OpenBarcodeReaderUseCase
+import lost.girl.rfidmobileinventory.domain.usescase.ResetLocationInventoryItemByIDUseCase
 import lost.girl.rfidmobileinventory.domain.usescase.StartBarcodeReaderUseCase
 import lost.girl.rfidmobileinventory.domain.usescase.StartRFiDInventoryUseCase
 import lost.girl.rfidmobileinventory.domain.usescase.StopBarcodeReaderUseCase
@@ -35,8 +37,9 @@ class RfidScannerViewModel(
     private val closeBarcodeReaderUseCase: CloseBarcodeReaderUseCase,
     private val startBarcodeReaderUseCase: StartBarcodeReaderUseCase,
     private val stopBarcodeReaderUseCase: StopBarcodeReaderUseCase,
+    private val resetLocationInventoryItemByID: ResetLocationInventoryItemByIDUseCase,
+    private val getAllInventoryItemListForRfidScanningUseCase: GetAllInventoryItemListForScanningUseCase,
     application: Application,
-    getAllInventoryItemListForRfidScanningUseCase: GetAllInventoryItemListForScanningUseCase,
 
     ) :
     MviViewModel<RfidScannerViewState, RfidScannerViewEffect, RfidScannerViewEvent>(application),
@@ -71,6 +74,17 @@ class RfidScannerViewModel(
             is RfidScannerViewEvent.SetScannerType -> {
                 setScannerType(viewEvent.type)
             }
+
+            is RfidScannerViewEvent.ShowAlertDialog -> {
+                showAlertDialog(
+                    viewEvent.message,
+                    viewEvent.onOkClickListener
+                )
+            }
+
+            is RfidScannerViewEvent.ResetInventoryItemState -> {
+                resetLocationInventory(viewEvent.item)
+            }
         }
     }
 
@@ -80,6 +94,13 @@ class RfidScannerViewModel(
         if (viewState.isScanningStart) {
             setScanningState(false)
             stopInventory()
+        }
+    }
+
+
+    private fun showAlertDialog(message: Int, onOkClickListener: () -> Unit) {
+        if (!viewState.isScanningStart) {
+            viewEffect = RfidScannerViewEffect.ShowAlertDialog(message, onOkClickListener)
         }
     }
 
@@ -154,15 +175,19 @@ class RfidScannerViewModel(
                 }
             }
             // если RFID счытыватель инициализирован - получем его мощность
-            val power = if (result && type == ReaderType.RFID) {
+            var power = if (result && type == ReaderType.RFID) {
                 getRFIDReaderPowerUseCase.execute()
             } else 0
+            if (power < 0 && type == ReaderType.RFID) {
+                power = -1
+                onError()
+            }
             // обновляем состояние окна по результату инициализации
             viewState = viewState.copy(
                 scannerType = type,
                 isReaderInit = result,
                 panelSettingsVisible = (result && type == ReaderType.RFID),
-                startScanningButtonVisible = result,
+                startScanningButtonVisible = (result && type == ReaderType.RFID),
                 scannerPowerValue = power
             )
         }
@@ -185,9 +210,9 @@ class RfidScannerViewModel(
         viewState = viewState.copy(
             canBackPress = !state,
             isScanningStart = state,
-            startScanningButtonVisible = !state,
+            startScanningButtonVisible = (!state && viewState.scannerType == ReaderType.RFID),
             panelSettingsVisible = (!state && viewState.scannerType == ReaderType.RFID),
-            stopScanningButtonVisible = state
+            stopScanningButtonVisible = (state && viewState.scannerType == ReaderType.RFID)
         )
         if (state) {
             startInventory()
@@ -210,9 +235,30 @@ class RfidScannerViewModel(
             inventoryState = getInventoryInfoUseCase.execute(viewState.currentLocation),
             inventoryItems = getInventoryItemByLocationIDUseCase.execute(
                 viewState.currentLocation
-            )
+            ),
+            inventoryItemsFullRFIDList = getAllInventoryItemListForRfidScanningUseCase.execute(),
         )
     }
+
+
+    // Завершение  нвентаризации (сохранение данных в файл и при успешном сохранении очистка BD)
+    private fun resetLocationInventory(item: InventoryItemForListModel) {
+        viewModelScope.launch(Dispatchers.IO) {
+            item.id?.let { resetLocationInventoryById(it) }
+        }
+    }
+
+    private fun resetLocationInventoryById(id: Int) {
+        resetLocationInventoryItemByID.execute(id)
+        viewState = viewState.copy(
+            inventoryState = getInventoryInfoUseCase.execute(viewState.currentLocation),
+            inventoryItems = getInventoryItemByLocationIDUseCase.execute(
+                viewState.currentLocation
+            ),
+            inventoryItemsFullRFIDList = getAllInventoryItemListForRfidScanningUseCase.execute(),
+        )
+    }
+
 
     // Проверка наличия метки в списке ТМЦ
     private fun checkItemNewLocationAndUpdate(scanCode: String) {
@@ -221,19 +267,22 @@ class RfidScannerViewModel(
         val itemId =
             when (viewState.scannerType) {
                 ReaderType.RFID -> {
-                    allItem.firstOrNull { it.rfidCardNum == scanCode }?.id ?: 0
+                    allItem.firstOrNull { it.rfidCardNum == scanCode && it.actualLocationID != viewState.currentLocation }?.id
+                        ?: 0
                 }
 
                 ReaderType.BARCODE_2D -> {
-                    allItem.firstOrNull { it.shipmentNum == scanCode }?.id ?: 0
+                    allItem.firstOrNull { it.shipmentNum == scanCode && it.actualLocationID != viewState.currentLocation }?.id
+                        ?: 0
                 }
 
                 else -> {
                     0
                 }
             }
-        // если метка найдена обновляем актальное местоположение у ТМЦ
+        // если метка найдена обновляем актальное местоположение у ТМЦ и проигрываем звук
         if (itemId > 0) {
+            viewEffect = RfidScannerViewEffect.PlaySound(1)
             updateInventoryItem(
                 viewState.currentLocation,
                 viewState.currentLocationName,
