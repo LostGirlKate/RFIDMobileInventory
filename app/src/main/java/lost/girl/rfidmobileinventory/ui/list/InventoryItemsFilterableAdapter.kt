@@ -82,7 +82,9 @@ class InventoryItemsFilterableAdapter(
         return list.filter {
             (
                 it.model.lowercase().contains(firstFilter) ||
-                    it.inventoryNum.lowercase().contains(firstFilter)
+                        it.inventoryNum.lowercase().contains(firstFilter) ||
+                        it.managerName.lowercase().contains(firstFilter) ||
+                        it.rfidCardNum.lowercase().contains(firstFilter)
                 ) &&
                 (showNotFound || it.state != InventoryItemState.STATE_NOT_FOUND) &&
                 (showFound || it.state != InventoryItemState.STATE_FOUND) &&

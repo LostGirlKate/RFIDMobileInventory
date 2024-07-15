@@ -241,13 +241,14 @@ class RfidScannerViewModel(
     }
 
 
-    // Завершение  нвентаризации (сохранение данных в файл и при успешном сохранении очистка BD)
+    // Сброс статуса
     private fun resetLocationInventory(item: InventoryItemForListModel) {
         viewModelScope.launch(Dispatchers.IO) {
             item.id?.let { resetLocationInventoryById(it) }
         }
     }
 
+    // Сброс статуса
     private fun resetLocationInventoryById(id: Int) {
         resetLocationInventoryItemByID.execute(id)
         viewState = viewState.copy(
