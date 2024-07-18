@@ -20,7 +20,8 @@ class ExportDataToExcelFileUseCase(private val resourcesProvider: ResourcesProvi
             resourcesProvider.getString(R.string.serial_num),
             resourcesProvider.getString(R.string.shipment_num),
             resourcesProvider.getString(R.string.rfid_dec),
-            resourcesProvider.getString(R.string.location_fact)
+            resourcesProvider.getString(R.string.location_fact),
+            resourcesProvider.getString(R.string.comment)
         )
         return ExcelUtil.exportDataToExcelFile(data, fileName, columnNames)
     }

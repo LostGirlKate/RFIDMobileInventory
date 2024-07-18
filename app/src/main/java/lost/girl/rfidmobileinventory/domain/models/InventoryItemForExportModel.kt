@@ -12,6 +12,7 @@ data class InventoryItemForExportModel(
     val shipmentNum: String,
     val rfidCardNum: String,
     val actualLocation: String,
+    val comment: String,
 ) {
     // Преобразование объекта в List<String> для выгрузки
     fun toListOfString(): List<String> {
@@ -23,9 +24,19 @@ data class InventoryItemForExportModel(
             $model|
             $serialNum|
             $shipmentNum|
-            $rfidCardNum|
-            ${if (actualLocation == "null") "" else actualLocation}
-        """.trimMargin().split(
+            ${if (rfidCardNum == "null" || rfidCardNum.isEmpty()) "" else rfidCardNum}|
+            ${if (actualLocation == "null" || actualLocation.isEmpty()) "" else actualLocation}|            
+            ${
+            if (comment == "null" || comment.isEmpty()) {
+                ""
+            } else {
+                comment.replace(
+                    System.getProperty("line.separator"),
+                    "; "
+                )
+            }
+        }
+        """.split(
             '|'
         )
     }

@@ -52,10 +52,19 @@ class InventoryListFragment :
 
     override fun renderViewEffect(viewEffect: InventoryListViewEffect) {
         when (viewEffect) {
-            is InventoryListViewEffect.ShowAlertDialog -> showAlertDialog(
-                viewEffect.message,
-                viewEffect.onOkClickListener
-            )
+            is InventoryListViewEffect.ShowAlertDialog -> {
+                showAlertDialog(
+                    viewEffect.message,
+                    viewEffect.onOkClickListener
+                )
+            }
+
+            is InventoryListViewEffect.ShowSettingsAlertDialog -> {
+                showAlertSettingsDialog(
+                    viewEffect.itemState,
+                    viewEffect.onOkClickListener
+                )
+            }
         }
     }
 
@@ -86,6 +95,14 @@ class InventoryListFragment :
         }
     }
 
+    // Показать AlertDialog для подтверждения действия (onOkClickListener) или подсказки
+    private fun showAlertSettingsDialog(
+        itemState: InventoryItemState,
+        onOkClickListener: (resetState: Boolean, setStateFound: Boolean, comment: String) -> Unit,
+    ) {
+        UIHelper.alertSettingsDialog(requireContext(), itemState, onOkClickListener)
+    }
+
     // Инициализация RecyclerView
     private fun initRcView() = with(binding) {
         rcInventoryList.layoutManager = LinearLayoutManager(activity)
@@ -96,17 +113,31 @@ class InventoryListFragment :
                 }
 
                 override fun onLongClick(item: InventoryItemForListModel): Boolean {
-                    if (item.state == InventoryItemState.STATE_FOUND_IN_WRONG_PLACE) {
-                        viewModel.process(
-                            InventoryListViewEvent.ShowAlertDialog(R.string.reset_inventory_item_state) {
+                    viewModel.process(
+                        InventoryListViewEvent.ShowSettingsAlertDialog(item.state) { resetState: Boolean, setStateFound: Boolean, comment: String ->
+                            if (comment.isNotEmpty()) {
+                                viewModel.process(
+                                    InventoryListViewEvent.SetCommentInventoryItem(
+                                        item, comment
+                                    )
+                                )
+                            }
+                            if (setStateFound) {
+                                viewModel.process(
+                                    InventoryListViewEvent.SetFoundInventoryItemState(
+                                        item
+                                    )
+                                )
+                            }
+                            if (resetState) {
                                 viewModel.process(
                                     InventoryListViewEvent.ResetInventoryItemState(
                                         item
                                     )
                                 )
                             }
-                        )
-                    }
+                        }
+                    )
 
                     return true
                 }

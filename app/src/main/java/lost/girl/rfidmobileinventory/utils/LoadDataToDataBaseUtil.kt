@@ -81,7 +81,8 @@ object LoadDataToDataBaseUtil {
             serialNum = serialNum,
             shipmentNum = shipmentNum,
             prevLocationID = null,
-            prevLocation = null
+            prevLocation = null,
+            comment = null
         )
     }
 }

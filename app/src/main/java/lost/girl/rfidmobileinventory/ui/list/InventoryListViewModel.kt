@@ -7,16 +7,21 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import lost.girl.rfidmobileinventory.domain.models.InventoryItemForListModel
+import lost.girl.rfidmobileinventory.domain.models.InventoryItemState
 import lost.girl.rfidmobileinventory.domain.usescase.GetAllLocationsUseCase
 import lost.girl.rfidmobileinventory.domain.usescase.GetInventoryInfoUseCase
 import lost.girl.rfidmobileinventory.domain.usescase.GetInventoryItemByLocationIDUseCase
 import lost.girl.rfidmobileinventory.domain.usescase.ResetLocationInventoryItemByIDUseCase
+import lost.girl.rfidmobileinventory.domain.usescase.SetCommentInventoryItemByIDUseCase
+import lost.girl.rfidmobileinventory.domain.usescase.SetFoundInventoryItemByIDUseCase
 import lost.girl.rfidmobileinventory.mvi.MviViewModel
 
 class InventoryListViewModel(
     private val getInventoryItemByLocationIDUseCase: GetInventoryItemByLocationIDUseCase,
     private val getInventoryInfo: GetInventoryInfoUseCase,
     private val resetLocationInventoryItemByID: ResetLocationInventoryItemByIDUseCase,
+    private val setFoundInventoryItemByIDUseCase: SetFoundInventoryItemByIDUseCase,
+    private val setCommentInventoryItemByIDUseCase: SetCommentInventoryItemByIDUseCase,
     application: Application,
     getAllLocationsUseCase: GetAllLocationsUseCase,
 ) : MviViewModel<InventoryListViewState, InventoryListViewEffect, InventoryListViewEvent>(
@@ -57,6 +62,21 @@ class InventoryListViewModel(
                     viewEvent.onOkClickListener
                 )
             }
+
+            is InventoryListViewEvent.ShowSettingsAlertDialog -> {
+                showSettingsAlertDialog(
+                    viewEvent.itemState,
+                    viewEvent.onOkClickListener
+                )
+            }
+
+            is InventoryListViewEvent.SetCommentInventoryItem -> {
+                setCommentInventoryItem(viewEvent.item, viewEvent.comment)
+            }
+
+            is InventoryListViewEvent.SetFoundInventoryItemState -> {
+                setFoundInventoryItemState(viewEvent.item)
+            }
         }
     }
 
@@ -64,10 +84,31 @@ class InventoryListViewModel(
         viewEffect = InventoryListViewEffect.ShowAlertDialog(message, onOkClickListener)
     }
 
+    private fun showSettingsAlertDialog(
+        itemState: InventoryItemState,
+        onOkClickListener: (resetState: Boolean, setStateFound: Boolean, comment: String) -> Unit,
+    ) {
+        viewEffect = InventoryListViewEffect.ShowSettingsAlertDialog(itemState, onOkClickListener)
+    }
+
     // сброс статуса ТМЦ
     private fun resetLocationInventory(item: InventoryItemForListModel) {
         viewModelScope.launch(Dispatchers.IO) {
             item.id?.let { resetLocationInventoryById(it) }
+        }
+    }
+
+    // установка статуса найдено вручную
+    private fun setFoundInventoryItemState(item: InventoryItemForListModel) {
+        viewModelScope.launch(Dispatchers.IO) {
+            item.id?.let { setFoundInventoryItemByID(it) }
+        }
+    }
+
+    // установка примечания
+    private fun setCommentInventoryItem(item: InventoryItemForListModel, comment: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            item.id?.let { setCommentInventoryItemByID(it, comment) }
         }
     }
 
@@ -80,6 +121,22 @@ class InventoryListViewModel(
                 viewState.currentLocationID
             )
         )
+    }
+
+    // установка статуса найдено вручную
+    private fun setFoundInventoryItemByID(id: Int) {
+        setFoundInventoryItemByIDUseCase.execute(id)
+        viewState = viewState.copy(
+            inventoryState = getInventoryInfo.execute(viewState.currentLocationID),
+            inventoryItems = getInventoryItemByLocationIDUseCase.execute(
+                viewState.currentLocationID
+            )
+        )
+    }
+
+    // установка комментария
+    private fun setCommentInventoryItemByID(id: Int, comment: String) {
+        setCommentInventoryItemByIDUseCase.execute(id, comment)
     }
 
     // Обновление данных(общего списка ТМЦ и информации об инвентаризации) с учетом выбранного фильтра по местоположению

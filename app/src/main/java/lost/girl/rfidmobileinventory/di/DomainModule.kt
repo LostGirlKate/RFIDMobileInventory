@@ -17,6 +17,8 @@ import lost.girl.rfidmobileinventory.domain.usescase.IsRFIDReaderInitializedUseC
 import lost.girl.rfidmobileinventory.domain.usescase.LoadDataToDataBaseUseCase
 import lost.girl.rfidmobileinventory.domain.usescase.OpenBarcodeReaderUseCase
 import lost.girl.rfidmobileinventory.domain.usescase.ResetLocationInventoryItemByIDUseCase
+import lost.girl.rfidmobileinventory.domain.usescase.SetCommentInventoryItemByIDUseCase
+import lost.girl.rfidmobileinventory.domain.usescase.SetFoundInventoryItemByIDUseCase
 import lost.girl.rfidmobileinventory.domain.usescase.StartBarcodeReaderUseCase
 import lost.girl.rfidmobileinventory.domain.usescase.StartRFiDInventoryUseCase
 import lost.girl.rfidmobileinventory.domain.usescase.StopBarcodeReaderUseCase
@@ -119,5 +121,13 @@ val domainModule = module {
 
     factory<ResetLocationInventoryItemByIDUseCase> {
         ResetLocationInventoryItemByIDUseCase(repository = get())
+    }
+
+    factory<SetFoundInventoryItemByIDUseCase> {
+        SetFoundInventoryItemByIDUseCase(repository = get())
+    }
+
+    factory<SetCommentInventoryItemByIDUseCase> {
+        SetCommentInventoryItemByIDUseCase(repository = get())
     }
 }

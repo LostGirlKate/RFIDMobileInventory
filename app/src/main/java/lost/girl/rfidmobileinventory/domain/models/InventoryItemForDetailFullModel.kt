@@ -16,6 +16,7 @@ data class InventoryItemForDetailFullModel(
     val rfidCardNum: String,
     val actualLocation: String?,
     val status: String,
+    val comment: String?,
 ) {
     // Преобразование объекта в список параметров
     fun toListOfDetail(
@@ -59,6 +60,10 @@ data class InventoryItemForDetailFullModel(
                 InventoryItemDetailModel(
                     resourcesProvider.getString(R.string.manager_name),
                     it.managerName
+                ),
+                InventoryItemDetailModel(
+                    resourcesProvider.getString(R.string.comment),
+                    it.comment.orEmpty()
                 )
             )
         }

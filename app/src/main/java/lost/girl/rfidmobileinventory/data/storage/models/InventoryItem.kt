@@ -67,6 +67,9 @@ class InventoryItem(
 
     @ColumnInfo(name = "prev_location")
     val prevLocation: String?,
+
+    @ColumnInfo(name = "comment")
+    val comment: String?,
 ) {
     fun toInventoryItemForExportModel(num: Int) =
         InventoryItemForExportModel(
@@ -79,7 +82,8 @@ class InventoryItem(
             serialNum = this.serialNum,
             shipmentNum = this.shipmentNum,
             rfidCardNum = this.rfidCardNum,
-            actualLocation = this.actualLocation.toString()
+            actualLocation = this.actualLocation.orEmpty(),
+            comment = this.comment.orEmpty()
         )
 
     fun toInventoryItemFullModelForDetail() =
@@ -94,7 +98,8 @@ class InventoryItem(
             shipmentNum = this.shipmentNum,
             rfidCardNum = this.rfidCardNum,
             actualLocation = this.actualLocation,
-            status = getState().toStr()
+            status = getState().toStr(),
+            comment = this.comment
         )
 
     fun toInventoryItemModelForList() =
@@ -123,7 +128,8 @@ class InventoryItem(
             actualLocationID = this.actualLocationID,
             actualLocation = this.actualLocation,
             prevLocationID = this.prevLocationID,
-            prevLocation = this.prevLocation
+            prevLocation = this.prevLocation,
+            comment = this.comment
         )
 
     fun toInventoryItemForScanningModel() =

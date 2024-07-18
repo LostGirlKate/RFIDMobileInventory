@@ -3,23 +3,33 @@ package lost.girl.rfidmobileinventory.utils
 import android.app.AlertDialog
 import android.content.Context
 import android.content.res.Resources
+import android.graphics.Color
 import android.graphics.Rect
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.InsetDrawable
+import android.os.Build
 import android.text.SpannableString
 import android.text.style.AbsoluteSizeSpan
 import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
+import android.view.WindowInsets
 import android.view.WindowManager
 import android.widget.Toast
 import android.widget.ToggleButton
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import lost.girl.rfidmobileinventory.R
 import lost.girl.rfidmobileinventory.databinding.CustomDialogBinding
 import lost.girl.rfidmobileinventory.databinding.CustomFilterDialogBinding
+import lost.girl.rfidmobileinventory.databinding.CustomSettingsDialogBinding
 import lost.girl.rfidmobileinventory.databinding.LayoutLoadingDialogBinding
+import lost.girl.rfidmobileinventory.domain.models.InventoryItemState
+import lost.girl.rfidmobileinventory.utils.searchablespinner.HORIZONTAL_INSET
+import lost.girl.rfidmobileinventory.utils.searchablespinner.VERTICAL_INSET
 
 const val DIALOG_PERCENT_WIDTH = 90.0
 const val DIM_AMOUNT = 0.5f
@@ -81,6 +91,76 @@ object UIHelper {
         }
 
         alertDialogSetParams(dialog)
+    }
+
+    // Показать AlertDialog с настройками
+    fun alertSettingsDialog(
+        context: Context,
+        itemState: InventoryItemState,
+        onOkClickListener: (resetState: Boolean, setStateFound: Boolean, comment: String) -> Unit,
+    ) {
+        val binding = CustomSettingsDialogBinding.inflate(LayoutInflater.from(context))
+        binding.cbResetState.visibility =
+            if (itemState == InventoryItemState.STATE_FOUND_IN_WRONG_PLACE) View.VISIBLE else View.GONE
+        binding.cbFoundState.visibility =
+            if (itemState == InventoryItemState.STATE_NOT_FOUND) View.VISIBLE else View.GONE
+        binding.stateCaption.visibility = if (binding.cbFoundState.isVisible ||
+            binding.cbResetState.isVisible
+        ) View.VISIBLE else View.GONE
+        val dialogBuilder = MaterialAlertDialogBuilder(
+            context,
+            R.style.MaterialAlertDialog_rounded
+        )
+            .setView(binding.root)
+        val dialog: androidx.appcompat.app.AlertDialog = dialogBuilder.show()
+        binding.btnOk.setOnClickListener {
+            dialog.dismiss()
+            val resetState = binding.cbResetState.isChecked
+            val setStateFound = binding.cbFoundState.isChecked
+            val rfidNotWork = if (binding.cbRfidNotWork.isChecked) """${binding.cbRfidNotWork.text}
+                |
+            """.trimMargin() else ""
+            val barcodeNotWork =
+                if (binding.cbBarcodeNotWork.isChecked) """${binding.cbBarcodeNotWork.text}
+                    |
+            """.trimMargin() else ""
+            val comment = "$rfidNotWork$barcodeNotWork${binding.teComment.text}"
+            onOkClickListener(resetState, setStateFound, comment)
+        }
+
+        alertDialogSetParams(dialog)
+        initAlertDialogWindow(dialog, binding.root)
+    }
+
+    private fun initAlertDialogWindow(
+        dialog: androidx.appcompat.app.AlertDialog,
+        dialogView: View,
+    ) {
+        val colorDrawable = ColorDrawable(Color.TRANSPARENT)
+        val insetBackgroundDrawable = InsetDrawable(
+            colorDrawable,
+            HORIZONTAL_INSET,
+            VERTICAL_INSET,
+            HORIZONTAL_INSET,
+            VERTICAL_INSET
+        )
+        dialog.window?.setBackgroundDrawable(insetBackgroundDrawable)
+        dialog.window?.attributes?.layoutAnimationParameters
+        dialog.window?.attributes?.height = WindowManager.LayoutParams.WRAP_CONTENT
+        dialog.window?.attributes?.width = WindowManager.LayoutParams.MATCH_PARENT
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            dialog.window?.setDecorFitsSystemWindows(false)
+            dialogView.setOnApplyWindowInsetsListener { _, insets ->
+                val topInset = insets.getInsets(WindowInsets.Type.statusBars()).top
+                val imeHeight = insets.getInsets(WindowInsets.Type.ime()).bottom
+                val navigationHeight = insets.getInsets(WindowInsets.Type.navigationBars()).bottom
+                val bottomInset = if (imeHeight == 0) navigationHeight else imeHeight
+                dialogView.setPadding(0, topInset, 0, bottomInset)
+                insets
+            }
+        } else {
+            dialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+        }
     }
 
     // Показать FilterDialog с подсказкой по фильтрам со статусами ТМЦ

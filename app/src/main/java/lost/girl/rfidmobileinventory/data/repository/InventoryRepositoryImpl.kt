@@ -71,4 +71,12 @@ class InventoryRepositoryImpl(
     override fun resetLocationInventoryItemByID(id: Int) {
         inventoryStorage.resetLocationInventoryItemByID(id)
     }
+
+    override fun setCommentInventoryItemByID(id: Int, comment: String) {
+        inventoryStorage.setCommentInventoryItemByID(id, comment)
+    }
+
+    override fun setFoundInventoryItemByID(id: Int) {
+        inventoryStorage.setFoundInventoryItemByID(id)
+    }
 }

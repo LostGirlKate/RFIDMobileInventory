@@ -98,6 +98,13 @@ class RfidScannerFragment :
                 viewEffect.message,
                 viewEffect.onOkClickListener
             )
+
+            is RfidScannerViewEffect.ShowSettingsAlertDialog -> {
+                showAlertSettingsDialog(
+                    viewEffect.itemState,
+                    viewEffect.onOkClickListener
+                )
+            }
         }
     }
 
@@ -152,6 +159,14 @@ class RfidScannerFragment :
         UIHelper.alertDialog(requireContext(), getString(msg)) {
             onOkClickListener()
         }
+    }
+
+    // Показать AlertDialog для подтверждения действия (onOkClickListener) или подсказки
+    private fun showAlertSettingsDialog(
+        itemState: InventoryItemState,
+        onOkClickListener: (resetState: Boolean, setStateFound: Boolean, comment: String) -> Unit,
+    ) {
+        UIHelper.alertSettingsDialog(requireContext(), itemState, onOkClickListener)
     }
 
     // Оповещение о выполнении инвентаризации (все метки найдены)
@@ -228,17 +243,31 @@ class RfidScannerFragment :
                 }
 
                 override fun onLongClick(item: InventoryItemForListModel): Boolean {
-                    if (item.state == InventoryItemState.STATE_FOUND_IN_WRONG_PLACE) {
-                        viewModel.process(
-                            RfidScannerViewEvent.ShowAlertDialog(R.string.reset_inventory_item_state) {
+                    viewModel.process(
+                        RfidScannerViewEvent.ShowSettingsAlertDialog(item.state) { resetState: Boolean, setStateFound: Boolean, comment: String ->
+                            if (comment.isNotEmpty()) {
+                                viewModel.process(
+                                    RfidScannerViewEvent.SetCommentInventoryItem(
+                                        item, comment
+                                    )
+                                )
+                            }
+                            if (setStateFound) {
+                                viewModel.process(
+                                    RfidScannerViewEvent.SetFoundInventoryItemState(
+                                        item
+                                    )
+                                )
+                            }
+                            if (resetState) {
                                 viewModel.process(
                                     RfidScannerViewEvent.ResetInventoryItemState(
                                         item
                                     )
                                 )
                             }
-                        )
-                    }
+                        }
+                    )
 
                     return true
                 }

@@ -10,6 +10,7 @@ import kotlinx.coroutines.withContext
 import lost.girl.rfidmobileinventory.R
 import lost.girl.rfidmobileinventory.data.readers.ReaderType
 import lost.girl.rfidmobileinventory.domain.models.InventoryItemForListModel
+import lost.girl.rfidmobileinventory.domain.models.InventoryItemState
 import lost.girl.rfidmobileinventory.domain.usescase.CloseBarcodeReaderUseCase
 import lost.girl.rfidmobileinventory.domain.usescase.GetAllInventoryItemListForScanningUseCase
 import lost.girl.rfidmobileinventory.domain.usescase.GetInventoryInfoUseCase
@@ -18,6 +19,8 @@ import lost.girl.rfidmobileinventory.domain.usescase.GetRFIDReaderPowerUseCase
 import lost.girl.rfidmobileinventory.domain.usescase.IsRFIDReaderInitializedUseCase
 import lost.girl.rfidmobileinventory.domain.usescase.OpenBarcodeReaderUseCase
 import lost.girl.rfidmobileinventory.domain.usescase.ResetLocationInventoryItemByIDUseCase
+import lost.girl.rfidmobileinventory.domain.usescase.SetCommentInventoryItemByIDUseCase
+import lost.girl.rfidmobileinventory.domain.usescase.SetFoundInventoryItemByIDUseCase
 import lost.girl.rfidmobileinventory.domain.usescase.StartBarcodeReaderUseCase
 import lost.girl.rfidmobileinventory.domain.usescase.StartRFiDInventoryUseCase
 import lost.girl.rfidmobileinventory.domain.usescase.StopBarcodeReaderUseCase
@@ -39,6 +42,8 @@ class RfidScannerViewModel(
     private val stopBarcodeReaderUseCase: StopBarcodeReaderUseCase,
     private val resetLocationInventoryItemByID: ResetLocationInventoryItemByIDUseCase,
     private val getAllInventoryItemListForRfidScanningUseCase: GetAllInventoryItemListForScanningUseCase,
+    private val setFoundInventoryItemByIDUseCase: SetFoundInventoryItemByIDUseCase,
+    private val setCommentInventoryItemByIDUseCase: SetCommentInventoryItemByIDUseCase,
     application: Application,
 
     ) :
@@ -85,6 +90,21 @@ class RfidScannerViewModel(
             is RfidScannerViewEvent.ResetInventoryItemState -> {
                 resetLocationInventory(viewEvent.item)
             }
+
+            is RfidScannerViewEvent.SetCommentInventoryItem -> {
+                setCommentInventoryItem(viewEvent.item, viewEvent.comment)
+            }
+
+            is RfidScannerViewEvent.SetFoundInventoryItemState -> {
+                setFoundInventoryItemState(viewEvent.item)
+            }
+
+            is RfidScannerViewEvent.ShowSettingsAlertDialog -> {
+                showSettingsAlertDialog(
+                    viewEvent.itemState,
+                    viewEvent.onOkClickListener
+                )
+            }
         }
     }
 
@@ -102,6 +122,13 @@ class RfidScannerViewModel(
         if (!viewState.isScanningStart) {
             viewEffect = RfidScannerViewEffect.ShowAlertDialog(message, onOkClickListener)
         }
+    }
+
+    private fun showSettingsAlertDialog(
+        itemState: InventoryItemState,
+        onOkClickListener: (resetState: Boolean, setStateFound: Boolean, comment: String) -> Unit,
+    ) {
+        viewEffect = RfidScannerViewEffect.ShowSettingsAlertDialog(itemState, onOkClickListener)
     }
 
     // Установка типа считывателя
@@ -258,6 +285,37 @@ class RfidScannerViewModel(
             ),
             inventoryItemsFullRFIDList = getAllInventoryItemListForRfidScanningUseCase.execute(),
         )
+    }
+
+    // установка статуса найдено вручную
+    private fun setFoundInventoryItemState(item: InventoryItemForListModel) {
+        viewModelScope.launch(Dispatchers.IO) {
+            item.id?.let { setFoundInventoryItemByID(it) }
+        }
+    }
+
+    // установка примечания
+    private fun setCommentInventoryItem(item: InventoryItemForListModel, comment: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            item.id?.let { setCommentInventoryItemByID(it, comment) }
+        }
+    }
+
+    // установка статуса найдено вручную
+    private fun setFoundInventoryItemByID(id: Int) {
+        setFoundInventoryItemByIDUseCase.execute(id)
+        viewState = viewState.copy(
+            inventoryState = getInventoryInfoUseCase.execute(viewState.currentLocation),
+            inventoryItems = getInventoryItemByLocationIDUseCase.execute(
+                viewState.currentLocation
+            ),
+            inventoryItemsFullRFIDList = getAllInventoryItemListForRfidScanningUseCase.execute(),
+        )
+    }
+
+    // установка комментария
+    private fun setCommentInventoryItemByID(id: Int, comment: String) {
+        setCommentInventoryItemByIDUseCase.execute(id, comment)
     }
 
 

@@ -2,6 +2,7 @@ package lost.girl.rfidmobileinventory.ui.rfidscan
 
 import lost.girl.rfidmobileinventory.data.readers.ReaderType
 import lost.girl.rfidmobileinventory.domain.models.InventoryItemForListModel
+import lost.girl.rfidmobileinventory.domain.models.InventoryItemState
 
 sealed class RfidScannerViewEvent {
 
@@ -24,5 +25,19 @@ sealed class RfidScannerViewEvent {
 
     // отмена текуущего статуса
     data class ResetInventoryItemState(val item: InventoryItemForListModel) :
+        RfidScannerViewEvent()
+
+    // Показать AlertDialog для настройки
+    data class ShowSettingsAlertDialog(
+        val itemState: InventoryItemState,
+        val onOkClickListener: (resetState: Boolean, setStateFound: Boolean, comment: String) -> Unit,
+    ) : RfidScannerViewEvent()
+
+    // установка статуса найдено вручную
+    data class SetFoundInventoryItemState(val item: InventoryItemForListModel) :
+        RfidScannerViewEvent()
+
+    // установка примечания
+    data class SetCommentInventoryItem(val item: InventoryItemForListModel, val comment: String) :
         RfidScannerViewEvent()
 }

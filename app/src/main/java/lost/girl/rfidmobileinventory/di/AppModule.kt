@@ -29,7 +29,9 @@ val appModule = module {
             getAllLocationsUseCase = get(),
             getInventoryInfo = get(),
             getInventoryItemByLocationIDUseCase = get(),
-            resetLocationInventoryItemByID = get()
+            resetLocationInventoryItemByID = get(),
+            setFoundInventoryItemByIDUseCase = get(),
+            setCommentInventoryItemByIDUseCase = get()
         )
     }
 
@@ -48,7 +50,9 @@ val appModule = module {
             closeBarcodeReaderUseCase = get(),
             startBarcodeReaderUseCase = get(),
             stopBarcodeReaderUseCase = get(),
-            resetLocationInventoryItemByID = get()
+            resetLocationInventoryItemByID = get(),
+            setFoundInventoryItemByIDUseCase = get(),
+            setCommentInventoryItemByIDUseCase = get()
         )
     }
 

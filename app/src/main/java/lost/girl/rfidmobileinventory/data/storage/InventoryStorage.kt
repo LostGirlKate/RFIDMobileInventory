@@ -32,4 +32,10 @@ interface InventoryStorage {
 
     // reset актуального местоположения ТМЦ по id
     fun resetLocationInventoryItemByID(id: Int)
+
+    // Установить примечание
+    fun setCommentInventoryItemByID(id: Int, comment: String)
+
+    // Установить статус найдено вручную
+    fun setFoundInventoryItemByID(id: Int)
 }

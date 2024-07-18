@@ -49,6 +49,7 @@
     <string name="shipment_num">Номер партии</string>
     <string name="manager_name">Сотрудник</string>
     <string name="rfid_dec">RFID Dec</string>
+    <string name="comment">Примечание</string>
     <string name="show_tmc">Просмотр ТМЦ</string>
     <string name="search">Поиск</string>
     <string name="start_scanning">Запустить сканирование</string>
@@ -69,6 +70,14 @@
     <string name="location_search">Выбор местоположения</string>
     <string name="filter_delimetr">~</string>
     <string name="reader_type_not_founded">Тип не инициализирован</string>
+
+
+    <string name="reset_state">Удалить</string>
+    <string name="ыефеу_ащгтв">Найдено</string>
+    <string name="note_caption">Комментарий</string>
+    <string name="barcode_not_work">Не считывается ШК</string>
+    <string name="rfid_not_work">Не считывается RFID</string>
+    <string name="save">Сохранить</string>
 
 
 </resources>

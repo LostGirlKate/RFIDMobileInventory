@@ -18,6 +18,7 @@ data class InventoryItemFullModel(
     val actualLocation: String?,
     val prevLocationID: Int?,
     val prevLocation: String?,
+    val comment: String?,
 ) {
     fun toInventoryItem() = InventoryItem(
         id = this.id,
@@ -33,6 +34,7 @@ data class InventoryItemFullModel(
         actualLocationID = this.actualLocationID,
         actualLocation = this.actualLocation,
         prevLocationID = this.prevLocationID,
-        prevLocation = this.prevLocation
+        prevLocation = this.prevLocation,
+        comment = this.comment
     )
 }
