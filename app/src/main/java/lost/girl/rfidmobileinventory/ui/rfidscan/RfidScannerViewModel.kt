@@ -128,7 +128,9 @@ class RfidScannerViewModel(
         itemState: InventoryItemState,
         onOkClickListener: (resetState: Boolean, setStateFound: Boolean, comment: String) -> Unit,
     ) {
-        viewEffect = RfidScannerViewEffect.ShowSettingsAlertDialog(itemState, onOkClickListener)
+        if (!viewState.isScanningStart) {
+            viewEffect = RfidScannerViewEffect.ShowSettingsAlertDialog(itemState, onOkClickListener)
+        }
     }
 
     // Установка типа считывателя

@@ -73,7 +73,7 @@
 
 
     <string name="reset_state">Удалить</string>
-    <string name="ыефеу_ащгтв">Найдено</string>
+    <string name="state_found">Найдено</string>
     <string name="note_caption">Комментарий</string>
     <string name="barcode_not_work">Не считывается ШК</string>
     <string name="rfid_not_work">Не считывается RFID</string>
