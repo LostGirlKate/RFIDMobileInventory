@@ -39,6 +39,9 @@ class InventoryItemsFilterableAdapter(
             itemNum.text = item.inventoryNum
             managerName.text = item.managerName
             rfidNum.text = item.rfidCardNum
+            itemOldLocation.visibility =
+                if (item.oldLocation != item.location) View.VISIBLE else View.GONE
+            itemOldLocation.text = item.oldLocation
             backgroudConstrain.background = ContextCompat.getDrawable(
                 binding.root.context,
                 item.state.toColor()

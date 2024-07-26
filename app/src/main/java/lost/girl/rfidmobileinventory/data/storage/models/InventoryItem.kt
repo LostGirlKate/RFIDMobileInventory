@@ -109,6 +109,7 @@ class InventoryItem(
             state = getState(),
             inventoryNum = this.inventoryNum,
             location = this.actualLocation ?: this.location,
+            oldLocation = this.location,
             managerName = this.managerName,
             rfidCardNum = "RFID: ${this.rfidCardNum}"
         )

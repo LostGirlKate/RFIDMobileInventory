@@ -47,6 +47,18 @@
                 tools:text="Бухгалтерия" />
 
             <TextView
+                android:id="@+id/item_old_location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="8dp"
+                android:paddingBottom="8dp"
+                android:textSize="@dimen/text_medium_size"
+                app:layout_constraintBottom_toBottomOf="@id/rfid_num"
+                app:layout_constraintEnd_toEndOf="@id/item_location"
+                app:layout_constraintTop_toTopOf="@+id/rfid_num"
+                tools:text="Бухгалтерия2" />
+
+            <TextView
                 android:id="@+id/item_num"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -61,28 +73,28 @@
             <TextView
                 android:id="@+id/manager_name"
                 android:layout_width="0dp"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
                 android:gravity="top|end"
                 android:paddingStart="40dp"
                 android:paddingEnd="8dp"
                 android:textAlignment="gravity"
                 android:textSize="@dimen/text_medium_size"
-                app:layout_constraintBottom_toBottomOf="@id/rfid_num"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/item_num"
                 app:layout_constraintTop_toTopOf="@+id/item_num"
-                tools:text="Крюкова Екатерина Вячеславовна" />
+                tools:text="Крюкова Екатерина Вячеславо" />
 
             <TextView
                 android:id="@+id/rfid_num"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:paddingHorizontal="8dp"
+                android:layout_marginTop="4dp"
                 android:paddingBottom="8dp"
                 android:textSize="@dimen/text_medium_size"
                 android:gravity="fill_vertical"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/item_num"
+                app:layout_constraintTop_toBottomOf="@+id/manager_name"
                 tools:text="RFID: 12345678910" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
